@@ -12,13 +12,22 @@
 # 尝试全部来源；任何单一来源失败都只产生警告
 uv run llm-course papers update --source all --max-results 20
 
+# 按课程域和日期检索；profile 还包括 evaluation-safety
+uv run llm-course papers update --profile data --since 2025-01-01
+uv run llm-course papers update --profile training-systems
+uv run llm-course papers update --profile attention
+uv run llm-course papers update --profile moe
+uv run llm-course papers update --profile posttraining
+
 # 单独调试某一来源
 uv run llm-course papers update --source arxiv --max-results 10
 uv run llm-course papers update --source semantic-scholar --max-results 10
 uv run llm-course papers update --source huggingface --max-results 10
 
-# 调整 Semantic Scholar 主题查询
-uv run llm-course papers update --source semantic-scholar --query "linear attention language model"
+# 自定义 query 会覆盖 profile，但仍会真实传给上游来源
+uv run llm-course papers update --source arxiv --query "linear attention language model"
+
+# --since 使用 YYYY-MM-DD；非法日期会在联网前被拒绝
 ```
 
 ## 去重与人工闸门

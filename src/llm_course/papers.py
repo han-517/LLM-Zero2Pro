@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import urllib.error
 import urllib.parse
@@ -10,6 +11,7 @@ from datetime import date
 from pathlib import Path
 
 import yaml
+from jsonschema import Draft202012Validator, FormatChecker
 
 from llm_course.paths import PAPER_CATALOG_PATH, PAPER_GRAPH_PATH, PAPER_INBOX_PATH
 from llm_course.schemas import PaperRecord, ValidationReport
@@ -36,6 +38,7 @@ REQUIRED_FIELDS = {
 RELATION_TYPES = {"builds_on", "improves", "contrasts_with", "used_by"}
 TIERS = {"core", "deep_dive", "frontier"}
 STATUSES = {"unread", "pass1", "pass2", "pass3", "reproduced"}
+PAPER_SCHEMA_PATH = PAPER_CATALOG_PATH.parent / "schema.json"
 ARXIV_ID = re.compile(r"arxiv\.org/(?:abs|pdf)/([^/?#]+)", re.IGNORECASE)
 
 
@@ -74,6 +77,12 @@ def validate_catalog(path: Path = PAPER_CATALOG_PATH) -> ValidationReport:
     if not isinstance(raw_papers, list):
         report.errors.append("papers 必须是列表")
         return report
+    try:
+        schema = json.loads(PAPER_SCHEMA_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        report.errors.append(f"无法读取论文 JSON Schema: {exc}")
+        return report
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
 
     ids: set[str] = set()
     dois: set[str] = set()
@@ -84,6 +93,13 @@ def validate_catalog(path: Path = PAPER_CATALOG_PATH) -> ValidationReport:
             report.errors.append(f"第 {index} 条论文不是 mapping")
             continue
         missing = REQUIRED_FIELDS - item.keys()
+        schema_errors = sorted(validator.iter_errors(item), key=lambda error: list(error.path))
+        if schema_errors:
+            paper_id = item.get("id", index)
+            for error in schema_errors:
+                location = ".".join(str(part) for part in error.path) or "<root>"
+                report.errors.append(f"论文 {paper_id} Schema {location}: {error.message}")
+            continue
         if missing:
             report.errors.append(f"论文 {item.get('id', index)} 缺字段: {sorted(missing)}")
             continue
@@ -136,15 +152,33 @@ def validate_catalog(path: Path = PAPER_CATALOG_PATH) -> ValidationReport:
 def check_links(papers: Iterable[PaperRecord], timeout: float = 8.0) -> ValidationReport:
     report = ValidationReport()
     for paper in papers:
-        request = urllib.request.Request(
+        head_request = urllib.request.Request(
             paper.url, method="HEAD", headers={"User-Agent": "llm-course/0.1"}
         )
+        head_error: Exception | None = None
         try:
-            with urllib.request.urlopen(request, timeout=timeout) as response:
+            with urllib.request.urlopen(head_request, timeout=timeout) as response:
                 if response.status >= 400:
                     report.warnings.append(f"{paper.id} 链接返回 HTTP {response.status}")
         except (urllib.error.URLError, TimeoutError) as exc:
-            report.warnings.append(f"{paper.id} 链接检查失败: {exc}")
+            head_error = exc
+        if head_error is None:
+            continue
+        get_request = urllib.request.Request(
+            paper.url,
+            method="GET",
+            headers={
+                "User-Agent": "llm-course/0.1",
+                "Range": "bytes=0-1023",
+                "Connection": "close",
+            },
+        )
+        try:
+            with urllib.request.urlopen(get_request, timeout=timeout) as response:
+                if response.status >= 400:
+                    report.warnings.append(f"{paper.id} GET 回退返回 HTTP {response.status}")
+        except (urllib.error.URLError, TimeoutError) as get_error:
+            report.warnings.append(f"{paper.id} 链接检查失败: HEAD={head_error}; GET={get_error}")
     return report
 
 
@@ -173,11 +207,19 @@ def _normalize_arxiv_entry(entry: ET.Element, namespace: dict[str, str], as_of: 
     }
 
 
-def fetch_arxiv_candidates(max_results: int = 20) -> list[dict]:
-    query = '(all:"mixture of experts" OR all:"efficient attention" OR all:"language model")'
+def fetch_arxiv_candidates(max_results: int = 20, query: str | None = None) -> list[dict]:
+    if query:
+        terms = [term for term in re.findall(r"[a-z0-9-]+", query.casefold()) if len(term) >= 4][
+            :10
+        ]
+        search_query = "(" + " OR ".join(f'all:"{term}"' for term in terms) + ")"
+    else:
+        search_query = (
+            '(all:"mixture of experts" OR all:"efficient attention" OR all:"language model")'
+        )
     parameters = urllib.parse.urlencode(
         {
-            "search_query": query,
+            "search_query": search_query,
             "start": 0,
             "max_results": max_results,
             "sortBy": "submittedDate",

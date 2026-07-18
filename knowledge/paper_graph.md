@@ -75,6 +75,31 @@ flowchart LR
   gptq["GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers"]
   smoothquant["SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models"]
   awq["AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration"]
+  position_interpolation["Extending Context Window of Large Language Models via Positional Interpolation"]
+  yarn["YaRN: Efficient Context Window Extension of Large Language Models"]
+  longrope["LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens"]
+  llama4["The Llama 4 Herd: Architecture and Release Notes"]
+  qwen3["Qwen3 Technical Report"]
+  qwen35["Qwen3.5-35B-A3B Official Model Card"]
+  rope_long_context_limits["RoPE Distinguishes Neither Positions Nor Tokens in Long Contexts, Provably"]
+  datacomp_lm["DataComp-LM: In search of the next generation of training sets for language models"]
+  fineweb["The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale"]
+  dolma["Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research"]
+  paloma["Paloma: A Benchmark for Evaluating Language Model Fit"]
+  megatron_lm["Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism"]
+  zero["ZeRO: Memory Optimizations Toward Training Trillion Parameter Models"]
+  olmoe["OLMoE: Open Mixture-of-Experts Language Models"]
+  aux_loss_free_moe["Auxiliary-Loss-Free Load Balancing Strategy for Mixture-of-Experts"]
+  rewardbench["RewardBench: Evaluating Reward Models for Language Modeling"]
+  dapo["DAPO: An Open-Source LLM Reinforcement Learning System at Scale"]
+  dr_grpo["Understanding R1-Zero-Like Training: A Critical Perspective"]
+  gspo["Group Sequence Policy Optimization"]
+  orca_serving["Orca: A Distributed Serving System for Transformer-Based Generative Models"]
+  sarathi["SARATHI: Efficient LLM Inference by Piggybacking Decodes with Chunked Prefills"]
+  distserve["DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving"]
+  kivi["KIVI: A Tuning-Free Asymmetric 2bit Quantization for KV Cache"]
+  medusa["Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads"]
+  eagle["EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty"]
   seq2seq -->|builds on| bengio_nplm
   bahdanau_attention -->|improves| seq2seq
   transformer -->|improves| bahdanau_attention
@@ -91,7 +116,6 @@ flowchart LR
   gqa -->|improves| transformer
   flashattention -->|improves| transformer
   flashattention2 -->|improves| flashattention
-  pagedattention -->|builds on| gqa
   speculative_decoding -->|improves| gpt3
   sparsely_gated_moe -->|builds on| bengio_nplm
   gshard -->|improves| sparsely_gated_moe
@@ -154,4 +178,34 @@ flowchart LR
   gptq -->|builds on| transformer
   smoothquant -.->|contrasts| gptq
   awq -->|improves| gptq
+  position_interpolation -->|improves| rope
+  yarn -->|improves| position_interpolation
+  longrope -->|improves| position_interpolation
+  longrope -->|builds on| yarn
+  llama4 -->|builds on| rope
+  llama4 -->|builds on| sparsely_gated_moe
+  qwen3 -->|builds on| gqa
+  qwen3 -->|builds on| switch_transformer
+  qwen35 -->|builds on| gated_deltanet
+  qwen35 -->|builds on| qwen3
+  qwen35 -->|builds on| gqa
+  rope_long_context_limits -.->|contrasts| rope
+  datacomp_lm -->|improves| the_pile
+  fineweb -->|improves| the_pile
+  dolma -.->|contrasts| the_pile
+  paloma -->|builds on| helm
+  megatron_lm -->|builds on| transformer
+  zero -.->|contrasts| megatron_lm
+  olmoe -->|builds on| switch_transformer
+  aux_loss_free_moe -->|improves| switch_transformer
+  rewardbench -->|builds on| dpo
+  dapo -->|builds on| deepseekmath
+  dr_grpo -->|improves| deepseekmath
+  gspo -->|improves| deepseekmath
+  orca_serving -->|builds on| transformer
+  sarathi -->|improves| orca_serving
+  distserve -->|improves| orca_serving
+  kivi -->|builds on| transformer
+  medusa -->|improves| speculative_decoding
+  eagle -->|improves| speculative_decoding
 ```

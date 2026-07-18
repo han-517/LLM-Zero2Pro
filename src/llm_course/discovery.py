@@ -19,6 +19,15 @@ from llm_course.paths import PAPER_INBOX_PATH
 
 SOURCES = ("arxiv", "semantic-scholar", "huggingface")
 DEFAULT_QUERY = "large language model efficient attention mixture of experts"
+PROFILE_QUERIES = {
+    "all": DEFAULT_QUERY,
+    "data": "language model pretraining data deduplication filtering mixture contamination",
+    "training-systems": "language model distributed training parallelism FSDP ZeRO checkpoint",
+    "attention": "language model attention RoPE FlashAttention MLA linear attention",
+    "moe": "language model mixture of experts routing expert parallel",
+    "posttraining": "language model post-training SFT preference DPO GRPO RLVR",
+    "evaluation-safety": "language model evaluation contamination safety reward benchmark",
+}
 ARXIV_PATTERN = re.compile(r"(?:arXiv:|arxiv\.org/(?:abs|pdf)/)?(\d{4}\.\d{4,5})", re.I)
 RELEVANCE_TERMS = {
     "language model",
@@ -114,12 +123,21 @@ def _looks_relevant(title: str, summary: str) -> bool:
     return any(term in text for term in RELEVANCE_TERMS)
 
 
+def _matches_query(title: str, summary: str, query: str) -> bool:
+    text = f"{title} {summary}".casefold()
+    terms = {term for term in re.findall(r"[a-z0-9-]+", query.casefold()) if len(term) >= 4}
+    return not terms or bool(terms & set(re.findall(r"[a-z0-9-]+", text)))
+
+
+def _is_on_or_after(published: str, since: str | None) -> bool:
+    if since is None:
+        return True
+    return bool(published) and published[:10] >= since
+
+
 def fetch_arxiv(max_results: int, query: str = DEFAULT_QUERY) -> list[dict[str, Any]]:
-    # The arXiv feed uses a curated boolean query in papers.py. ``query`` is
-    # retained in the common interface and recorded in inbox metadata.
-    del query
     normalized = []
-    for item in fetch_arxiv_candidates(max_results=max_results):
+    for item in fetch_arxiv_candidates(max_results=max_results, query=query):
         arxiv_id = item["arxiv_id"]
         candidate = _candidate(
             source="arxiv",
@@ -135,9 +153,7 @@ def fetch_arxiv(max_results: int, query: str = DEFAULT_QUERY) -> list[dict[str, 
     return normalized
 
 
-def fetch_semantic_scholar(
-    max_results: int, query: str = DEFAULT_QUERY
-) -> list[dict[str, Any]]:
+def fetch_semantic_scholar(max_results: int, query: str = DEFAULT_QUERY) -> list[dict[str, Any]]:
     fields = ",".join(
         [
             "paperId",
@@ -154,9 +170,7 @@ def fetch_semantic_scholar(
             "fieldsOfStudy",
         ]
     )
-    parameters = urllib.parse.urlencode(
-        {"query": query, "limit": max_results, "fields": fields}
-    )
+    parameters = urllib.parse.urlencode({"query": query, "limit": max_results, "fields": fields})
     url = f"https://api.semanticscholar.org/graph/v1/paper/search?{parameters}"
     headers: dict[str, str] = {}
     api_key = os.environ.get("SEMANTIC_SCHOLAR_API_KEY")
@@ -196,14 +210,9 @@ def fetch_semantic_scholar(
     return normalized
 
 
-def fetch_huggingface(
-    max_results: int, query: str = DEFAULT_QUERY
-) -> list[dict[str, Any]]:
-    del query
+def fetch_huggingface(max_results: int, query: str = DEFAULT_QUERY) -> list[dict[str, Any]]:
     api_limit = min(100, max(max_results * 4, 20))
-    parameters = urllib.parse.urlencode(
-        {"p": 0, "limit": api_limit, "sort": "publishedAt"}
-    )
+    parameters = urllib.parse.urlencode({"p": 0, "limit": api_limit, "sort": "publishedAt"})
     headers: dict[str, str] = {}
     token = os.environ.get("HF_TOKEN")
     if token:
@@ -217,7 +226,12 @@ def fetch_huggingface(
         arxiv_id = _arxiv_id(raw_paper.get("id"))
         title = raw_paper.get("title") or item.get("title") or ""
         summary = raw_paper.get("summary") or item.get("summary") or ""
-        if not arxiv_id or not title or not _looks_relevant(title, summary):
+        if (
+            not arxiv_id
+            or not title
+            or not _looks_relevant(title, summary)
+            or not _matches_query(title, summary, query)
+        ):
             continue
         authors = raw_paper.get("authors") or []
         normalized.append(
@@ -296,16 +310,40 @@ def update_inbox_multisource(
     max_results: int = 20,
     *,
     source: str = "all",
-    query: str = DEFAULT_QUERY,
+    query: str | None = None,
+    profile: str = "all",
+    since: str | None = None,
     path: Path = PAPER_INBOX_PATH,
 ) -> tuple[int, int, list[str]]:
+    if isinstance(max_results, bool) or not isinstance(max_results, int) or max_results < 1:
+        raise ValueError("max_results 必须是正整数")
+    if source != "all" and source not in SOURCES:
+        raise ValueError(f"未知 source: {source!r}")
+    if profile not in PROFILE_QUERIES:
+        raise ValueError(f"未知 profile: {profile!r}")
+    if query is None:
+        resolved_query = PROFILE_QUERIES[profile]
+    elif not isinstance(query, str) or not query.strip():
+        raise ValueError("query 必须是非空字符串")
+    else:
+        resolved_query = query.strip()
+    if since is not None:
+        if not isinstance(since, str):
+            raise TypeError("since 必须是 ISO 日期字符串")
+        try:
+            date.fromisoformat(since)
+        except ValueError as exc:
+            raise ValueError("since 必须是 YYYY-MM-DD 格式的有效日期") from exc
     selected = list(SOURCES if source == "all" else (source,))
     errors = []
     fetched: list[dict[str, Any]] = []
     succeeded = []
     for source_name in selected:
         try:
-            fetched.extend(FETCHERS[source_name](max_results, query))
+            candidates = FETCHERS[source_name](max_results, resolved_query)
+            fetched.extend(
+                item for item in candidates if _is_on_or_after(item.get("published", ""), since)
+            )
             succeeded.append(source_name)
         except Exception as exc:  # Network/API failures must not corrupt the inbox.
             errors.append(f"{source_name}: {type(exc).__name__}: {exc}")
@@ -330,7 +368,9 @@ def update_inbox_multisource(
         "sources_requested": selected,
         "sources_succeeded": succeeded,
         "source_errors": errors,
-        "query": query,
+        "query": resolved_query,
+        "profile": profile,
+        "since": since,
         "max_results_per_source": max_results,
         "policy": "只进入候选池；按 arXiv ID、DOI、规范化标题去重；人工确认后才可加入 catalog。",
     }

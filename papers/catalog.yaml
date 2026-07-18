@@ -1,7 +1,7 @@
 metadata:
   title: 文本 LLM 论文目录
-  as_of: '2026-07-18'
-  count: 78
+  as_of: '2026-07-19'
+  count: 96
   policy: Core 约 25 篇；Deep Dive 保持 40–60 篇；新论文先进入 inbox，人工核验后再升级。
 papers:
 - id: bengio_nplm
@@ -29,7 +29,7 @@ papers:
   - 上下文窗口固定，规模和数据远小于现代 LLM。
   reproduction: planned-small
   relations: []
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
   doi: 10.1162/153244303322533223
 - id: seq2seq
   title: Sequence to Sequence Learning with Neural Networks
@@ -57,7 +57,7 @@ papers:
   relations:
   - type: builds_on
     target: bengio_nplm
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: bahdanau_attention
   title: Neural Machine Translation by Jointly Learning to Align and Translate
   year: 2015
@@ -84,7 +84,7 @@ papers:
   relations:
   - type: improves
     target: seq2seq
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: transformer
   title: Attention Is All You Need
   year: 2017
@@ -112,7 +112,7 @@ papers:
   relations:
   - type: improves
     target: bahdanau_attention
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: gpt2
   title: Language Models are Unsupervised Multitask Learners
   year: 2019
@@ -139,7 +139,7 @@ papers:
   relations:
   - type: builds_on
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: gpt3
   title: Language Models are Few-Shot Learners
   year: 2020
@@ -167,7 +167,7 @@ papers:
   relations:
   - type: improves
     target: gpt2
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: scaling_laws
   title: Scaling Laws for Neural Language Models
   year: 2020
@@ -195,7 +195,7 @@ papers:
   relations:
   - type: builds_on
     target: gpt3
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: chinchilla
   title: Training Compute-Optimal Large Language Models
   year: 2022
@@ -222,7 +222,7 @@ papers:
   relations:
   - type: improves
     target: scaling_laws
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: llama
   title: 'LLaMA: Open and Efficient Foundation Language Models'
   year: 2023
@@ -253,7 +253,7 @@ papers:
     target: chinchilla
   - type: builds_on
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: adamw
   title: Decoupled Weight Decay Regularization
   year: 2019
@@ -278,7 +278,7 @@ papers:
   - 最佳衰减仍依赖模型、数据和训练预算。
   reproduction: required-step
   relations: []
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: rmsnorm
   title: Root Mean Square Layer Normalization
   year: 2019
@@ -305,7 +305,7 @@ papers:
   relations:
   - type: used_by
     target: llama
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: swiglu
   title: GLU Variants Improve Transformer
   year: 2020
@@ -332,7 +332,7 @@ papers:
   relations:
   - type: used_by
     target: llama
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: rope
   title: 'RoFormer: Enhanced Transformer with Rotary Position Embedding'
   year: 2021
@@ -362,7 +362,7 @@ papers:
     target: transformer
   - type: used_by
     target: llama
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: gqa
   title: 'GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints'
   year: 2023
@@ -389,7 +389,7 @@ papers:
   relations:
   - type: improves
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: flashattention
   title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness'
   year: 2022
@@ -417,7 +417,7 @@ papers:
   relations:
   - type: improves
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: flashattention2
   title: 'FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning'
   year: 2023
@@ -444,7 +444,7 @@ papers:
   relations:
   - type: improves
     target: flashattention
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: pagedattention
   title: Efficient Memory Management for Large Language Model Serving with PagedAttention
   year: 2023
@@ -468,10 +468,8 @@ papers:
   limitations:
   - 系统结果依赖调度、硬件和竞争实现版本。
   reproduction: simulator
-  relations:
-  - type: builds_on
-    target: gqa
-  as_of: '2026-07-18'
+  relations: []
+  as_of: '2026-07-19'
 - id: speculative_decoding
   title: Fast Inference from Transformers via Speculative Decoding
   year: 2023
@@ -498,7 +496,7 @@ papers:
   relations:
   - type: improves
     target: gpt3
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: sparsely_gated_moe
   title: 'Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer'
   year: 2017
@@ -526,7 +524,7 @@ papers:
   relations:
   - type: builds_on
     target: bengio_nplm
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: gshard
   title: 'GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding'
   year: 2020
@@ -554,7 +552,7 @@ papers:
   relations:
   - type: improves
     target: sparsely_gated_moe
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: switch_transformer
   title: 'Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity'
   year: 2021
@@ -582,7 +580,7 @@ papers:
   relations:
   - type: improves
     target: gshard
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: st_moe
   title: 'ST-MoE: Designing Stable and Transferable Sparse Expert Models'
   year: 2022
@@ -609,7 +607,7 @@ papers:
   relations:
   - type: improves
     target: switch_transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: instructgpt
   title: Training Language Models to Follow Instructions with Human Feedback
   year: 2022
@@ -637,7 +635,7 @@ papers:
   relations:
   - type: builds_on
     target: gpt3
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: lora
   title: 'LoRA: Low-Rank Adaptation of Large Language Models'
   year: 2021
@@ -665,7 +663,7 @@ papers:
   relations:
   - type: improves
     target: instructgpt
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: dpo
   title: 'Direct Preference Optimization: Your Language Model is Secretly a Reward Model'
   year: 2023
@@ -693,7 +691,7 @@ papers:
   relations:
   - type: improves
     target: instructgpt
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: qlora
   title: 'QLoRA: Efficient Finetuning of Quantized LLMs'
   year: 2023
@@ -721,7 +719,7 @@ papers:
   relations:
   - type: improves
     target: lora
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: deepseekmoe
   title: 'DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models'
   year: 2024
@@ -750,7 +748,7 @@ papers:
     target: switch_transformer
   - type: builds_on
     target: st_moe
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: deepseek_v2
   title: 'DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model'
   year: 2024
@@ -781,7 +779,7 @@ papers:
     target: deepseekmoe
   - type: improves
     target: gqa
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: mixtral
   title: Mixtral of Experts
   year: 2024
@@ -808,7 +806,7 @@ papers:
   relations:
   - type: builds_on
     target: sparsely_gated_moe
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: mamba2
   title: 'Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State
     Space Duality'
@@ -837,7 +835,7 @@ papers:
   relations:
   - type: contrasts_with
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: gated_deltanet
   title: 'Gated Delta Networks: Improving Mamba2 with Delta Rule'
   year: 2025
@@ -865,7 +863,7 @@ papers:
   relations:
   - type: improves
     target: mamba2
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: deepseekmath
   title: 'DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models'
   year: 2024
@@ -893,7 +891,7 @@ papers:
   relations:
   - type: builds_on
     target: instructgpt
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: deepseek_r1
   title: 'DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning'
   year: 2025
@@ -922,7 +920,7 @@ papers:
   relations:
   - type: improves
     target: deepseekmath
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: deepseek_v3
   title: DeepSeek-V3 Technical Report
   year: 2024
@@ -953,7 +951,7 @@ papers:
     target: deepseek_v2
   - type: improves
     target: deepseekmoe
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: minimax_m1
   title: 'MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention'
   year: 2025
@@ -984,7 +982,7 @@ papers:
     target: transformer
   - type: builds_on
     target: deepseek_r1
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: kimi_linear
   title: 'Kimi Linear: An Expressive, Efficient Attention Architecture'
   year: 2025
@@ -1014,7 +1012,7 @@ papers:
     target: gated_deltanet
   - type: contrasts_with
     target: deepseek_v2
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: deepseek_v32
   title: 'DeepSeek-V3.2: Pushing the Frontier of Open Large Language Models'
   year: 2025
@@ -1044,7 +1042,7 @@ papers:
     target: deepseek_v3
   - type: contrasts_with
     target: flashattention2
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: nemotron3_super
   title: 'Nemotron 3 Super: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic
     Reasoning'
@@ -1079,7 +1077,7 @@ papers:
     target: deepseek_v3
   - type: builds_on
     target: speculative_decoding
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: routing_free_moe
   title: Routing-Free Mixture-of-Experts
   year: 2026
@@ -1109,7 +1107,7 @@ papers:
     target: switch_transformer
   - type: improves
     target: sparsely_gated_moe
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: mqa
   title: 'Fast Transformer Decoding: One Write-Head is All You Need'
   year: 2019
@@ -1137,7 +1135,7 @@ papers:
   relations:
   - type: improves
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: transformer_xl
   title: 'Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context'
   year: 2019
@@ -1164,7 +1162,7 @@ papers:
   relations:
   - type: improves
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: alibi
   title: 'Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation'
   year: 2022
@@ -1191,7 +1189,7 @@ papers:
   relations:
   - type: contrasts_with
     target: rope
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: longformer
   title: 'Longformer: The Long-Document Transformer'
   year: 2020
@@ -1218,7 +1216,7 @@ papers:
   relations:
   - type: contrasts_with
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: bigbird
   title: 'Big Bird: Transformers for Longer Sequences'
   year: 2020
@@ -1245,7 +1243,7 @@ papers:
   relations:
   - type: improves
     target: longformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: reformer
   title: 'Reformer: The Efficient Transformer'
   year: 2020
@@ -1272,7 +1270,7 @@ papers:
   relations:
   - type: contrasts_with
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: performer
   title: Rethinking Attention with Performers
   year: 2021
@@ -1300,7 +1298,7 @@ papers:
   relations:
   - type: contrasts_with
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: linear_transformer
   title: 'Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention'
   year: 2020
@@ -1327,7 +1325,7 @@ papers:
   relations:
   - type: contrasts_with
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: retnet
   title: 'Retentive Network: A Successor to Transformer for Large Language Models'
   year: 2023
@@ -1355,7 +1353,7 @@ papers:
   relations:
   - type: improves
     target: linear_transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: mamba
   title: 'Mamba: Linear-Time Sequence Modeling with Selective State Spaces'
   year: 2023
@@ -1383,7 +1381,7 @@ papers:
   relations:
   - type: contrasts_with
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: h3
   title: 'Hungry Hungry Hippos: Towards Language Modeling with State Space Models'
   year: 2022
@@ -1411,7 +1409,7 @@ papers:
   relations:
   - type: contrasts_with
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: hyena
   title: 'Hyena Hierarchy: Towards Larger Convolutional Language Models'
   year: 2023
@@ -1439,7 +1437,7 @@ papers:
   relations:
   - type: contrasts_with
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: flashattention3
   title: 'FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision'
   year: 2024
@@ -1467,7 +1465,7 @@ papers:
   relations:
   - type: improves
     target: flashattention2
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: ring_attention
   title: Ring Attention with Blockwise Transformers for Near-Infinite Context
   year: 2023
@@ -1494,7 +1492,7 @@ papers:
   relations:
   - type: builds_on
     target: flashattention
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: stripedhyena
   title: 'StripedHyena: Moving Beyond Transformers with Hybrid Signal Processing Models'
   year: 2024
@@ -1522,7 +1520,7 @@ papers:
   relations:
   - type: builds_on
     target: hyena
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: base_layers
   title: 'BASE Layers: Simplifying Training of Large, Sparse Models'
   year: 2021
@@ -1549,7 +1547,7 @@ papers:
   relations:
   - type: improves
     target: sparsely_gated_moe
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: expert_choice
   title: Mixture-of-Experts with Expert Choice Routing
   year: 2022
@@ -1576,7 +1574,7 @@ papers:
   relations:
   - type: contrasts_with
     target: switch_transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: sparse_upcycling
   title: 'Sparse Upcycling: Training Mixture-of-Experts from Dense Checkpoints'
   year: 2022
@@ -1603,7 +1601,7 @@ papers:
   relations:
   - type: builds_on
     target: switch_transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: megablocks
   title: 'MegaBlocks: Efficient Sparse Training with Mixture-of-Experts'
   year: 2023
@@ -1631,7 +1629,7 @@ papers:
   relations:
   - type: improves
     target: switch_transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: deepspeed_moe
   title: 'DeepSpeed-MoE: Advancing Mixture-of-Experts Inference and Training to Power Next-Generation
     AI Scale'
@@ -1660,7 +1658,7 @@ papers:
   relations:
   - type: builds_on
     target: gshard
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: dedup_training_data
   title: Deduplicating Training Data Makes Language Models Better
   year: 2022
@@ -1688,7 +1686,7 @@ papers:
   relations:
   - type: builds_on
     target: gpt3
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: the_pile
   title: 'The Pile: An 800GB Dataset of Diverse Text for Language Modeling'
   year: 2020
@@ -1713,7 +1711,7 @@ papers:
   - 许可、隐私、重复和来源偏差仍需单独治理，规模不代表质量。
   reproduction: data-audit
   relations: []
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: gopher
   title: 'Scaling Language Models: Methods, Analysis & Insights from Training Gopher'
   year: 2021
@@ -1741,7 +1739,7 @@ papers:
   relations:
   - type: improves
     target: gpt3
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: mmlu
   title: Measuring Massive Multitask Language Understanding
   year: 2021
@@ -1769,7 +1767,7 @@ papers:
   relations:
   - type: used_by
     target: llama
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: helm
   title: Holistic Evaluation of Language Models
   year: 2022
@@ -1797,7 +1795,7 @@ papers:
   relations:
   - type: contrasts_with
     target: mmlu
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: ppo
   title: Proximal Policy Optimization Algorithms
   year: 2017
@@ -1825,7 +1823,7 @@ papers:
   relations:
   - type: used_by
     target: instructgpt
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: constitutional_ai
   title: 'Constitutional AI: Harmlessness from AI Feedback'
   year: 2022
@@ -1853,7 +1851,7 @@ papers:
   relations:
   - type: improves
     target: instructgpt
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: simpo
   title: 'SimPO: Simple Preference Optimization with a Reference-Free Reward'
   year: 2024
@@ -1881,7 +1879,7 @@ papers:
   relations:
   - type: improves
     target: dpo
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: kto
   title: 'KTO: Model Alignment as Prospect Theoretic Optimization'
   year: 2024
@@ -1909,7 +1907,7 @@ papers:
   relations:
   - type: contrasts_with
     target: dpo
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: gptq
   title: 'GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers'
   year: 2022
@@ -1937,7 +1935,7 @@ papers:
   relations:
   - type: builds_on
     target: transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: smoothquant
   title: 'SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models'
   year: 2022
@@ -1965,7 +1963,7 @@ papers:
   relations:
   - type: contrasts_with
     target: gptq
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: awq
   title: 'AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration'
   year: 2023
@@ -1993,7 +1991,7 @@ papers:
   relations:
   - type: improves
     target: gptq
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: position_interpolation
   title: Extending Context Window of Large Language Models via Positional Interpolation
   year: 2023
@@ -2020,7 +2018,7 @@ papers:
   relations:
   - type: improves
     target: rope
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: yarn
   title: 'YaRN: Efficient Context Window Extension of Large Language Models'
   year: 2023
@@ -2047,7 +2045,7 @@ papers:
   relations:
   - type: improves
     target: position_interpolation
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: longrope
   title: 'LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens'
   year: 2024
@@ -2076,12 +2074,12 @@ papers:
     target: position_interpolation
   - type: builds_on
     target: yarn
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: llama4
   title: 'The Llama 4 Herd: Architecture and Release Notes'
   year: 2025
   version_date: '2025-04-05'
-  source_type: technical_report
+  source_type: official_blog
   url: https://ai.meta.com/blog/llama-4-multimodal-intelligence/
   code_url: https://github.com/meta-llama/llama-models
   topics:
@@ -2106,7 +2104,7 @@ papers:
     target: rope
   - type: builds_on
     target: sparsely_gated_moe
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: qwen3
   title: Qwen3 Technical Report
   year: 2025
@@ -2136,12 +2134,12 @@ papers:
     target: gqa
   - type: builds_on
     target: switch_transformer
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: qwen35
   title: Qwen3.5-35B-A3B Official Model Card
   year: 2026
   version_date: '2026-02-16'
-  source_type: technical_report
+  source_type: model_card
   url: https://huggingface.co/Qwen/Qwen3.5-35B-A3B
   code_url: https://huggingface.co/Qwen/Qwen3.5-35B-A3B
   topics:
@@ -2169,7 +2167,7 @@ papers:
     target: qwen3
   - type: builds_on
     target: gqa
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
 - id: rope_long_context_limits
   title: RoPE Distinguishes Neither Positions Nor Tokens in Long Contexts, Provably
   year: 2026
@@ -2198,4 +2196,381 @@ papers:
   relations:
   - type: contrasts_with
     target: rope
-  as_of: '2026-07-18'
+  as_of: '2026-07-19'
+- id: datacomp_lm
+  title: "DataComp-LM: In search of the next generation of training sets for language models"
+  year: 2024
+  version_date: '2024-06-17'
+  source_type: preprint
+  url: https://arxiv.org/abs/2406.11794
+  code_url: https://github.com/mlfoundations/dclm
+  data_url: https://huggingface.co/mlfoundations
+  arxiv_id: '2406.11794'
+  topics: [pretraining-data, filtering, benchmark]
+  tier: deep_dive
+  status: unread
+  prerequisites: [data-governance, evaluation]
+  claims: ["受控数据竞赛可把过滤、混合与模型配方放到共同计算预算下比较。"]
+  evidence: ["公开语料、训练配方、模型与 53 项评测的系统实验。"]
+  evidence_location: ["paper sections 3-5", "released code and data"]
+  limitations: ["结论依赖英语 Common Crawl、所选规模与评测套件。"]
+  reproduction: planned-small
+  relations: [{type: improves, target: the_pile}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: fineweb
+  title: "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale"
+  year: 2024
+  version_date: '2024-06-25'
+  source_type: preprint
+  url: https://arxiv.org/abs/2406.17557
+  code_url: https://github.com/huggingface/datatrove
+  data_url: https://huggingface.co/datasets/HuggingFaceFW/fineweb
+  arxiv_id: '2406.17557'
+  topics: [pretraining-data, deduplication, filtering]
+  tier: deep_dive
+  status: unread
+  prerequisites: [common-crawl, data-ablation]
+  claims: ["大规模网页语料的去重和过滤选择必须通过受控模型训练消融验证。"]
+  evidence: ["对 FineWeb 构建决策、去重和教育过滤进行逐项消融。"]
+  evidence_location: ["paper data ablations", "DataTrove repository"]
+  limitations: ["网页和英语占主导，过滤器偏差会被带入模型。"]
+  reproduction: dataset-audit
+  relations: [{type: improves, target: the_pile}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: dolma
+  title: "Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research"
+  year: 2024
+  version_date: '2024-06-06'
+  source_type: preprint
+  url: https://arxiv.org/abs/2402.00159
+  code_url: https://github.com/allenai/dolma
+  data_url: https://huggingface.co/datasets/allenai/dolma
+  arxiv_id: '2402.00159'
+  topics: [pretraining-data, data-governance, open-science]
+  tier: deep_dive
+  status: unread
+  prerequisites: [data-card, deduplication]
+  claims: ["开放语料应连同构建原则、混合组成和处理工具一起发布。"]
+  evidence: ["3T token 语料构建记录、中间版本分析与开源工具。"]
+  evidence_location: ["paper sections 2-4", "Dolma toolkit"]
+  limitations: ["语料许可、代表性和过滤误差仍需下游使用者独立审计。"]
+  reproduction: dataset-audit
+  relations: [{type: contrasts_with, target: the_pile}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: paloma
+  title: "Paloma: A Benchmark for Evaluating Language Model Fit"
+  year: 2023
+  version_date: '2023-12-16'
+  source_type: preprint
+  url: https://arxiv.org/abs/2312.10523
+  code_url: https://github.com/allenai/paloma
+  data_url: https://huggingface.co/datasets/allenai/paloma
+  arxiv_id: '2312.10523'
+  topics: [evaluation, perplexity, domain-analysis]
+  tier: deep_dive
+  status: unread
+  prerequisites: [perplexity, contamination]
+  claims: ["按数百个域拆分 LM fit 比单一总体 perplexity 更能暴露语料差异。"]
+  evidence: ["受控 1B 基线和细粒度域级 perplexity 案例研究。"]
+  evidence_location: ["paper benchmark protocol", "released baselines"]
+  limitations: ["perplexity 不是任务能力或安全性的完整代理。"]
+  reproduction: planned-small
+  relations: [{type: builds_on, target: helm}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: megatron_lm
+  title: "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism"
+  year: 2019
+  version_date: '2019-09-17'
+  source_type: preprint
+  url: https://arxiv.org/abs/1909.08053
+  code_url: https://github.com/NVIDIA/Megatron-LM
+  data_url: ''
+  arxiv_id: '1909.08053'
+  topics: [distributed-training, tensor-parallel, pipeline-parallel]
+  tier: deep_dive
+  status: unread
+  prerequisites: [transformer, distributed-systems]
+  claims: ["Transformer 层内张量并行可用少量集合通信扩展模型宽度。"]
+  evidence: ["最高 8.3B 模型的多 GPU 收敛与扩展效率实验。"]
+  evidence_location: ["paper parallelism method", "Megatron-LM code"]
+  limitations: ["早期硬件和模型规模不能直接代表现代集群效率。"]
+  reproduction: conceptual
+  relations: [{type: builds_on, target: transformer}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: zero
+  title: "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models"
+  year: 2019
+  version_date: '2019-10-04'
+  source_type: peer_reviewed
+  url: https://arxiv.org/abs/1910.02054
+  code_url: https://github.com/microsoft/DeepSpeed
+  data_url: ''
+  arxiv_id: '1910.02054'
+  topics: [distributed-training, optimizer-sharding, memory]
+  tier: deep_dive
+  status: unread
+  prerequisites: [adamw, data-parallel]
+  claims: ["分片优化器、梯度和参数状态可逐阶段移除数据并行内存冗余。"]
+  evidence: ["内存/通信分析及百亿参数级多 GPU 实验。"]
+  evidence_location: ["paper sections 3-6", "DeepSpeed implementation"]
+  limitations: ["真实收益取决于通信、offload、checkpoint 与框架版本。"]
+  reproduction: memory-ledger
+  relations: [{type: contrasts_with, target: megatron_lm}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: olmoe
+  title: "OLMoE: Open Mixture-of-Experts Language Models"
+  year: 2024
+  version_date: '2024-09-03'
+  source_type: preprint
+  url: https://arxiv.org/abs/2409.02060
+  code_url: https://github.com/allenai/OLMoE
+  data_url: https://huggingface.co/allenai/OLMoE-1B-7B-0924
+  arxiv_id: '2409.02060'
+  topics: [moe, open-science, routing-analysis]
+  tier: deep_dive
+  status: unread
+  prerequisites: [switch-transformer, expert-routing]
+  claims: ["开放权重、数据、代码和日志使 MoE 路由专化分析可复核。"]
+  evidence: ["7B 总参数/1B 活跃参数模型、训练日志和路由分析。"]
+  evidence_location: ["paper experiments", "released checkpoints and logs"]
+  limitations: ["一个规模和配方的观察不能外推到所有 MoE。"]
+  reproduction: routing-analysis
+  relations: [{type: builds_on, target: switch_transformer}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: aux_loss_free_moe
+  title: "Auxiliary-Loss-Free Load Balancing Strategy for Mixture-of-Experts"
+  year: 2024
+  version_date: '2024-08-28'
+  source_type: preprint
+  url: https://arxiv.org/abs/2408.15664
+  code_url: ''
+  data_url: ''
+  arxiv_id: '2408.15664'
+  topics: [moe, routing, load-balancing]
+  tier: frontier
+  status: unread
+  prerequisites: [top-k-routing, load-balance-loss]
+  claims: ["专家偏置的非梯度更新可控制负载而不向主模型注入辅助损失梯度。"]
+  evidence: ["最高 3B 模型、200B token 的负载和质量对照。"]
+  evidence_location: ["paper algorithm and ablations"]
+  limitations: ["偏置更新仍引入超参数和动态反馈，系统容量约束不会消失。"]
+  reproduction: simulator
+  relations: [{type: improves, target: switch_transformer}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: rewardbench
+  title: "RewardBench: Evaluating Reward Models for Language Modeling"
+  year: 2024
+  version_date: '2024-03-20'
+  source_type: preprint
+  url: https://arxiv.org/abs/2403.13787
+  code_url: https://github.com/allenai/reward-bench
+  data_url: https://huggingface.co/datasets/allenai/reward-bench
+  arxiv_id: '2403.13787'
+  topics: [reward-model, evaluation, safety]
+  tier: deep_dive
+  status: unread
+  prerequisites: [preference-data, reward-model]
+  claims: ["奖励模型需在对话、推理和安全的困难 chosen/rejected 对上独立评测。"]
+  evidence: ["公开 benchmark、代码和多种显式/隐式奖励模型对比。"]
+  evidence_location: ["paper benchmark construction", "leaderboard code"]
+  limitations: ["pairwise 准确率不能完全预测在线 RL 或安全表现。"]
+  reproduction: planned-small
+  relations: [{type: builds_on, target: dpo}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: dapo
+  title: "DAPO: An Open-Source LLM Reinforcement Learning System at Scale"
+  year: 2025
+  version_date: '2025-05-20'
+  source_type: preprint
+  url: https://arxiv.org/abs/2503.14476
+  code_url: https://github.com/BytedTsinghua-SIA/DAPO
+  data_url: https://huggingface.co/datasets/BytedTsinghua-SIA/DAPO-Math-17k
+  arxiv_id: '2503.14476'
+  topics: [rlvr, reasoning, reinforcement-learning]
+  tier: frontier
+  status: unread
+  prerequisites: [grpo, policy-clipping]
+  claims: ["解耦裁剪、动态采样等工程选择可改善大规模推理 RL 的稳定性。"]
+  evidence: ["开源训练系统、数据与 Qwen2.5-32B 的 AIME 训练结果。"]
+  evidence_location: ["paper algorithm sections", "released DAPO code"]
+  limitations: ["单一数学域和大规模配方的收益不可归因于某一个技巧。"]
+  reproduction: conceptual
+  relations: [{type: builds_on, target: deepseekmath}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: dr_grpo
+  title: "Understanding R1-Zero-Like Training: A Critical Perspective"
+  year: 2025
+  version_date: '2025-10-06'
+  source_type: preprint
+  url: https://arxiv.org/abs/2503.20783
+  code_url: https://github.com/sail-sg/understand-r1-zero
+  data_url: ''
+  arxiv_id: '2503.20783'
+  topics: [dr-grpo, reasoning, rlvr]
+  tier: frontier
+  status: unread
+  prerequisites: [grpo, length-bias]
+  claims: ["GRPO 的归一化选择可能造成长度偏置，Dr.GRPO 旨在移除该偏差。"]
+  evidence: ["多种 base model 的 R1-Zero-like 训练分析与 7B 配方实验。"]
+  evidence_location: ["paper bias analysis", "released training recipe"]
+  limitations: ["结论受 base model 预训练偏置、verifier 和数学任务影响。"]
+  reproduction: planned-small
+  relations: [{type: improves, target: deepseekmath}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: gspo
+  title: "Group Sequence Policy Optimization"
+  year: 2025
+  version_date: '2025-07-28'
+  source_type: preprint
+  url: https://arxiv.org/abs/2507.18071
+  code_url: ''
+  data_url: ''
+  arxiv_id: '2507.18071'
+  topics: [gspo, sequence-objective, moe-rl]
+  tier: frontier
+  status: unread
+  prerequisites: [grpo, sequence-logprob]
+  claims: ["序列级 importance ratio 与 clipping 可替代 token 级比率并改善 MoE RL 稳定性。"]
+  evidence: ["与 GRPO 的效率、性能和 MoE 训练稳定性比较。"]
+  evidence_location: ["paper method and experiments"]
+  limitations: ["作者报告的模型和基础设施结果需独立复现。"]
+  reproduction: conceptual
+  relations: [{type: improves, target: deepseekmath}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: orca_serving
+  title: "Orca: A Distributed Serving System for Transformer-Based Generative Models"
+  year: 2022
+  version_date: '2022-07-11'
+  source_type: peer_reviewed
+  url: https://www.usenix.org/conference/osdi22/presentation/yu
+  code_url: ''
+  data_url: ''
+  topics: [serving, iteration-level-scheduling, batching]
+  tier: deep_dive
+  status: unread
+  prerequisites: [autoregressive-decoding, scheduling]
+  claims: ["迭代级调度可让不同长度请求进入同一动态批次。"]
+  evidence: ["OSDI 系统实现与多模型 serving 工作负载评测。"]
+  evidence_location: ["OSDI paper scheduling design and evaluation"]
+  limitations: ["硬件、模型、请求分布和后续 kernel 会改变绝对收益。"]
+  reproduction: simulator
+  relations: [{type: builds_on, target: transformer}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: sarathi
+  title: "SARATHI: Efficient LLM Inference by Piggybacking Decodes with Chunked Prefills"
+  year: 2023
+  version_date: '2023-08-31'
+  source_type: preprint
+  url: https://arxiv.org/abs/2308.16369
+  code_url: https://github.com/microsoft/sarathi-serve
+  data_url: ''
+  arxiv_id: '2308.16369'
+  topics: [serving, chunked-prefill, continuous-batching]
+  tier: deep_dive
+  status: unread
+  prerequisites: [prefill, decode, batching]
+  claims: ["分块 prefill 可与 decode 拼批，降低 phase 干扰和流水线气泡。"]
+  evidence: ["多种模型与请求分布的吞吐和延迟基准。"]
+  evidence_location: ["paper scheduler design and evaluation"]
+  limitations: ["chunk 大小与调度收益依赖 SLO、硬件和请求长度。"]
+  reproduction: simulator
+  relations: [{type: improves, target: orca_serving}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: distserve
+  title: "DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving"
+  year: 2024
+  version_date: '2024-06-06'
+  source_type: peer_reviewed
+  url: https://arxiv.org/abs/2401.09670
+  code_url: https://github.com/LLMServe/DistServe
+  data_url: ''
+  arxiv_id: '2401.09670'
+  topics: [serving, disaggregation, goodput]
+  tier: deep_dive
+  status: unread
+  prerequisites: [ttft, tpot, parallelism]
+  claims: ["分离 prefill/decode 资源可分别优化 TTFT 与 TPOT SLO 下的 goodput。"]
+  evidence: ["OSDI 2024 系统在多种模型和延迟约束下的评测。"]
+  evidence_location: ["paper sections 3-6", "DistServe code"]
+  limitations: ["分离会增加 KV 传输和部署复杂度，收益依赖互连。"]
+  reproduction: conceptual
+  relations: [{type: improves, target: orca_serving}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: kivi
+  title: "KIVI: A Tuning-Free Asymmetric 2bit Quantization for KV Cache"
+  year: 2024
+  version_date: '2024-07-25'
+  source_type: peer_reviewed
+  url: https://arxiv.org/abs/2402.02750
+  code_url: https://github.com/jy-yuan/KIVI
+  data_url: ''
+  arxiv_id: '2402.02750'
+  topics: [kv-cache, quantization, inference]
+  tier: deep_dive
+  status: unread
+  prerequisites: [kv-cache, quantization]
+  claims: ["K 与 V 的离群分布不同，适合分别按 channel 和 token 做低比特量化。"]
+  evidence: ["ICML 2024 的分布分析、质量、内存和吞吐实验。"]
+  evidence_location: ["paper analysis and system evaluation", "KIVI code"]
+  limitations: ["2-bit kernel收益依赖硬件实现，长尾任务可能更敏感。"]
+  reproduction: planned-small
+  relations: [{type: builds_on, target: transformer}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: medusa
+  title: "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads"
+  year: 2024
+  version_date: '2024-06-14'
+  source_type: preprint
+  url: https://arxiv.org/abs/2401.10774
+  code_url: https://github.com/FasterDecoding/Medusa
+  data_url: ''
+  arxiv_id: '2401.10774'
+  topics: [speculative-decoding, multi-token, tree-attention]
+  tier: deep_dive
+  status: unread
+  prerequisites: [speculative-decoding, sampling]
+  claims: ["额外 decoding heads 可并行提出多 token 候选并用 tree attention 验证。"]
+  evidence: ["多模型、两种微调设置的生成质量与加速实验。"]
+  evidence_location: ["paper method and experiments", "Medusa code"]
+  limitations: ["需要训练额外 heads，接受方案与目标采样分布的契约必须核对。"]
+  reproduction: conceptual
+  relations: [{type: improves, target: speculative_decoding}]
+  verification_status: source_checked
+  as_of: '2026-07-19'
+- id: eagle
+  title: "EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty"
+  year: 2024
+  version_date: '2025-03-04'
+  source_type: preprint
+  url: https://arxiv.org/abs/2401.15077
+  code_url: https://github.com/SafeAILab/EAGLE
+  data_url: ''
+  arxiv_id: '2401.15077'
+  topics: [speculative-decoding, feature-drafting, inference]
+  tier: deep_dive
+  status: unread
+  prerequisites: [speculative-decoding, hidden-state]
+  claims: ["在特征层起草并显式处理 token 不确定性可提高候选接受率。"]
+  evidence: ["多模型与任务的接受长度、速度和分布一致性实验。"]
+  evidence_location: ["paper algorithm and evaluation", "EAGLE code"]
+  limitations: ["训练 draft head 和系统集成成本未被 toy speculative baseline 覆盖。"]
+  reproduction: conceptual
+  relations: [{type: improves, target: speculative_decoding}]
+  verification_status: source_checked
+  as_of: '2026-07-19'

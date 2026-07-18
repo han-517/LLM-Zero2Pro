@@ -37,6 +37,10 @@ class PaperRecord:
     reproduction: str
     relations: tuple[Relation, ...]
     as_of: str
+    arxiv_id: str = ""
+    data_url: str = ""
+    evidence_location: tuple[str, ...] = ()
+    verification_status: str = "unverified"
     doi: str = ""
 
     @classmethod
@@ -60,6 +64,10 @@ class PaperRecord:
             relations=tuple(Relation.from_dict(item) for item in data["relations"]),
             as_of=str(data["as_of"]),
             doi=str(data.get("doi", "")),
+            arxiv_id=str(data.get("arxiv_id", "")),
+            data_url=str(data.get("data_url", "")),
+            evidence_location=tuple(data.get("evidence_location", ())),
+            verification_status=str(data.get("verification_status", "unverified")),
         )
 
 
@@ -100,4 +108,3 @@ class ValidationReport:
     def merge(self, other: ValidationReport) -> None:
         self.errors.extend(other.errors)
         self.warnings.extend(other.warnings)
-
