@@ -1,0 +1,56 @@
+[project]
+name = "llm-learning-course"
+version = "0.1.0"
+description = "中文、从零实现优先的文本大语言模型学习课程"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "einops>=0.8,<1",
+    "matplotlib>=3.9,<4",
+    "numpy>=2.0,<3",
+    "pyyaml>=6.0,<7",
+    "torch>=2.7,<3",
+]
+
+[project.scripts]
+llm-course = "llm_course.cli:main"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29,<7",
+    "jupyterlab>=4.2,<5",
+    "nbclient>=0.10,<1",
+    "pytest>=8.3,<9",
+    "ruff>=0.11,<1",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llm_course", "src/llm_from_scratch"]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+

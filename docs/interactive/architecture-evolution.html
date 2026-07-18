@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RoPE、注意力与 MoE 架构演化</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --background: #f7f8fb;
+      --foreground: #18212f;
+      --card: #ffffff;
+      --card-foreground: #18212f;
+      --muted: #e9edf4;
+      --muted-foreground: #536176;
+      --border: #cbd3df;
+      --accent: #e6eefc;
+      --accent-foreground: #173c78;
+      --attention: #2563eb;
+      --position: #7c3aed;
+      --moe: #c66a08;
+      --state: #0f766e;
+      --danger: #b42318;
+      --shadow: 0 12px 32px rgba(24, 33, 47, 0.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #10141c;
+        --foreground: #e9edf5;
+        --card: #171d27;
+        --card-foreground: #e9edf5;
+        --muted: #252e3c;
+        --muted-foreground: #aeb8c8;
+        --border: #3b4658;
+        --accent: #203557;
+        --accent-foreground: #d9e8ff;
+        --attention: #78a9ff;
+        --position: #b69cff;
+        --moe: #f2ad64;
+        --state: #65cfc3;
+        --danger: #ff928a;
+        --shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--foreground);
+      font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+    }
+    a { color: currentColor; }
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+    .top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin-bottom: 28px;
+      color: var(--muted-foreground);
+    }
+    h1, h2, h3 { line-height: 1.25; font-weight: 500; }
+    h1 { margin: 0 0 10px; font-size: clamp(1.8rem, 4vw, 3rem); }
+    h2 { margin: 0 0 8px; }
+    h3 { margin: 0; }
+    .lead {
+      max-width: 820px;
+      margin: 0;
+      color: var(--muted-foreground);
+    }
+    .as-of {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted-foreground);
+    }
+    main { display: grid; gap: 34px; margin-top: 36px; }
+    section { min-width: 0; }
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .section-note {
+      margin: 0;
+      max-width: 660px;
+      color: var(--muted-foreground);
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      color: var(--muted-foreground);
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .swatch { width: 12px; height: 12px; border-radius: 50%; }
+    .swatch.attention { background: var(--attention); }
+    .swatch.position { background: var(--position); }
+    .swatch.moe { background: var(--moe); }
+    .timeline {
+      background: var(--card);
+      color: var(--card-foreground);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .axis {
+      position: relative;
+      height: 44px;
+      margin-left: 126px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted-foreground);
+    }
+    .axis span {
+      position: absolute;
+      bottom: 8px;
+      transform: translateX(-50%);
+      font-variant-numeric: tabular-nums;
+    }
+    .axis span:first-child { transform: none; }
+    .axis span:last-child { transform: translateX(-100%); }
+    .lane {
+      display: grid;
+      grid-template-columns: 126px minmax(0, 1fr);
+      min-height: 224px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lane:last-child { border-bottom: 0; }
+    .lane-title {
+      padding: 20px 16px;
+      border-right: 1px solid var(--border);
+    }
+    .lane-title small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted-foreground);
+      font-weight: 400;
+    }
+    .track {
+      position: relative;
+      min-width: 0;
+      margin: 0 24px;
+    }
+    .track::before {
+      content: "";
+      position: absolute;
+      inset: 127px 0 auto;
+      height: 2px;
+      background: var(--border);
+    }
+    .event {
+      --event-color: var(--attention);
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: 92px;
+      min-height: 54px;
+      padding: 6px 7px;
+      transform: translateX(-50%);
+      border: 1px solid color-mix(in srgb, var(--event-color) 55%, var(--border));
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--event-color) 13%, var(--card));
+      color: var(--card-foreground);
+      font: inherit;
+      font-size: 0.76rem;
+      line-height: 1.25;
+      cursor: pointer;
+      text-align: left;
+    }
+    .event::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      width: 2px;
+      height: var(--stem);
+      background: var(--event-color);
+    }
+    .event.high::after { top: 100%; }
+    .event.low::after { bottom: 100%; }
+    .event strong {
+      display: block;
+      color: var(--event-color);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+    .event[aria-pressed="true"] {
+      background: color-mix(in srgb, var(--event-color) 24%, var(--card));
+      border-width: 2px;
+    }
+    .event.position { --event-color: var(--position); }
+    .event.moe { --event-color: var(--moe); }
+    .detail {
+      margin-top: 16px;
+      padding: 20px;
+      background: var(--card);
+      color: var(--card-foreground);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .detail-meta { color: var(--muted-foreground); }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .detail-grid div {
+      padding-top: 10px;
+      border-top: 2px solid var(--border);
+    }
+    .detail-grid span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted-foreground);
+    }
+    .detail p { margin: 0; }
+    .detail-source { display: inline-block; margin-top: 14px; }
+    .model-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 14px;
+      margin: 16px 0;
+    }
+    label { display: grid; gap: 6px; color: var(--muted-foreground); }
+    select {
+      min-width: min(100%, 310px);
+      padding: 9px 34px 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--card);
+      color: var(--card-foreground);
+      font: inherit;
+    }
+    .model-panel {
+      display: grid;
+      gap: 18px;
+      padding: 20px;
+      background: var(--card);
+      color: var(--card-foreground);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+    .model-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .model-summary div {
+      padding: 12px;
+      background: var(--muted);
+      border-radius: 10px;
+    }
+    .model-summary span {
+      display: block;
+      color: var(--muted-foreground);
+    }
+    .model-summary strong { font-weight: 500; }
+    .stack {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      gap: 8px;
+    }
+    .layer {
+      display: grid;
+      place-items: center;
+      min-height: 62px;
+      flex: 1 1 112px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-align: center;
+    }
+    .layer.attention { border-color: var(--attention); background: color-mix(in srgb, var(--attention) 12%, var(--card)); }
+    .layer.position { border-color: var(--position); background: color-mix(in srgb, var(--position) 12%, var(--card)); }
+    .layer.moe { border-color: var(--moe); background: color-mix(in srgb, var(--moe) 12%, var(--card)); }
+    .layer.state { border-color: var(--state); background: color-mix(in srgb, var(--state) 12%, var(--card)); }
+    .tradeoff {
+      padding-left: 14px;
+      border-left: 4px solid var(--attention);
+      color: var(--muted-foreground);
+    }
+    .status-note {
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--muted-foreground);
+    }
+    .sources {
+      columns: 2 320px;
+      padding-left: 20px;
+    }
+    .sources li { break-inside: avoid; margin-bottom: 8px; }
+    @media (max-width: 760px) {
+      .page { width: min(100% - 20px, 720px); padding-top: 18px; }
+      .section-head { align-items: start; flex-direction: column; }
+      .axis { display: none; }
+      .lane { grid-template-columns: 1fr; }
+      .lane-title {
+        padding: 14px 14px 6px;
+        border-right: 0;
+      }
+      .track {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin: 8px 14px 16px;
+      }
+      .track::before { display: none; }
+      .event {
+        position: static;
+        width: auto;
+        min-height: 58px;
+        transform: none;
+      }
+      .event::after { display: none; }
+      .detail-grid, .model-summary { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 430px) {
+      .track { grid-template-columns: 1fr; }
+      .stack { flex-direction: column; }
+      .layer { flex-basis: auto; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .event, .layer { transition: background-color 160ms ease, border-color 160ms ease; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav" aria-label="教程导航">
+      <a href="../architecture_evolution.md">文字讲义</a>
+      <a href="core-concepts.html">核心概念实验室</a>
+      <a href="../../README.md">课程首页</a>
+    </nav>
+    <header>
+      <h1>RoPE、注意力与 MoE 的演化地图</h1>
+      <p class="lead">三条技术线解决不同瓶颈：位置编码决定顺序如何进入模型，注意力决定 token 如何读取历史，MoE 决定每个 token 激活哪些参数。点击节点查看贡献与边界。</p>
+      <span class="as-of">资料核验至 2026-07-18</span>
+    </header>
+
+    <main>
+      <section id="timeline" aria-labelledby="timeline-title">
+        <div class="section-head">
+          <div>
+            <h2 id="timeline-title">三条对齐的演化时间轴</h2>
+            <p class="section-note">同一年出现不代表互相替代；例如 FlashAttention、GQA 和 RoPE 可以同时出现在一个模型中。</p>
+          </div>
+          <div class="legend" aria-label="时间轴图例">
+            <span><i class="swatch attention"></i>注意力/序列混合</span>
+            <span><i class="swatch position"></i>位置编码</span>
+            <span><i class="swatch moe"></i>MoE</span>
+          </div>
+        </div>
+        <div class="timeline">
+          <div id="year-axis" class="axis" aria-hidden="true"></div>
+          <div id="timeline-lanes"></div>
+        </div>
+        <article id="event-detail" class="detail" aria-live="polite"></article>
+      </section>
+
+      <section id="landscape" aria-labelledby="landscape-title">
+        <h2 id="landscape-title">当前公开模型如何组合这些技术</h2>
+        <p class="section-note">这里展示架构族而非逐层完整配置。切换模型，观察 token mixing、position 和 FFN/routing 如何组合。</p>
+        <div class="model-controls">
+          <label for="model-select">代表模型
+            <select id="model-select">
+              <option value="qwen3">Qwen3 Dense：成熟 GQA 基线</option>
+              <option value="deepseek-v32">DeepSeek-V3.2：DSA + MLA + DeepSeekMoE</option>
+              <option value="llama4">Llama 4：iRoPE + shared/routed MoE</option>
+              <option value="qwen35" selected>Qwen3.5-35B-A3B：Gated DeltaNet 混合 MoE</option>
+            </select>
+          </label>
+        </div>
+        <article class="model-panel">
+          <div>
+            <h3 id="model-name"></h3>
+            <p id="model-note" class="section-note"></p>
+          </div>
+          <div id="model-summary" class="model-summary"></div>
+          <div id="model-stack" class="stack" role="img"></div>
+          <p id="model-tradeoff" class="tradeoff"></p>
+          <a id="model-source" href="#">查看原始资料</a>
+        </article>
+      </section>
+
+      <section aria-labelledby="reading-title">
+        <h2 id="reading-title">如何判断“当前主流”</h2>
+        <p class="status-note">这里的“主流”是对公开架构的归纳：GQA/RoPE 仍是成熟基线；MLA、learned sparse attention、interleaved NoPE/RoPE、以及 Gated DeltaNet + full attention 的混合路线都已有公开模型采用。它不是质量排行榜，也不推断闭源模型内部结构。</p>
+        <ul class="sources">
+          <li><a href="https://arxiv.org/abs/2104.09864">RoFormer / RoPE</a></li>
+          <li><a href="https://arxiv.org/abs/2306.15595">Position Interpolation</a></li>
+          <li><a href="https://arxiv.org/abs/2309.00071">YaRN</a></li>
+          <li><a href="https://arxiv.org/abs/2402.13753">LongRoPE</a></li>
+          <li><a href="https://arxiv.org/abs/2305.13245">GQA</a></li>
+          <li><a href="https://arxiv.org/abs/2205.14135">FlashAttention</a></li>
+          <li><a href="https://arxiv.org/abs/2412.19437">DeepSeek-V3</a></li>
+          <li><a href="https://arxiv.org/abs/2512.02556">DeepSeek-V3.2 / DSA</a></li>
+          <li><a href="https://arxiv.org/abs/1701.06538">Sparsely-Gated MoE</a></li>
+          <li><a href="https://arxiv.org/abs/2101.03961">Switch Transformer</a></li>
+          <li><a href="https://arxiv.org/abs/2401.06066">DeepSeekMoE</a></li>
+          <li><a href="https://arxiv.org/abs/2505.09388">Qwen3 Technical Report</a></li>
+          <li><a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B">Qwen3.5 官方模型卡</a></li>
+          <li><a href="https://ai.meta.com/blog/llama-4-multimodal-intelligence/">Llama 4 官方说明</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <noscript>此页面需要启用 JavaScript 才能切换时间轴详情和模型结构。</noscript>
+  <script>
+    const events = [
+      {lane:"attention", year:2014, pos:2014, title:"Bahdanau", id:"bahdanau_attention", problem:"固定长度编码器瓶颈", change:"解码器按步对源序列做软对齐。", boundary:"仍依赖 RNN 串行状态。", source:"https://arxiv.org/abs/1409.0473"},
+      {lane:"attention", year:2017, pos:2017, title:"MHA", id:"transformer", problem:"并行全局内容寻址", change:"多头缩放点积注意力移除序列递归。", boundary:"Prefill 计算与分数矩阵随长度二次增长。", source:"https://arxiv.org/abs/1706.03762"},
+      {lane:"attention", year:2019, pos:2019, title:"MQA", id:"mqa", problem:"Decode KV 带宽", change:"所有 Query heads 共享一组 K/V。", boundary:"KV 表达能力更受限。", source:"https://arxiv.org/abs/1911.02150"},
+      {lane:"attention", year:2022, pos:2022, title:"FlashAttn", id:"flashattention", problem:"HBM IO 与中间矩阵", change:"分块和在线 Softmax 精确计算注意力。", boundary:"不改变二次注意力的连接数学。", source:"https://arxiv.org/abs/2205.14135"},
+      {lane:"attention", year:2023, pos:2023.1, title:"GQA", id:"gqa", problem:"MHA 质量与 MQA 缓存折中", change:"一组 Query heads 共享一个 KV head。", boundary:"group 数与服务内核影响收益。", source:"https://arxiv.org/abs/2305.13245"},
+      {lane:"attention", year:2024, pos:2024, title:"MLA", id:"deepseek_v2", problem:"进一步压缩 KV Cache", change:"缓存低维 KV latent，并吸收部分投影。", boundary:"RoPE 解耦和高效内核更复杂。", source:"https://arxiv.org/abs/2405.04434"},
+      {lane:"attention", year:2024, pos:2024.7, title:"Gated ΔNet", id:"gated_deltanet", problem:"固定状态的序列记忆", change:"用带遗忘门的 delta rule 修正关联。", boundary:"递归状态不等价于完整 Softmax 检索。", source:"https://arxiv.org/abs/2412.06464"},
+      {lane:"attention", year:2025, pos:2025.5, title:"DSA", id:"deepseek_v32", problem:"长上下文主注意力成本", change:"学习 indexer，为 Query 选择少量历史 token。", boundary:"Indexer 本身成为新的质量和成本组件。", source:"https://arxiv.org/abs/2512.02556"},
+      {lane:"attention", year:2026, pos:2026.2, title:"Hybrid 3:1", id:"qwen35", problem:"Decode 状态与精确检索兼顾", change:"3 个 Gated DeltaNet 层配 1 个 GQA 层。", boundary:"质量依赖少量完整注意力层和专用内核。", source:"https://huggingface.co/Qwen/Qwen3.5-35B-A3B"},
+
+      {lane:"position", year:2017, pos:2017, title:"Sinusoidal", id:"transformer", problem:"无位置时注意力不感知顺序", change:"把确定性绝对位置向量加到表示。", boundary:"长度外推不是默认保证。", source:"https://arxiv.org/abs/1706.03762"},
+      {lane:"position", year:2021, pos:2021, title:"RoPE", id:"rope", problem:"在点积中编码相对位移", change:"按位置旋转 Q/K 的二维维度对。", boundary:"超训练长度仍可能失真。", source:"https://arxiv.org/abs/2104.09864"},
+      {lane:"position", year:2023, pos:2023, title:"PI", id:"position_interpolation", problem:"扩展 RoPE 上下文", change:"把新位置插值回训练过的角度范围。", boundary:"通常仍需长上下文继续训练。", source:"https://arxiv.org/abs/2306.15595"},
+      {lane:"position", year:2023, pos:2023.6, title:"YaRN", id:"yarn", problem:"更稳健的频率扩展", change:"按频率分区缩放并调整 attention 温度。", boundary:"factor 与模型/任务相关。", source:"https://arxiv.org/abs/2309.00071"},
+      {lane:"position", year:2024, pos:2024.1, title:"LongRoPE", id:"longrope", problem:"百万级上下文扩展", change:"搜索非均匀缩放并渐进延长。", boundary:"窗口长度不等于有效利用长度。", source:"https://arxiv.org/abs/2402.13753"},
+      {lane:"position", year:2024, pos:2024.7, title:"Decoupled", id:"deepseek_v3", problem:"RoPE 阻碍 MLA 投影吸收", change:"只保留小部分带旋转的位置分量。", boundary:"不是完全去掉位置编码。", source:"https://arxiv.org/abs/2412.19437"},
+      {lane:"position", year:2025, pos:2025.3, title:"iRoPE", id:"llama4", problem:"超长上下文长度泛化", change:"交错 NoPE 层与使用 RoPE 的层。", boundary:"官方公开的是架构说明，不是充分消融。", source:"https://ai.meta.com/blog/llama-4-multimodal-intelligence/"},
+      {lane:"position", year:2026, pos:2026, title:"Partial RoPE", id:"qwen35", problem:"混合层的状态与位置成本", change:"Qwen3.5 完整注意力只旋转部分 head 维度。", boundary:"具体比例是模型设计，不是通用常数。", source:"https://huggingface.co/Qwen/Qwen3.5-35B-A3B"},
+      {lane:"position", year:2026, pos:2026.6, title:"Limits?", id:"rope_limits", problem:"RoPE 长上下文可辨识边界", change:"研究相同分数下位置/内容混淆的理论条件。", boundary:"2026 frontier preprint，不能当成已定共识。", source:"https://arxiv.org/abs/2605.15514"},
+
+      {lane:"moe", year:2017, pos:2017, title:"Sparse Gate", id:"sparsely_gated_moe", problem:"增加容量而不同比增加计算", change:"学习门控，每个样本激活少数专家。", boundary:"路由、容量和通信复杂。", source:"https://arxiv.org/abs/1701.06538"},
+      {lane:"moe", year:2020, pos:2020, title:"GShard", id:"gshard", problem:"大集群条件计算", change:"Top-2 路由配合自动分片。", boundary:"依赖 all-to-all 和大规模硬件。", source:"https://arxiv.org/abs/2006.16668"},
+      {lane:"moe", year:2021, pos:2021, title:"Switch", id:"switch_transformer", problem:"简化 MoE 路由", change:"每 token Top-1，并系统研究稳定性。", boundary:"capacity 与 dropping 会改变语义。", source:"https://arxiv.org/abs/2101.03961"},
+      {lane:"moe", year:2022, pos:2022.2, title:"Expert Choice", id:"expert_choice", problem:"天然控制专家容量", change:"由专家选择固定数量 token。", boundary:"批次全局选择约束在线推理。", source:"https://arxiv.org/abs/2202.09368"},
+      {lane:"moe", year:2024, pos:2024, title:"Mixtral", id:"mixtral", problem:"开放 decoder MoE 实证", change:"8 个 FFN 中每 token 选择 2 个。", boundary:"47B total 与 13B active 必须分开。", source:"https://arxiv.org/abs/2401.04088"},
+      {lane:"moe", year:2024, pos:2024.35, title:"DeepSeekMoE", id:"deepseekmoe", problem:"专家专门化与公共知识冗余", change:"细粒度 routed experts 加 shared experts。", boundary:"更多专家组合增加路由与通信复杂度。", source:"https://arxiv.org/abs/2401.06066"},
+      {lane:"moe", year:2024, pos:2024.85, title:"Aux-free", id:"deepseek_v3", problem:"均衡损失干扰主目标", change:"DeepSeek-V3 使用 auxiliary-loss-free balancing。", boundary:"负载均匀仍不等于专家专门化。", source:"https://arxiv.org/abs/2412.19437"},
+      {lane:"moe", year:2025, pos:2025.25, title:"Llama 4", id:"llama4", problem:"低活跃参数的公开多模态模型", change:"shared expert 加 1 个 routed expert，交错 Dense/MoE 层。", boundary:"总权重仍需存储或分布式切分。", source:"https://ai.meta.com/blog/llama-4-multimodal-intelligence/"},
+      {lane:"moe", year:2025, pos:2025.65, title:"Qwen3", id:"qwen3", problem:"纯 routed 大规模 MoE", change:"公开 30B-A3B 与 235B-A22B 等模型。", boundary:"活跃参数低不自动等于低延迟。", source:"https://arxiv.org/abs/2505.09388"},
+      {lane:"moe", year:2026, pos:2026.2, title:"Qwen3.5", id:"qwen35", problem:"MoE 与混合线性注意力协同", change:"256 experts，8 routed + 1 shared（35B-A3B）。", boundary:"需要同时优化状态、路由和专家内核。", source:"https://huggingface.co/Qwen/Qwen3.5-35B-A3B"}
+    ];
+
+    const laneMeta = {
+      attention: {title:"注意力 / 序列混合", note:"读取历史的方式"},
+      position: {title:"位置编码 / RoPE", note:"顺序进入分数的方式"},
+      moe: {title:"MoE", note:"激活参数的方式"}
+    };
+    const minYear = 2014;
+    const maxYear = 2026.7;
+    const lanesRoot = document.getElementById("timeline-lanes");
+    const axis = document.getElementById("year-axis");
+    [2014, 2017, 2020, 2023, 2026].forEach(year => {
+      const marker = document.createElement("span");
+      marker.textContent = year;
+      marker.style.left = ((year - minYear) / (maxYear - minYear) * 100) + "%";
+      axis.appendChild(marker);
+    });
+
+    function showEvent(selected) {
+      document.querySelectorAll(".event").forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.eventId === selected.lane + "-" + selected.id));
+      });
+      document.getElementById("event-detail").innerHTML =
+        '<div class="detail-meta">' + selected.year + ' · ' + laneMeta[selected.lane].title + ' · paper_id: <code>' + selected.id + '</code></div>' +
+        '<h3>' + selected.title + '</h3>' +
+        '<div class="detail-grid">' +
+          '<div><span>要解决</span><p>' + selected.problem + '</p></div>' +
+          '<div><span>关键变化</span><p>' + selected.change + '</p></div>' +
+          '<div><span>边界</span><p>' + selected.boundary + '</p></div>' +
+        '</div><a class="detail-source" href="' + selected.source + '">打开原始资料</a>';
+    }
+
+    Object.keys(laneMeta).forEach(laneName => {
+      const lane = document.createElement("div");
+      lane.className = "lane";
+      const heading = document.createElement("h3");
+      heading.className = "lane-title";
+      heading.innerHTML = laneMeta[laneName].title + '<small>' + laneMeta[laneName].note + '</small>';
+      const track = document.createElement("div");
+      track.className = "track";
+      events.filter(event => event.lane === laneName).forEach((event, index) => {
+        const button = document.createElement("button");
+        const level = index % 3;
+        const high = level < 2;
+        button.type = "button";
+        button.className = "event " + laneName + " " + (high ? "high" : "low");
+        button.dataset.eventId = event.lane + "-" + event.id;
+        button.style.setProperty("--x", (9 + (event.pos - minYear) / (maxYear - minYear) * 82) + "%");
+        button.style.setProperty("--y", ["10px", "63px", "143px"][level]);
+        button.style.setProperty("--stem", ["63px", "10px", "16px"][level]);
+        button.setAttribute("aria-pressed", "false");
+        button.setAttribute("aria-label", event.year + " " + event.title + "，查看详情");
+        button.innerHTML = "<strong>" + event.year + "</strong>" + event.title;
+        button.addEventListener("click", () => showEvent(event));
+        track.appendChild(button);
+      });
+      lane.append(heading, track);
+      lanesRoot.appendChild(lane);
+    });
+
+    const models = {
+      qwen3: {
+        name:"Qwen3 Dense（架构族）",
+        note:"成熟的 decoder-only 组合：完整 Softmax GQA、RoPE 与 Dense FFN。Qwen3 同时也发布 MoE 型号，这里只展示 Dense 基线。",
+        summary:{mixing:"GQA / Softmax", position:"RoPE", ffn:"Dense SwiGLU"},
+        stack:[
+          {label:"GQA", kind:"attention"},
+          {label:"RoPE on Q/K", kind:"position"},
+          {label:"Dense SwiGLU", kind:""}
+        ],
+        tradeoff:"实现、量化和推理栈成熟；Decode 时 KV Cache 仍随上下文长度增长。",
+        source:"https://arxiv.org/abs/2505.09388"
+      },
+      "deepseek-v32": {
+        name:"DeepSeek-V3.2",
+        note:"在 DeepSeek-V3 的 MLA + DeepSeekMoE 主干上加入 learned sparse attention；主注意力只处理 indexer 选出的历史 token。",
+        summary:{mixing:"DSA on MLA", position:"Decoupled RoPE", ffn:"Shared + routed MoE"},
+        stack:[
+          {label:"Lightning indexer", kind:"attention"},
+          {label:"Selected KV latent", kind:"attention"},
+          {label:"Decoupled RoPE", kind:"position"},
+          {label:"DeepSeekMoE", kind:"moe"}
+        ],
+        tradeoff:"KV 表示和长上下文主注意力都被压缩，但 indexer、投影吸收和专家通信共同提高系统复杂度。",
+        source:"https://arxiv.org/abs/2512.02556"
+      },
+      llama4: {
+        name:"Llama 4（Scout / Maverick 架构族）",
+        note:"Meta 公开说明交错使用无位置编码的 attention 层与多数使用 RoPE 的层，并交错 Dense 与 MoE 层。",
+        summary:{mixing:"Full attention", position:"iRoPE: NoPE + RoPE", ffn:"Shared + 1 routed expert"},
+        stack:[
+          {label:"RoPE attention", kind:"attention"},
+          {label:"MoE: shared + routed", kind:"moe"},
+          {label:"NoPE attention", kind:"position"},
+          {label:"Dense FFN", kind:""}
+        ],
+        tradeoff:"结构把长度泛化与稀疏激活结合；官方公开材料不足以把全部长上下文收益归因给 iRoPE。",
+        source:"https://ai.meta.com/blog/llama-4-multimodal-intelligence/"
+      },
+      qwen35: {
+        name:"Qwen3.5-35B-A3B",
+        note:"官方模型卡给出的 40 层布局是 10 × [3 × (Gated DeltaNet → MoE) + 1 × (Gated Attention → MoE)]。",
+        summary:{mixing:"75% Gated DeltaNet + 25% GQA", position:"64 / 256 dims RoPE", ffn:"256 experts；8 routed + 1 shared"},
+        stack:[
+          {label:"Gated DeltaNet", kind:"state"},
+          {label:"MoE", kind:"moe"},
+          {label:"Gated DeltaNet", kind:"state"},
+          {label:"MoE", kind:"moe"},
+          {label:"Gated DeltaNet", kind:"state"},
+          {label:"MoE", kind:"moe"},
+          {label:"GQA + partial RoPE", kind:"attention"},
+          {label:"MoE", kind:"moe"}
+        ],
+        tradeoff:"大部分层用固定状态降低 Decode 历史内存，少数 GQA 层保留精确内容寻址；部署需要混合状态、注意力和专家内核。",
+        source:"https://huggingface.co/Qwen/Qwen3.5-35B-A3B"
+      }
+    };
+
+    function showModel(key) {
+      const model = models[key];
+      document.getElementById("model-name").textContent = model.name;
+      document.getElementById("model-note").textContent = model.note;
+      document.getElementById("model-summary").innerHTML =
+        '<div><span>Token mixing</span><strong>' + model.summary.mixing + '</strong></div>' +
+        '<div><span>Position</span><strong>' + model.summary.position + '</strong></div>' +
+        '<div><span>FFN / routing</span><strong>' + model.summary.ffn + '</strong></div>';
+      const stack = document.getElementById("model-stack");
+      stack.setAttribute("aria-label", model.name + " 的概念架构：" + model.stack.map(item => item.label).join("，"));
+      stack.innerHTML = model.stack.map(item => '<div class="layer ' + item.kind + '">' + item.label + '</div>').join("");
+      document.getElementById("model-tradeoff").textContent = model.tradeoff;
+      document.getElementById("model-source").href = model.source;
+    }
+
+    document.getElementById("model-select").addEventListener("change", event => showModel(event.target.value));
+    showEvent(events.find(event => event.id === "rope"));
+    showModel("qwen35");
+  </script>
+</body>
+</html>

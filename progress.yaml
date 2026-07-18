@@ -1,0 +1,61 @@
+learner: ""
+started_on: null
+current_week: 1
+weekly_target_hours: 8
+weeks:
+  # status: not_started | learning | completed
+  - {week: 1, status: not_started, hours: 0, reflection: ""}
+  - {week: 2, status: not_started, hours: 0, reflection: ""}
+  - {week: 3, status: not_started, hours: 0, reflection: ""}
+  - {week: 4, status: not_started, hours: 0, reflection: ""}
+  - {week: 5, status: not_started, hours: 0, reflection: ""}
+  - {week: 6, status: not_started, hours: 0, reflection: ""}
+  - {week: 7, status: not_started, hours: 0, reflection: ""}
+  - {week: 8, status: not_started, hours: 0, reflection: ""}
+  - {week: 9, status: not_started, hours: 0, reflection: ""}
+  - {week: 10, status: not_started, hours: 0, reflection: ""}
+  - {week: 11, status: not_started, hours: 0, reflection: ""}
+  - {week: 12, status: not_started, hours: 0, reflection: ""}
+  - {week: 13, status: not_started, hours: 0, reflection: ""}
+  - {week: 14, status: not_started, hours: 0, reflection: ""}
+  - {week: 15, status: not_started, hours: 0, reflection: ""}
+  - {week: 16, status: not_started, hours: 0, reflection: ""}
+  - {week: 17, status: not_started, hours: 0, reflection: ""}
+  - {week: 18, status: not_started, hours: 0, reflection: ""}
+  - {week: 19, status: not_started, hours: 0, reflection: ""}
+  - {week: 20, status: not_started, hours: 0, reflection: ""}
+  - {week: 21, status: not_started, hours: 0, reflection: ""}
+  - {week: 22, status: not_started, hours: 0, reflection: ""}
+  - {week: 23, status: not_started, hours: 0, reflection: ""}
+  - {week: 24, status: not_started, hours: 0, reflection: ""}
+  - {week: 25, status: not_started, hours: 0, reflection: ""}
+  - {week: 26, status: not_started, hours: 0, reflection: ""}
+  - {week: 27, status: not_started, hours: 0, reflection: ""}
+  - {week: 28, status: not_started, hours: 0, reflection: ""}
+  - {week: 29, status: not_started, hours: 0, reflection: ""}
+  - {week: 30, status: not_started, hours: 0, reflection: ""}
+  - {week: 31, status: not_started, hours: 0, reflection: ""}
+  - {week: 32, status: not_started, hours: 0, reflection: ""}
+  - {week: 33, status: not_started, hours: 0, reflection: ""}
+  - {week: 34, status: not_started, hours: 0, reflection: ""}
+  - {week: 35, status: not_started, hours: 0, reflection: ""}
+  - {week: 36, status: not_started, hours: 0, reflection: ""}
+  - {week: 37, status: not_started, hours: 0, reflection: ""}
+  - {week: 38, status: not_started, hours: 0, reflection: ""}
+  - {week: 39, status: not_started, hours: 0, reflection: ""}
+  - {week: 40, status: not_started, hours: 0, reflection: ""}
+  - {week: 41, status: not_started, hours: 0, reflection: ""}
+  - {week: 42, status: not_started, hours: 0, reflection: ""}
+  - {week: 43, status: not_started, hours: 0, reflection: ""}
+  - {week: 44, status: not_started, hours: 0, reflection: ""}
+  - {week: 45, status: not_started, hours: 0, reflection: ""}
+  - {week: 46, status: not_started, hours: 0, reflection: ""}
+  - {week: 47, status: not_started, hours: 0, reflection: ""}
+  - {week: 48, status: not_started, hours: 0, reflection: ""}
+paper_reviews: []
+mistakes: []
+capstone:
+  question: ""
+  preregistered: false
+  report: ""
+

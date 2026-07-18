@@ -1,0 +1,408 @@
+course:
+  title: "从零到前沿：文本 LLM"
+  version: "2026.07"
+  as_of: "2026-07-18"
+  language: "zh-CN"
+  weeks: 48
+  weekly_hours: "8-10"
+  required_device: "cpu"
+  scope: "text-only"
+  teaching_loop: ["直觉与图", "张量形状", "必要公式", "最小实现", "对照实验", "常见误区"]
+
+stages:
+  - {id: foundations, weeks: "1-4", title: "工具、数学与 PyTorch"}
+  - {id: neural_lm, weeks: "5-8", title: "神经网络与早期语言模型"}
+  - {id: transformer, weeks: "9-15", title: "从分词到 GPT"}
+  - {id: modern_decoder, weeks: "16-21", title: "现代 Decoder 组件"}
+  - {id: pretraining, weeks: "22-27", title: "预训练、数据、缩放与评测"}
+  - {id: attention_frontiers, weeks: "28-34", title: "注意力与序列建模前沿"}
+  - {id: moe, weeks: "35-39", title: "Mixture of Experts"}
+  - {id: posttraining, weeks: "40-44", title: "后训练与推理能力"}
+  - {id: inference_capstone, weeks: "45-48", title: "推理优化与毕业项目"}
+
+weeks:
+  - week: 1
+    stage: foundations
+    title: "命令行、Git、Python 与可复现环境"
+    objectives: ["理解仓库、环境和依赖的区别", "会运行 Python、测试和 Notebook"]
+    readings: ["docs/00_environment.md", "docs/02_learning_method.md"]
+    experiments: ["运行 doctor", "修改并执行一个 Python 函数"]
+    exercise: "解释为什么不把课程依赖装进系统 Python"
+    acceptance: ["doctor 通过", "能说明工作区、解释器、虚拟环境和锁文件"]
+  - week: 2
+    stage: foundations
+    title: "向量、矩阵与张量形状"
+    objectives: ["用几何和表格理解向量/矩阵", "熟练追踪 batch、time、feature 维"]
+    readings: ["docs/stages/01_foundations.md"]
+    experiments: ["NumPy 广播", "矩阵乘法可视化"]
+    exercise: "为三段张量代码手写每一步形状"
+    acceptance: ["解释点积和矩阵乘法", "通过形状练习"]
+  - week: 3
+    stage: foundations
+    title: "导数、链式法则与自动微分"
+    objectives: ["把导数理解为局部敏感度", "手算并实现反向传播"]
+    readings: ["docs/stages/01_foundations.md"]
+    experiments: ["有限差分", "标量自动微分"]
+    exercise: "实现 Value 的加法、乘法、tanh 反传"
+    acceptance: ["数值梯度与解析梯度一致", "画出一个计算图"]
+  - week: 4
+    stage: foundations
+    title: "概率、Softmax、交叉熵与 PyTorch"
+    objectives: ["理解概率分布和负对数似然", "会写基础 PyTorch 训练循环"]
+    readings: ["docs/stages/01_foundations.md"]
+    experiments: ["稳定 Softmax", "交叉熵曲线"]
+    exercise: "解释正确类别概率变大时损失为何下降"
+    acceptance: ["实现稳定 Softmax", "完成一个线性分类器训练"]
+  - week: 5
+    stage: neural_lm
+    title: "监督学习、泛化与数据切分"
+    objectives: ["区分训练、验证和测试", "理解欠拟合与过拟合"]
+    readings: ["docs/stages/02_neural_lm.md"]
+    experiments: ["拟合一维函数", "观察训练/验证曲线"]
+    exercise: "诊断三个典型学习曲线"
+    acceptance: ["不会用测试集调参", "能解释泛化间隙"]
+  - week: 6
+    stage: neural_lm
+    title: "MLP、激活函数与优化"
+    objectives: ["理解层的组合", "观察 ReLU、tanh、SiLU 的差异"]
+    readings: ["docs/stages/02_neural_lm.md"]
+    experiments: ["从零 MLP", "梯度流可视化"]
+    exercise: "在无 nn.Sequential 的情况下训练两层 MLP"
+    acceptance: ["小数据过拟合", "解释非线性的作用"]
+  - week: 7
+    stage: neural_lm
+    title: "词向量与神经语言模型"
+    objectives: ["把 token 映射为可学习向量", "理解 next-token prediction"]
+    readings: ["docs/stages/02_neural_lm.md"]
+    experiments: ["Bigram 表", "Embedding + MLP LM"]
+    exercise: "比较 one-hot 乘权重与 embedding lookup"
+    acceptance: ["实现 bigram LM", "能解释 logits 和概率"]
+  - week: 8
+    stage: neural_lm
+    title: "RNN、状态与序列瓶颈"
+    objectives: ["理解循环状态", "知道长依赖和串行计算为何困难"]
+    readings: ["docs/stages/02_neural_lm.md"]
+    experiments: ["手写 Elman RNN", "梯度随时间变化"]
+    exercise: "对比固定窗口 MLP 与 RNN"
+    acceptance: ["实现 RNN 单元", "说出注意力替代 RNN 的动机"]
+  - week: 9
+    stage: transformer
+    title: "文本、Unicode、字节与 token"
+    objectives: ["理解字符不等于字节也不等于 token", "能构造确定的词表"]
+    readings: ["docs/stages/03_transformer.md"]
+    experiments: ["UTF-8 拆解", "字符级 tokenizer"]
+    exercise: "比较中英文字符串的字符、字节和 token 数"
+    acceptance: ["encode/decode 往返一致", "解释未知 token 问题"]
+  - week: 10
+    stage: transformer
+    title: "从零实现 BPE"
+    objectives: ["理解频繁相邻对合并", "处理确定性和特殊 token"]
+    readings: ["docs/stages/03_transformer.md"]
+    experiments: ["训练 Byte-level BPE", "查看合并过程"]
+    exercise: "补完 BPE 训练和编码"
+    acceptance: ["BPE 往返一致", "合并顺序可复现"]
+  - week: 11
+    stage: transformer
+    title: "Embedding 与位置信息"
+    objectives: ["理解 token/position embedding", "知道没有位置时注意力看不见顺序"]
+    readings: ["docs/stages/03_transformer.md"]
+    experiments: ["打乱 token 测试", "绝对位置 embedding"]
+    exercise: "构造一个必须依赖位置才能区分的样例"
+    acceptance: ["解释 permutation equivariance", "实现位置向量相加"]
+  - week: 12
+    stage: transformer
+    title: "缩放点积注意力"
+    objectives: ["从查询、钥匙、内容理解 QKV", "推导缩放与 Softmax"]
+    readings: ["docs/stages/03_transformer.md"]
+    experiments: ["单头注意力热力图", "有无缩放的熵"]
+    exercise: "纯 PyTorch 实现单头注意力"
+    acceptance: ["形状正确", "与 PyTorch SDPA 数值一致"]
+  - week: 13
+    stage: transformer
+    title: "因果掩码与多头注意力"
+    objectives: ["阻止未来信息泄漏", "理解多头的独立投影与拼接"]
+    readings: ["docs/stages/03_transformer.md"]
+    experiments: ["未来 token 扰动测试", "多头注意力"]
+    exercise: "实现 causal MHA"
+    acceptance: ["未来 token 不影响过去输出", "梯度通过所有投影"]
+  - week: 14
+    stage: transformer
+    title: "Transformer Block 与残差"
+    objectives: ["组装 Attention、MLP、Norm、Residual", "理解残差的信息高速路"]
+    readings: ["docs/stages/03_transformer.md"]
+    experiments: ["无残差消融", "梯度范数记录"]
+    exercise: "实现一个 Pre-Norm Block"
+    acceptance: ["端到端前反传", "参数量计算正确"]
+  - week: 15
+    stage: transformer
+    title: "训练并采样 Tiny GPT"
+    objectives: ["完成数据到生成的闭环", "理解温度和 top-k 采样"]
+    readings: ["docs/stages/03_transformer.md"]
+    experiments: ["单 batch 过拟合", "短语料训练"]
+    exercise: "训练并解释三个生成失败案例"
+    acceptance: ["损失显著下降", "可保存/加载并生成文本"]
+  - week: 16
+    stage: modern_decoder
+    title: "Pre-Norm 与 RMSNorm"
+    objectives: ["理解归一化位置对梯度的影响", "从零实现 RMSNorm"]
+    readings: ["docs/stages/04_modern_decoder.md"]
+    experiments: ["LayerNorm/RMSNorm 对照", "深层梯度"]
+    exercise: "证明 RMSNorm 不减均值"
+    acceptance: ["与参考公式一致", "解释 Pre-Norm 的训练优势"]
+  - week: 17
+    stage: modern_decoder
+    title: "SwiGLU 与门控 MLP"
+    objectives: ["把门控理解为内容过滤", "匹配参数预算"]
+    readings: ["docs/stages/04_modern_decoder.md"]
+    experiments: ["GELU/SwiGLU 对照", "激活分布"]
+    exercise: "在相似参数量下替换 MLP"
+    acceptance: ["实现 SwiGLU", "说明隐藏维为何常改变"]
+  - week: 18
+    stage: modern_decoder
+    title: "RoPE：用旋转编码相对位置"
+    objectives: ["从二维旋转理解 RoPE", "正确处理频率和维度"]
+    readings: ["docs/stages/04_modern_decoder.md"]
+    experiments: ["旋转向量动画", "相对位移点积"]
+    exercise: "实现 apply_rope"
+    acceptance: ["保持向量范数", "相对位置测试通过"]
+  - week: 19
+    stage: modern_decoder
+    title: "MQA 与 GQA"
+    objectives: ["理解共享 KV 如何节省缓存", "追踪 query head 到 KV head 映射"]
+    readings: ["docs/stages/04_modern_decoder.md"]
+    experiments: ["MHA/GQA 缓存估算", "重复 KV 数值对照"]
+    exercise: "实现 GQA 并匹配展开后的 MHA"
+    acceptance: ["数值一致", "能计算缓存节省比例"]
+  - week: 20
+    stage: modern_decoder
+    title: "KV Cache 与逐 token 解码"
+    objectives: ["区分 prefill 和 decode", "避免重复计算历史 K/V"]
+    readings: ["docs/stages/04_modern_decoder.md"]
+    experiments: ["完整前缀/缓存解码对照", "缓存增长曲线"]
+    exercise: "为注意力加入 cache API"
+    acceptance: ["缓存与非缓存 logits 一致", "说明速度与内存权衡"]
+  - week: 21
+    stage: modern_decoder
+    title: "初始化、AdamW 与训练稳定性"
+    objectives: ["理解方差传播", "区分权重衰减和 L2"]
+    readings: ["docs/stages/04_modern_decoder.md"]
+    experiments: ["不同初始化的激活", "梯度裁剪"]
+    exercise: "记录并诊断 loss spike"
+    acceptance: ["训练无 NaN", "能解释 warmup 和 clipping"]
+  - week: 22
+    stage: pretraining
+    title: "预训练数据从哪里来"
+    objectives: ["理解数据来源、许可和泄漏", "设计数据卡"]
+    readings: ["docs/stages/05_pretraining.md"]
+    experiments: ["检查小语料编码", "数据统计"]
+    exercise: "为一个数据集写 data card"
+    acceptance: ["记录来源与许可", "区分训练和评测污染"]
+  - week: 23
+    stage: pretraining
+    title: "过滤、去重与数据混合"
+    objectives: ["理解质量过滤和近重复", "观察数据配比影响"]
+    readings: ["docs/stages/05_pretraining.md"]
+    experiments: ["MinHash 概念实验", "重复数据过拟合"]
+    exercise: "实现精确去重和简单质量规则"
+    acceptance: ["统计每步保留率", "避免静默丢数据"]
+  - week: 24
+    stage: pretraining
+    title: "优化器、Warmup 与学习率计划"
+    objectives: ["理解动量和自适应缩放", "设计可解释的 scheduler"]
+    readings: ["docs/stages/05_pretraining.md"]
+    experiments: ["SGD/AdamW 对照", "cosine schedule"]
+    exercise: "从公式实现 AdamW 更新"
+    acceptance: ["与 PyTorch 单步一致", "绘制学习率曲线"]
+  - week: 25
+    stage: pretraining
+    title: "FLOPs、显存与混合精度"
+    objectives: ["估算参数/激活/优化器内存", "理解算力与带宽瓶颈"]
+    readings: ["docs/stages/05_pretraining.md"]
+    experiments: ["resource accounting", "dtype 误差"]
+    exercise: "估算一个 1B 模型的训练内存"
+    acceptance: ["写清估算假设", "区分训练与推理内存"]
+  - week: 26
+    stage: pretraining
+    title: "Scaling Laws 与计算最优"
+    objectives: ["理解幂律拟合", "不外推到证据范围之外"]
+    readings: ["docs/stages/05_pretraining.md"]
+    experiments: ["拟合微型 scaling curve", "置信区间"]
+    exercise: "用多组小模型拟合趋势"
+    acceptance: ["报告拟合残差", "说明缩尺结论局限"]
+  - week: 27
+    stage: pretraining
+    title: "评测、消融与故障诊断"
+    objectives: ["建立可重复评测", "诊断数据、数值和实现问题"]
+    readings: ["docs/stages/05_pretraining.md"]
+    experiments: ["随机基线", "一次一变量消融"]
+    exercise: "为 Tiny GPT 写评测卡"
+    acceptance: ["训练/验证分离", "结果包含种子和环境"]
+  - week: 28
+    stage: attention_frontiers
+    title: "FlashAttention 与 IO-aware 思维"
+    objectives: ["区分数学等价和执行顺序", "理解分块减少 HBM 往返"]
+    readings: ["docs/stages/06_attention_frontiers.md"]
+    experiments: ["分块在线 Softmax", "IO 计数模型"]
+    exercise: "实现 CPU tiled attention 参考版"
+    acceptance: ["与标准注意力一致", "解释为何不是近似注意力"]
+  - week: 29
+    stage: attention_frontiers
+    title: "滑窗、块稀疏与全局 token"
+    objectives: ["理解稀疏模式", "分析感受野随层数增长"]
+    readings: ["docs/stages/06_attention_frontiers.md"]
+    experiments: ["稀疏 mask 可视化", "长距离复制任务"]
+    exercise: "实现 sliding-window attention"
+    acceptance: ["mask 正确", "给出无法连接的反例"]
+  - week: 30
+    stage: attention_frontiers
+    title: "MLA 与低维 KV 表示"
+    objectives: ["理解 KV 压缩与投影吸收", "认识 RoPE 冲突"]
+    readings: ["docs/stages/06_attention_frontiers.md"]
+    experiments: ["MHA/GQA/MLA 缓存估算", "低秩重构"]
+    exercise: "实现教学版 MLA"
+    acceptance: ["输出/缓存形状正确", "说明训练与解码的不同收益"]
+  - week: 31
+    stage: attention_frontiers
+    title: "线性注意力的结合律与递归形式"
+    objectives: ["重排 Q(K^T V)", "理解并行训练和递归解码"]
+    readings: ["docs/stages/06_attention_frontiers.md"]
+    experiments: ["二次/线性实现对照", "状态递推"]
+    exercise: "实现因果线性注意力"
+    acceptance: ["并行与递归形式一致", "明确它不等于 Softmax 注意力"]
+  - week: 32
+    stage: attention_frontiers
+    title: "状态空间模型与 Mamba-2"
+    objectives: ["把状态更新看作可选择记忆", "理解 gating 和 SSD 对偶"]
+    readings: ["docs/stages/06_attention_frontiers.md"]
+    experiments: ["选择性衰减", "复制/遗忘任务"]
+    exercise: "实现简化门控状态层"
+    acceptance: ["能解释并行和递归路径", "指出与注意力的差异"]
+  - week: 33
+    stage: attention_frontiers
+    title: "Gated DeltaNet 与定向擦除"
+    objectives: ["理解 delta rule", "观察写入前先修正旧预测"]
+    readings: ["docs/stages/06_attention_frontiers.md"]
+    experiments: ["矩阵状态更新", "冲突键值测试"]
+    exercise: "实现教学版 Gated DeltaNet"
+    acceptance: ["状态更新数值测试通过", "说明 beta 和 decay 的作用"]
+  - week: 34
+    stage: attention_frontiers
+    title: "混合架构、DSA 与长上下文评测"
+    objectives: ["理解 full/linear 混合", "区分稀疏检索与固定窗口"]
+    readings: ["docs/stages/06_attention_frontiers.md"]
+    experiments: ["混合层消融", "needle/复制任务"]
+    exercise: "为一种混合架构设计公平消融"
+    acceptance: ["报告质量/速度双指标", "不把上下文长度等同有效利用"]
+  - week: 35
+    stage: moe
+    title: "条件计算与 Top-k 路由"
+    objectives: ["区分总参数和活跃参数", "实现 token-choice routing"]
+    readings: ["docs/stages/07_moe.md"]
+    experiments: ["路由热力图", "Dense/MoE 活跃 FLOPs"]
+    exercise: "实现 Top-2 MoE"
+    acceptance: ["门控权重归一化", "所有被选择且未丢弃的专家可反传；构造批次覆盖全部专家"]
+  - week: 36
+    stage: moe
+    title: "容量、token dropping 与负载均衡"
+    objectives: ["理解系统容量约束", "测量 expert utilization"]
+    readings: ["docs/stages/07_moe.md"]
+    experiments: ["容量溢出", "均衡损失前后对照"]
+    exercise: "实现 capacity factor 和辅助损失"
+    acceptance: ["溢出行为显式", "负载统计正确"]
+  - week: 37
+    stage: moe
+    title: "Router z-loss、数值精度与稳定性"
+    objectives: ["控制 router logits", "理解路由专用 FP32"]
+    readings: ["docs/stages/07_moe.md"]
+    experiments: ["极端 logits", "z-loss 消融"]
+    exercise: "构造路由崩溃并修复"
+    acceptance: ["无 NaN", "能解释 z-loss 不等于负载均衡"]
+  - week: 38
+    stage: moe
+    title: "共享专家、细粒度专家与 upcycling"
+    objectives: ["理解公共知识和专业知识拆分", "从 Dense 初始化 MoE"]
+    readings: ["docs/stages/07_moe.md"]
+    experiments: ["复制 FFN 权重", "共享专家消融"]
+    exercise: "实现教学版 upcycling"
+    acceptance: ["初始化输出可比较", "说明对称性如何被打破"]
+  - week: 39
+    stage: moe
+    title: "专家并行、DeepSeekMoE 与现代变体"
+    objectives: ["理解 all-to-all 通信", "串起 DeepSeek V1-V3 路由演化"]
+    readings: ["docs/stages/07_moe.md"]
+    experiments: ["通信量纸面估算", "aux-loss-free bias 模拟"]
+    exercise: "画出一次 MoE 前向的数据流"
+    acceptance: ["区分算法收益与系统收益", "能批判技术报告证据"]
+  - week: 40
+    stage: posttraining
+    title: "指令数据与 SFT"
+    objectives: ["理解 prompt/response masking", "建立 chat template 概念"]
+    readings: ["docs/stages/08_posttraining.md"]
+    experiments: ["玩具指令微调", "只对回答计算损失"]
+    exercise: "实现 SFT loss mask"
+    acceptance: ["prompt token 不计损失", "保留基础能力评测"]
+  - week: 41
+    stage: posttraining
+    title: "LoRA 与 QLoRA"
+    objectives: ["理解低秩更新", "区分训练参数和冻结参数"]
+    readings: ["docs/stages/08_posttraining.md"]
+    experiments: ["低秩矩阵拟合", "rank 消融"]
+    exercise: "实现 LoRALinear"
+    acceptance: ["合并前后输出一致", "仅 LoRA 参数获得梯度"]
+  - week: 42
+    stage: posttraining
+    title: "偏好、奖励模型与 PPO"
+    objectives: ["把偏好转为相对分数", "理解策略、价值和 KL 约束"]
+    readings: ["docs/stages/08_posttraining.md"]
+    experiments: ["成对奖励损失", "KL 惩罚曲线"]
+    exercise: "实现 pairwise reward loss"
+    acceptance: ["优选样本分数上升", "解释 reward hacking"]
+  - week: 43
+    stage: posttraining
+    title: "DPO：绕开奖励模型的偏好优化"
+    objectives: ["理解策略/参考模型 log-ratio", "实现稳定 DPO loss"]
+    readings: ["docs/stages/08_posttraining.md"]
+    experiments: ["玩具偏好数据", "beta 消融"]
+    exercise: "从四组 log-prob 实现 DPO"
+    acceptance: ["数值测试通过", "说明 DPO 的数据假设"]
+  - week: 44
+    stage: posttraining
+    title: "GRPO、RLVR 与推理训练"
+    objectives: ["理解组内相对优势", "区分可验证奖励和主观奖励"]
+    readings: ["docs/stages/08_posttraining.md"]
+    experiments: ["group advantage", "玩具算术 verifier"]
+    exercise: "实现归一化 group advantage"
+    acceptance: ["常数奖励时优势为零", "解释奖励稀疏与作弊"]
+  - week: 45
+    stage: inference_capstone
+    title: "权重量化与误差"
+    objectives: ["理解 scale/zero-point/group", "测量大小与误差权衡"]
+    readings: ["docs/stages/09_inference.md"]
+    experiments: ["对称 int8/int4 伪量化", "层级误差"]
+    exercise: "实现 per-tensor 对称量化"
+    acceptance: ["饱和处理正确", "报告误差和理论体积"]
+  - week: 46
+    stage: inference_capstone
+    title: "PagedAttention 与推测解码"
+    objectives: ["理解非连续 KV 页面", "理解 draft/verify 保持分布正确"]
+    readings: ["docs/stages/09_inference.md"]
+    experiments: ["页面分配模拟", "块式贪心推测解码：一次 target 调用验证多个候选"]
+    exercise: "实现教学版 speculative decoding"
+    acceptance: ["draft 等于 target 时完整接受", "解释拒绝后的修正"]
+  - week: 47
+    stage: inference_capstone
+    title: "基准设计与公平比较"
+    objectives: ["区分 latency、throughput、TTFT、TPOT", "记录完整实验条件"]
+    readings: ["docs/03_capstone.md", "docs/stages/09_inference.md"]
+    experiments: ["预热与重复测量", "参数/FLOPs 匹配"]
+    exercise: "写毕业项目预注册表"
+    acceptance: ["一次只改变一个因素", "原始结果可追溯"]
+  - week: 48
+    stage: inference_capstone
+    title: "毕业项目与知识答辩"
+    objectives: ["完成 Dense/Attention/MoE 对照", "区分证据、推断和限制"]
+    readings: ["docs/03_capstone.md"]
+    experiments: ["三个模型公平训练", "生成和失败案例分析"]
+    exercise: "提交可复现报告并进行口述答辩"
+    acceptance: ["测试全部通过", "报告损失/速度/内存/路由/限制", "能解释关键实现而非只运行代码"]
+

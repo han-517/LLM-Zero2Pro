@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PaperRecord",
+  "type": "object",
+  "required": [
+    "id", "title", "year", "version_date", "source_type", "url", "code_url",
+    "topics", "tier", "status", "prerequisites", "claims", "evidence", "limitations",
+    "reproduction", "relations", "as_of"
+  ],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "year": {"type": "integer", "minimum": 1900},
+    "version_date": {"type": "string", "format": "date"},
+    "source_type": {"enum": ["peer_reviewed", "preprint", "technical_report"]},
+    "url": {"type": "string", "format": "uri"},
+    "code_url": {"type": "string"},
+    "topics": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "tier": {"enum": ["core", "deep_dive", "frontier"]},
+    "status": {"enum": ["unread", "pass1", "pass2", "pass3", "reproduced"]},
+    "prerequisites": {"type": "array", "items": {"type": "string"}},
+    "claims": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "evidence": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "limitations": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "reproduction": {"type": "string"},
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "target"],
+        "properties": {
+          "type": {"enum": ["builds_on", "improves", "contrasts_with", "used_by"]},
+          "target": {"type": "string"}
+        }
+      }
+    },
+    "as_of": {"type": "string", "format": "date"},
+    "doi": {"type": "string"}
+  }
+}
+

@@ -1,0 +1,60 @@
+as_of: "2026-07-18"
+concepts:
+  - id: next_token_prediction
+    name: "下一个 token 预测"
+    plain_language: "把一段文字切成很多道‘根据前文猜下一个符号’的题。"
+    prerequisites: [cross_entropy]
+    leads_to: [decoder_only_transformer, sft]
+  - id: cross_entropy
+    name: "交叉熵"
+    plain_language: "模型给正确答案的概率越低，受到的惩罚越大。"
+    prerequisites: [probability, logarithm]
+    leads_to: [next_token_prediction, preference_loss]
+  - id: self_attention
+    name: "自注意力"
+    plain_language: "当前位置根据问题，从所有允许的历史资料卡中加权读取内容。"
+    prerequisites: [matrix_multiplication, softmax]
+    leads_to: [mha, flashattention, gqa, mla]
+  - id: kv_cache
+    name: "KV Cache"
+    plain_language: "把历史 token 已经整理好的钥匙和内容保存下来，生成时不重复计算。"
+    prerequisites: [self_attention, autoregressive_decoding]
+    leads_to: [gqa, mla, pagedattention]
+  - id: gqa
+    name: "Grouped-Query Attention"
+    plain_language: "多个查询头共用一组 K/V，少存一些缓存。"
+    prerequisites: [mha, kv_cache]
+    tradeoffs: ["缓存更小", "共享过多可能影响质量"]
+  - id: mla
+    name: "Multi-head Latent Attention"
+    plain_language: "先把 K/V 压进小行李箱，需要使用时再通过投影展开。"
+    prerequisites: [kv_cache, low_rank_factorization, rope]
+    tradeoffs: ["缓存更小", "投影与 RoPE 实现更复杂"]
+  - id: linear_attention
+    name: "线性注意力"
+    plain_language: "把历史压成固定大小状态，而不是保留每张资料卡。"
+    prerequisites: [associativity, feature_map]
+    leads_to: [mamba2, gated_deltanet]
+    tradeoffs: ["长序列状态固定", "不等价于 Softmax 注意力"]
+  - id: gated_deltanet
+    name: "Gated DeltaNet"
+    plain_language: "写入记忆前先看旧记忆预测错了多少，只写修正量，并允许遗忘。"
+    prerequisites: [linear_attention, delta_rule, gating]
+    tradeoffs: ["递归解码高效", "状态更新和高性能内核复杂"]
+  - id: moe
+    name: "Mixture of Experts"
+    plain_language: "有许多专家，但每个 token 只请少数专家工作。"
+    prerequisites: [mlp, softmax, conditional_computation]
+    leads_to: [topk_routing, expert_parallelism]
+    tradeoffs: ["总容量大而活跃计算小", "路由、负载与通信复杂"]
+  - id: dpo
+    name: "Direct Preference Optimization"
+    plain_language: "直接让模型相对参考模型更偏爱好答案，而不单独训练奖励模型。"
+    prerequisites: [preference_loss, reference_model, kl_divergence]
+    tradeoffs: ["流程较简单", "依赖离线偏好数据与参考策略"]
+  - id: speculative_decoding
+    name: "推测解码"
+    plain_language: "小模型先草拟几步，大模型一次批改，猜对就一次前进多个 token。"
+    prerequisites: [autoregressive_decoding, sampling]
+    tradeoffs: ["可降低串行 target 调用", "收益取决于接受率"]
+
