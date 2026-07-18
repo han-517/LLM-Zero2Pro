@@ -8,24 +8,52 @@ from llm_course.exercises import EXERCISES, select_exercises, validate_exercise_
 
 ROOT = Path(__file__).resolve().parents[1]
 
+STABLE_CORE = {
+    "01": ("softmax", (4,)),
+    "02": ("attention", (12, 13)),
+    "03": ("kv-cache", (20,)),
+    "04": ("sft", (40,)),
+    "05": ("moe-capacity", (36,)),
+    "06": ("bpe", (10,)),
+    "07": ("rope", (18,)),
+    "08": ("gqa", (19,)),
+    "09": ("decoder", (16, 17)),
+    "10": ("moe-router", (35,)),
+}
 
-def test_exercise_catalog_covers_ten_core_templates() -> None:
-    assert [exercise.exercise_id for exercise in EXERCISES] == [
-        f"{index:02d}" for index in range(1, 11)
-    ]
-    assert {exercise.slug for exercise in EXERCISES} >= {
-        "softmax",
-        "bpe",
-        "attention",
-        "rope",
-        "gqa",
-        "decoder",
-        "kv-cache",
-        "moe-capacity",
-        "moe-router",
-        "sft",
+
+def test_exercise_manifest_has_twenty_required_and_one_optional_template() -> None:
+    assert len(EXERCISES) == 21
+    assert {exercise.exercise_id for exercise in EXERCISES} == {
+        f"{index:02d}" for index in range(1, 22)
     }
+    required = [exercise for exercise in EXERCISES if not exercise.optional]
+    optional = [exercise for exercise in EXERCISES if exercise.optional]
+    assert len(required) == 20
+    assert [(exercise.exercise_id, exercise.slug, exercise.weeks) for exercise in optional] == [
+        ("21", "multimodal-bridge", ())
+    ]
     assert validate_exercise_assets().ok
+
+
+def test_stable_ids_keep_their_topics_and_real_roadmap_weeks() -> None:
+    by_id = {exercise.exercise_id: exercise for exercise in EXERCISES}
+    assert set(STABLE_CORE) <= by_id.keys()
+    for exercise_id, (slug, weeks) in STABLE_CORE.items():
+        exercise = by_id[exercise_id]
+        assert exercise.slug == slug
+        assert exercise.weeks == weeks
+
+
+def test_exercises_are_sorted_by_first_real_week_with_optional_last() -> None:
+    expected = sorted(
+        EXERCISES,
+        key=lambda exercise: (
+            exercise.optional,
+            exercise.weeks[0] if exercise.weeks else 49,
+        ),
+    )
+    assert list(EXERCISES) == expected
 
 
 def test_templates_keep_core_implementation_blank() -> None:
@@ -35,10 +63,11 @@ def test_templates_keep_core_implementation_blank() -> None:
         assert "raise NotImplementedError" in source
 
 
-def test_select_exercises_accepts_ids_aliases_and_all() -> None:
+def test_select_exercises_accepts_ids_aliases_optional_and_all() -> None:
     assert select_exercises("07")[0].slug == "rope"
     assert select_exercises("rope")[0].exercise_id == "07"
     assert select_exercises("08_grouped_query_attention")[0].slug == "gqa"
+    assert select_exercises("multimodal_bridge")[0].optional
     assert select_exercises("all") == EXERCISES
 
 

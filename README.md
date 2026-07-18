@@ -1,91 +1,167 @@
-# 从零到前沿：文本 LLM 学习仓库
+# LLM-Zero2Pro：从零到前沿的文本 LLM 课程
 
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white) ![PyTorch 2.7+](https://img.shields.io/badge/PyTorch-2.7%2B-EE4C2C?logo=pytorch&logoColor=white) ![Course](https://img.shields.io/badge/Course-48%20weeks-6C5CE7)
 
-[15 周核心路径](docs/core_learning_path.md) · [代码模板与核查](docs/code_templates.md) · [交互实验室](docs/interactive/core-concepts.html) · [架构演化图](docs/interactive/architecture-evolution.html) · [论文目录](papers/README.md)
-
-
-这是一个 **48 周、中文、从零实现优先、CPU 必修可跑** 的文本大语言模型课程。目标不是背诵模型名，而是建立一条能够反复验证的知识链：
+一套中文、从零实现优先、CPU 必修可跑的文本大语言模型教程。目标不是背模型名称，而是建立可以反复验证的学习闭环：
 
 > 直觉 → 张量形状 → 必要公式 → 最小代码 → 对照实验 → 论文证据
 
-课程主线借鉴 Stanford CS336 的“从零构建语言模型”方式，并扩展到现代 Decoder、MLA、线性注意力、Gated DeltaNet、稀疏注意力、MoE、后训练和推理优化。首版只学习文本 LLM，不包含多模态、RAG 和 Agent。
+课程从张量、自动微分和 BPE 开始，经过 Transformer、RoPE、GQA、KV Cache、MoE、后训练与推理优化，最终完成 Tiny GPT 和缩尺对照实验。48 周主线严格聚焦文本 LLM；多模态是课外选修包；不包含 RAG 和 Agent。
 
-## 五分钟开始
+## 第一次来这里，从这四步开始
 
-Windows 尚未安装工具链时，可先使用 Scoop：
+先阅读[跨平台环境搭建](docs/00_environment.md)，在仓库根目录完成：
 
-```powershell
-scoop install git uv
-```
-
-然后在仓库根目录执行：
-
-```powershell
+```text
 uv python install 3.12
 uv sync
 uv run llm-course doctor
-uv run llm-course papers validate
-uv run llm-course course check
+uv run llm-course lab
 ```
 
-启动 Notebook：
+最后一条命令会启动 JupyterLab，并直接打开 `notebooks/00_START_HERE.ipynb`。不要第一次进入 Lab 后随意浏览全部目录；欢迎页会先检查 Kernel，再让你选择路线。
 
-```powershell
-uv run jupyter lab
-```
-
-若下载 PyTorch 较慢，请阅读[环境搭建教程](docs/00_environment.md)和 [Scoop 可选工具教程](docs/00_scoop.md)。所有必修测试默认使用 CPU，不需要 CUDA；Python 项目依赖仍由 `uv` 和 `uv.lock` 管理。
-
-## 怎样使用这个仓库
-
-1. 初学者先走[15 周核心路径](docs/core_learning_path.md)，完成 Tiny GPT 闭环后再进入前沿模块。
-2. 用[核心概念交互实验室](docs/interactive/core-concepts.html)建立基础直觉，再用[架构演化图](docs/interactive/architecture-evolution.html)串起 RoPE、注意力和 MoE 的代表工作。
-3. 从[48 周路线](course/roadmap.yaml)查看本周目标，阅读 `docs/` 中对应阶段讲义。
-4. 运行 `notebooks/` 的实验，再阅读 `src/llm_from_scratch/` 的参考实现。
-5. 独立完成 `exercises/starter/` 和 `exercises/`，最后再看提示或答案。
-6. 按[三遍论文阅读法](docs/01_paper_workflow.md)填写论文笔记。
-7. 每周运行 `uv run llm-course course check`，确认仓库和教学资产没有损坏。
-
-推荐每周 8–10 小时：直觉讲解 2 小时、数学 1.5 小时、代码 3 小时、论文 2 小时、复盘 1 小时。完全零基础可把前 8 周各拆为两周。
-
-## 仓库地图
+如果你已经执行过 `uv sync`，以后回来通常只需要：
 
 ```text
-course/                  48 周课程清单和阶段验收
-docs/                    中文讲义、环境教程、概念解释
-notebooks/               可视化与交互实验
-src/llm_from_scratch/    BPE、GPT、注意力、MoE、后训练、推理实现
-src/llm_course/          doctor、论文库和课程校验 CLI
-papers/                  论文目录、候选池、阅读模板
-knowledge/               概念图和结构化知识
-exercises/               练习、提示与答案
-tests/                   数值一致性和验收测试
+uv run llm-course lab
 ```
 
-## 统一命令
+## 系统支持
 
-```powershell
-# 检查 Python、PyTorch、设备和最小张量运算
-uv run llm-course doctor
+| 系统 | 本课程路径 | 安装入口 |
+|---|---|---|
+| Windows 10/11 x64 | CPU 必修完整支持 | [Windows 安装步骤](docs/00_environment.md#windows-安装) |
+| macOS 14+ Apple Silicon | CPU 必修完整支持；可检测 MPS | [macOS 安装步骤](docs/00_environment.md#macos-apple-silicon-安装) |
+| Intel Mac | 当前锁文件没有对应的最新 PyTorch wheel | [Intel Mac 说明](docs/00_environment.md#intel-mac-怎么办) |
+| Colab / Kaggle Linux | 可选 GPU、Triton 与性能实验 | [托管 GPU 路径](docs/00_environment.md#免费托管-gpu-选修) |
 
-# 校验目录；从三个公开来源拉取候选项；生成 Mermaid 论文图
-uv run llm-course papers validate
-uv run llm-course papers update --source all --max-results 20
-uv run llm-course papers graph
+所有必修 Notebook 默认以 CPU 为数值基线，不要求 CUDA，也不会因为 Mac 有 MPS 就改变验收结果。
 
-# 校验 48 周课程并执行单元测试与必修 Notebook
-uv run llm-course course check
+## 进入 JupyterLab 后怎么做
 
-# 代码模板说明见 docs/code_templates.md
+1. 保持启动 JupyterLab 的终端窗口运行。
+2. 在欢迎页运行第一个环境检查单元，确认 Python 3.12、PyTorch 和项目路径。
+3. 第一次学习选择 `00_shapes_and_autograd.ipynb`。
+4. 每个 Notebook 完成后使用 **Kernel → Restart Kernel and Run All Cells**，排除残留变量。
+5. 回到终端运行对应 starter 核查，而不是直接复制 `src/` 中的参考实现。
+
+如果你使用了普通的 `uv run jupyter lab`，请手动打开 [`notebooks/00_START_HERE.ipynb`](notebooks/00_START_HERE.ipynb)。推荐始终使用课程命令，它会固定仓库根目录并打开欢迎页。
+
+## 选择学习路线
+
+| 路线 | 适合谁 | 从哪里开始 | 完成目标 |
+|---|---|---|---|
+| 15 周核心路线 | 第一次系统学习 LLM，会少量 Python | [核心学习路径](docs/core_learning_path.md) | 从文本到 Tiny GPT 的完整闭环 |
+| 48 周完整路线 | 已掌握基础 Transformer | [课程清单](course/roadmap.yaml) | 现代 Decoder、前沿注意力、MoE、后训练和推理 |
+| 专题路线 | 想专项补 RoPE、注意力或 MoE | [架构演化指南](docs/architecture_evolution.md) | 理解代表工作之间的因果关系与工程权衡 |
+
+不确定时选择 15 周路线。完全零基础可以把前 8 周各拆成两周，不需要追赶 48 周日历。
+
+## 每周固定学习循环
+
+每周只处理当前主题，按相同顺序完成：
+
+1. **讲义**：写下直觉答案，标注所有张量形状。
+2. **交互图**：先预测参数变化结果，再拖动滑块。
+3. **Notebook**：运行最小实验，并保留失败输入。
+4. **starter**：关闭参考实现，填写核心 `TODO`。
+5. **核查**：运行单题公开测试，从第一条失败信息开始修正。
+6. **参考实现与论文**：最后才比较实现差异和证据。
+7. **复盘**：在 `progress.yaml` 记录完成状态、反例和未解决问题。
+
+推荐每周 8–10 小时：讲义与直觉 2 小时、数学 1.5 小时、代码 3 小时、论文 2 小时、复盘 1 小时。
+
+## 每类文件负责什么
+
+| 目录 | 用途 | 什么时候打开 | 是否建议修改 |
+|---|---|---|---|
+| `docs/` | 中文讲义、环境和架构演化 | Notebook 前后都可查 | 通常只读 |
+| `notebooks/` | 可执行实验与图表 | 当前周实验阶段 | 可以添加自己的观察单元 |
+| `exercises/starter/` | 故意留空的核心代码 | 学完知识点后 | **主要填写区域** |
+| `exercises/checks/` | starter 的公开行为测试 | 填写过程中 | 通常只读 |
+| `src/llm_from_scratch/` | 完整参考实现 | starter 通过之后 | 不要用它替代练习 |
+| `course/roadmap.yaml` | 48 周目标、实验和验收 | 规划本周任务 | 通常只读 |
+| `papers/` | 论文目录、候选池和笔记模板 | 建立代码直觉之后 | 在 `notes/` 写阅读记录 |
+| `progress.yaml` | 个人学习进度 | 每周结束 | **持续更新** |
+
+## Notebook 顺序
+
+| 顺序 | Notebook | 核心问题 |
+|---:|---|---|
+| 0 | `00_START_HERE.ipynb` | 当前环境和学习入口是否正确？ |
+| 1 | `00_shapes_and_autograd.ipynb` | 张量形状和梯度怎样流动？ |
+| 2 | `neural_lm_lab.ipynb` | Bigram、MLP 与 RNN 怎样逐步扩大上下文？ |
+| 3 | `tokenization_lab.ipynb` | Unicode、字节和 BPE merge 怎样改变 token？ |
+| 4 | `01_attention_lab.ipynb` | Q/K/V 与组合 mask 怎样阻止未来和 padding 泄漏？ |
+| 5 | `03_tiny_gpt.ipynb` | 如何训练、保存、加载并生成 Tiny GPT？ |
+| 6 | `modern_decoder_lab.ipynb` | RMSNorm、SwiGLU、RoPE、GQA 怎样组成现代 Decoder？ |
+| 7 | `pretraining_lab.ipynb` | 数据去重、packing、优化器和评测怎样形成训练闭环？ |
+| 8 | `attention_frontiers_lab.ipynb` | Flash、稀疏、MLA、线性/Delta 状态有什么边界？ |
+| 9 | `02_moe_lab.ipynb` | Top-k 路由、容量和 dropping 如何影响负载？ |
+| 10 | `posttraining_lab.ipynb` | SFT、LoRA、DPO 与 GRPO 的输入契约是什么？ |
+| 11 | `inference_serving_lab.ipynb` | 分页缓存、连续批处理和推测解码如何影响服务指标？ |
+| 选修 | `80_multimodal_bridge.ipynb` | 视觉 patch 怎样经 projector 接到文本 Decoder？ |
+| 选修 | `90_optional_gpu_check.ipynb` | 托管 GPU 是否真的可用？ |
+
+更详细的运行约定见 [Notebook 使用指南](notebooks/README.md)。
+
+## 代码模板与核查
+
+练习清单包含 20 个文本主线 starter/checker 与 1 个多模态选修。既保留稳定编号 01–10，也补齐自动微分、神经 LM、TinyGPT、数据/优化器、前沿注意力、MoE 系统、后训练和推理服务；实际周次与路径以 `exercises/manifest.yaml` 为唯一来源。
+
+```text
+# 查看编号、周次、主题和填写状态
 uv run llm-course exercises list
+
+# 核查单题：编号和别名都可以
 uv run llm-course exercises check 07
+uv run llm-course exercises check rope
+
+# 核查全部已填写模板
 uv run llm-course exercises check all
 ```
 
-论文更新器支持 `arxiv`、`semantic-scholar`、`huggingface` 或默认的 `all`。Semantic Scholar 公共请求可能在高峰期被限流；设置可选的 `SEMANTIC_SCHOLAR_API_KEY` 会更稳定。某个来源临时失败时，成功来源仍会写入候选池并记录错误。
+模板初始包含 `NotImplementedError`，所以第一次练习核查失败是正常起点。`course check` 验证仓库健康，`exercises check` 验证你的填空实现，两者不能互相替代。完整说明见[代码模板与核查](docs/code_templates.md)。
 
-`papers update` 只把结果放入候选池，不会自动把热门论文标为必读。候选项会按 arXiv ID、DOI 和规范化标题去重；技术报告、预印本和正式发表版本需人工核验后才能升级。
+## 交互式学习资源
+
+- [互动实验总入口](docs/interactive/index.html)：按阶段进入全部离线实验。
+- [基础实验室](docs/interactive/foundations-lab.html)：计算图分支梯度、BPE merge 与上下文模型。
+- [架构实验室](docs/interactive/architecture-lab.html)：RoPE 在 Q/K 内的旋转、MHA/MQA/GQA/MLA/线性状态与缓存。
+- [训练与对齐](docs/interactive/training-and-alignment.html)：数据过滤、并行内存、SFT/DPO/GRPO。
+- [推理服务](docs/interactive/serving-lab.html)：PagedAttention、连续批处理、TTFT/TPOT 与推测解码。
+- [架构演化图](docs/interactive/architecture-evolution.html)：按基础共识、公开模型采用、前沿预印本分层。
+- [多模态数据流](docs/interactive/multimodal-flow.html)：选修的 patch/projector/token 接口。
+
+页面均为无网络依赖的独立 HTML，支持键盘和窄屏。克隆后用浏览器打开；GitHub 文件预览不会执行交互脚本。
+
+## 常用命令
+
+| 目的 | 命令 |
+|---|---|
+| 环境诊断 | `uv run llm-course doctor` |
+| 打开欢迎页和 JupyterLab | `uv run llm-course lab` |
+| 远程机器启动 Lab | `uv run llm-course lab --no-browser` |
+| 指定端口 | `uv run llm-course lab --port 8890` |
+| 列出代码模板 | `uv run llm-course exercises list` |
+| 核查代码模板 | `uv run llm-course exercises check <编号或别名>` |
+| 校验论文目录 | `uv run llm-course papers validate` |
+| 生成论文关系图 | `uv run llm-course papers graph` |
+| 完整课程健康检查 | `uv run llm-course course check` |
+| 生成 15/48 周路线 | `uv run llm-course course path --weeks 15` |
+| 验证 48 周资产闭环但不跑测试 | `uv run llm-course course check --no-tests` |
+
+论文候选更新和三遍阅读法分别见 [论文目录](papers/README.md)与[论文阅读工作流](docs/01_paper_workflow.md)。
+
+## 常见问题
+
+- **Jupyter 里找不到 `llm_course`**：关闭当前服务，从仓库根目录执行 `uv sync`，再运行 `uv run llm-course lab`。
+- **打开 Lab 后不知道点哪里**：打开 `notebooks/00_START_HERE.ipynb`，不要直接从 `src/` 开始读。
+- **PyTorch 下载很慢**：CPU wheel 仍然较大；不要中断后改用多个全局 Python。平台细节见环境文档。
+- **starter 测试全部失败**：先只核查当前编号。未填写模板失败是预期行为。
+- **交互 HTML 只显示源码**：在系统文件管理器中用浏览器打开 `docs/interactive/*.html`。
+- **想使用 vLLM/Triton/CUDA**：它们属于 Linux GPU 选修，不是 Windows/macOS CPU 主线的前置条件。
 
 ## 学完后的毕业标准
 
@@ -93,9 +169,9 @@ uv run llm-course exercises check all
 - 能比较 MHA、GQA、MLA、线性注意力和稀疏注意力的计算/内存权衡。
 - 能实现 Top-k MoE，诊断负载不均、容量溢出和路由不稳定。
 - 能解释 SFT、LoRA、DPO、GRPO、量化、PagedAttention 和推测解码的核心机制。
-- 能用相同数据、训练 token 数和近似活跃 FLOPs，完成 Dense、注意力变体、MoE 的缩尺对照实验。
-- 能清楚区分论文中的作者主张、实验证据、自己的推断和未复现部分。
+- 能用相同数据、训练 token 数和近似活跃 FLOPs 完成缩尺对照实验。
+- 能区分论文中的作者主张、实验证据、自己的推断和未复现部分。
 
-## 资料时效
+## 资料时效与边界
 
-论文库核验至 **2026-07-18**，当前收录 78 篇，包含 25 篇 Core、40+ 篇 Deep Dive 和滚动 Frontier。运行论文更新命令可生成新的候选项；所有被提升为课程材料的论文仍需人工核验。
+论文库核验至 **2026-07-19**，当前收录 96 篇。资料优先使用原论文、官方技术报告、模型卡、代码和文档；候选更新器只进入待审池，不会自动把热门结果升级为必读。涉及“当前主流”的结论必须保留版本日期和证据位置。

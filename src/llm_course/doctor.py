@@ -23,6 +23,7 @@ def collect_diagnostics() -> dict[str, object]:
     product = left @ right
     expected = torch.tensor([[4.0], [10.0]])
 
+    mps_available = bool(hasattr(torch.backends, "mps") and torch.backends.mps.is_available())
     data_dir = PROJECT_ROOT / "data"
     return {
         "python": sys.version.split()[0],
@@ -30,8 +31,9 @@ def collect_diagnostics() -> dict[str, object]:
         "project_root": str(PROJECT_ROOT),
         "project_root_exists": PROJECT_ROOT.is_dir(),
         "torch": torch.__version__,
-        "device": "cuda" if torch.cuda.is_available() else "cpu",
+        "device": ("cuda" if torch.cuda.is_available() else "mps" if mps_available else "cpu"),
         "cuda_available": torch.cuda.is_available(),
+        "mps_available": mps_available,
         "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
         "seed": seed,
         "matmul_ok": bool(torch.allclose(product, expected)),
@@ -53,4 +55,3 @@ def run_doctor(as_json: bool = False) -> int:
         if not info["data_dir_exists"]:
             print("提示：data/ 会在第一次运行数据实验时创建；这不是错误。")
     return 0 if info["matmul_ok"] and Path(info["project_root"]).is_dir() else 1
-

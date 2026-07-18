@@ -6,16 +6,19 @@ course:
   weeks: 48
   weekly_hours: "8-10"
   required_device: "cpu"
-  scope: "text-only"
+  scope: "text-llm-core; multimodal optional outside 48 weeks"
   teaching_loop: ["直觉与图", "张量形状", "必要公式", "最小实现", "对照实验", "常见误区"]
+
+paths:
+  core_15: [1, 2, 3, 4, 7, 10, 12, 13, 15, 16, 18, 19, 20, 35, 48]
 
 stages:
   - {id: foundations, weeks: "1-4", title: "工具、数学与 PyTorch"}
   - {id: neural_lm, weeks: "5-8", title: "神经网络与早期语言模型"}
   - {id: transformer, weeks: "9-15", title: "从分词到 GPT"}
   - {id: modern_decoder, weeks: "16-21", title: "现代 Decoder 组件"}
-  - {id: pretraining, weeks: "22-27", title: "预训练、数据、缩放与评测"}
-  - {id: attention_frontiers, weeks: "28-34", title: "注意力与序列建模前沿"}
+  - {id: pretraining, weeks: "22-28", title: "预训练、数据、训练系统与评测"}
+  - {id: attention_frontiers, weeks: "29-34", title: "注意力与序列建模前沿"}
   - {id: moe, weeks: "35-39", title: "Mixture of Experts"}
   - {id: posttraining, weeks: "40-44", title: "后训练与推理能力"}
   - {id: inference_capstone, weeks: "45-48", title: "推理优化与毕业项目"}
@@ -223,21 +226,29 @@ weeks:
     acceptance: ["写清估算假设", "区分训练与推理内存"]
   - week: 26
     stage: pretraining
+    title: "并行训练、检查点与故障恢复"
+    objectives: ["区分数据/张量/流水线并行", "理解 ZeRO/FSDP 的状态分片"]
+    readings: ["docs/stages/05_pretraining.md"]
+    experiments: ["纸面内存分片", "可恢复检查点清单"]
+    exercise: "为 8 卡训练设计并行与恢复方案"
+    acceptance: ["标明通信边界", "恢复后数据顺序和优化器状态可追溯"]
+  - week: 27
+    stage: pretraining
     title: "Scaling Laws 与计算最优"
     objectives: ["理解幂律拟合", "不外推到证据范围之外"]
     readings: ["docs/stages/05_pretraining.md"]
     experiments: ["拟合微型 scaling curve", "置信区间"]
     exercise: "用多组小模型拟合趋势"
     acceptance: ["报告拟合残差", "说明缩尺结论局限"]
-  - week: 27
-    stage: pretraining
-    title: "评测、消融与故障诊断"
-    objectives: ["建立可重复评测", "诊断数据、数值和实现问题"]
-    readings: ["docs/stages/05_pretraining.md"]
-    experiments: ["随机基线", "一次一变量消融"]
-    exercise: "为 Tiny GPT 写评测卡"
-    acceptance: ["训练/验证分离", "结果包含种子和环境"]
   - week: 28
+    stage: pretraining
+    title: "可靠评测、去污染与故障诊断"
+    objectives: ["建立可重复评测", "区分能力、污染和实现故障"]
+    readings: ["docs/stages/05_pretraining.md"]
+    experiments: ["随机基线", "一次一变量消融", "近重复污染检查"]
+    exercise: "为 Tiny GPT 写评测卡"
+    acceptance: ["训练/验证分离", "结果包含种子、环境和污染声明"]
+  - week: 29
     stage: attention_frontiers
     title: "FlashAttention 与 IO-aware 思维"
     objectives: ["区分数学等价和执行顺序", "理解分块减少 HBM 往返"]
@@ -245,7 +256,7 @@ weeks:
     experiments: ["分块在线 Softmax", "IO 计数模型"]
     exercise: "实现 CPU tiled attention 参考版"
     acceptance: ["与标准注意力一致", "解释为何不是近似注意力"]
-  - week: 29
+  - week: 30
     stage: attention_frontiers
     title: "滑窗、块稀疏与全局 token"
     objectives: ["理解稀疏模式", "分析感受野随层数增长"]
@@ -253,38 +264,30 @@ weeks:
     experiments: ["稀疏 mask 可视化", "长距离复制任务"]
     exercise: "实现 sliding-window attention"
     acceptance: ["mask 正确", "给出无法连接的反例"]
-  - week: 30
-    stage: attention_frontiers
-    title: "MLA 与低维 KV 表示"
-    objectives: ["理解 KV 压缩与投影吸收", "认识 RoPE 冲突"]
-    readings: ["docs/stages/06_attention_frontiers.md"]
-    experiments: ["MHA/GQA/MLA 缓存估算", "低秩重构"]
-    exercise: "实现教学版 MLA"
-    acceptance: ["输出/缓存形状正确", "说明训练与解码的不同收益"]
   - week: 31
     stage: attention_frontiers
-    title: "线性注意力的结合律与递归形式"
-    objectives: ["重排 Q(K^T V)", "理解并行训练和递归解码"]
+    title: "MLA 与低维 KV 表示"
+    objectives: ["理解 KV 压缩、历史重建与投影吸收", "认识 decoupled RoPE"]
     readings: ["docs/stages/06_attention_frontiers.md"]
-    experiments: ["二次/线性实现对照", "状态递推"]
-    exercise: "实现因果线性注意力"
-    acceptance: ["并行与递归形式一致", "明确它不等于 Softmax 注意力"]
+    experiments: ["MHA/GQA/MLA 缓存估算", "latent-cache reconstruction baseline"]
+    exercise: "实现并标注教学版 latent-cache baseline"
+    acceptance: ["输出/缓存形状正确", "不把历史重建误称为 absorbed decode"]
   - week: 32
     stage: attention_frontiers
-    title: "状态空间模型与 Mamba-2"
-    objectives: ["把状态更新看作可选择记忆", "理解 gating 和 SSD 对偶"]
+    title: "线性注意力的结合律与归一化状态"
+    objectives: ["理解正特征映射和归一化分母", "连接并行训练与递归解码"]
     readings: ["docs/stages/06_attention_frontiers.md"]
-    experiments: ["选择性衰减", "复制/遗忘任务"]
-    exercise: "实现简化门控状态层"
-    acceptance: ["能解释并行和递归路径", "指出与注意力的差异"]
+    experiments: ["二次/线性实现对照", "parallel/recurrent 数值等价"]
+    exercise: "实现因果归一化线性注意力"
+    acceptance: ["并行与递归形式一致", "明确它不等于 Softmax 注意力"]
   - week: 33
     stage: attention_frontiers
-    title: "Gated DeltaNet 与定向擦除"
-    objectives: ["理解 delta rule", "观察写入前先修正旧预测"]
+    title: "Mamba-2、DeltaNet 与选择性状态更新"
+    objectives: ["理解 SSD 对偶和 delta rule", "观察选择性遗忘与定向擦除"]
     readings: ["docs/stages/06_attention_frontiers.md"]
-    experiments: ["矩阵状态更新", "冲突键值测试"]
-    exercise: "实现教学版 Gated DeltaNet"
-    acceptance: ["状态更新数值测试通过", "说明 beta 和 decay 的作用"]
+    experiments: ["选择性衰减", "冲突键值写入", "并行/递归路径"]
+    exercise: "实现教学版门控 Delta 状态层"
+    acceptance: ["状态更新数值测试通过", "说明 decay、beta 与注意力的差异"]
   - week: 34
     stage: attention_frontiers
     title: "混合架构、DSA 与长上下文评测"
@@ -405,4 +408,340 @@ weeks:
     experiments: ["三个模型公平训练", "生成和失败案例分析"]
     exercise: "提交可复现报告并进行口述答辩"
     acceptance: ["测试全部通过", "报告损失/速度/内存/路由/限制", "能解释关键实现而非只运行代码"]
-
+assets:
+  1:
+    lecture: docs/00_environment.md
+    notebooks: [notebooks/00_START_HERE.ipynb]
+    exercises: []
+    sources: ["https://docs.python.org/3/library/venv.html"]
+    mode: research
+    deliverable: "环境诊断快照与复现命令"
+  2:
+    lecture: docs/stages/01_foundations.md
+    notebooks: [notebooks/00_shapes_and_autograd.ipynb]
+    exercises: []
+    sources: ["https://docs.pytorch.org/docs/stable/notes/broadcasting.html"]
+    mode: research
+    deliverable: "三段张量代码的逐步形状表"
+  3:
+    lecture: docs/stages/01_foundations.md
+    notebooks: [notebooks/00_shapes_and_autograd.ipynb]
+    exercises: ["11"]
+    sources: ["https://github.com/karpathy/micrograd"]
+    mode: implementation
+    deliverable: "分支计算图、有限差分和 starter 核查"
+  4:
+    lecture: docs/stages/01_foundations.md
+    notebooks: [notebooks/00_shapes_and_autograd.ipynb]
+    exercises: ["01"]
+    sources: [bengio_nplm]
+    mode: implementation
+    deliverable: "稳定 Softmax 与训练循环记录"
+  5:
+    lecture: docs/stages/02_neural_lm.md
+    notebooks: [notebooks/neural_lm_lab.ipynb]
+    exercises: []
+    sources: [the_pile]
+    mode: research
+    deliverable: "无泄漏数据切分说明"
+  6:
+    lecture: docs/stages/02_neural_lm.md
+    notebooks: [notebooks/neural_lm_lab.ipynb]
+    exercises: ["12"]
+    sources: [bengio_nplm]
+    mode: implementation
+    deliverable: "MLP 小数据过拟合与梯度图"
+  7:
+    lecture: docs/stages/02_neural_lm.md
+    notebooks: [notebooks/neural_lm_lab.ipynb]
+    exercises: ["12"]
+    sources: [bengio_nplm]
+    mode: implementation
+    deliverable: "Bigram 与固定窗口 MLP 对照"
+  8:
+    lecture: docs/stages/02_neural_lm.md
+    notebooks: [notebooks/neural_lm_lab.ipynb]
+    exercises: ["12"]
+    sources: [seq2seq]
+    mode: implementation
+    deliverable: "RNN 状态、BPTT 和长依赖反例"
+  9:
+    lecture: docs/stages/03_transformer.md
+    notebooks: [notebooks/tokenization_lab.ipynb]
+    exercises: []
+    sources: [gpt2]
+    mode: research
+    deliverable: "中英文字符、字节和 token 对照表"
+  10:
+    lecture: docs/stages/03_transformer.md
+    notebooks: [notebooks/tokenization_lab.ipynb]
+    exercises: ["06"]
+    sources: [gpt2]
+    mode: implementation
+    deliverable: "确定性 Byte BPE 往返核查"
+  11:
+    lecture: docs/stages/03_transformer.md
+    notebooks: [notebooks/01_attention_lab.ipynb]
+    exercises: []
+    sources: [transformer]
+    mode: research
+    deliverable: "无位置编码时的顺序反例"
+  12:
+    lecture: docs/stages/03_transformer.md
+    notebooks: [notebooks/01_attention_lab.ipynb]
+    exercises: ["02"]
+    sources: [transformer]
+    mode: implementation
+    deliverable: "可编辑 Q/K/V 与缩放注意力"
+  13:
+    lecture: docs/stages/03_transformer.md
+    notebooks: [notebooks/01_attention_lab.ipynb]
+    exercises: ["02"]
+    sources: [transformer]
+    mode: implementation
+    deliverable: "未来扰动与全遮蔽行测试"
+  14:
+    lecture: docs/stages/03_transformer.md
+    notebooks: [notebooks/03_tiny_gpt.ipynb]
+    exercises: ["13"]
+    sources: [transformer]
+    mode: implementation
+    deliverable: "Pre-Norm Block 与梯度范数"
+  15:
+    lecture: docs/stages/03_transformer.md
+    notebooks: [notebooks/03_tiny_gpt.ipynb]
+    exercises: ["13"]
+    sources: [gpt2]
+    mode: implementation
+    deliverable: "TinyGPT 保存、加载和生成样例"
+  16:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks: [notebooks/modern_decoder_lab.ipynb]
+    exercises: ["09"]
+    sources: [rmsnorm]
+    mode: implementation
+    deliverable: "经典与 RMSNorm 消融"
+  17:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks: [notebooks/modern_decoder_lab.ipynb]
+    exercises: ["09"]
+    sources: [swiglu]
+    mode: implementation
+    deliverable: "等参数预算 MLP/SwiGLU 对照"
+  18:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks: [notebooks/modern_decoder_lab.ipynb]
+    exercises: ["07"]
+    sources: [rope]
+    mode: implementation
+    deliverable: "RoPE 范数与相对位移核查"
+  19:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks: [notebooks/modern_decoder_lab.ipynb]
+    exercises: ["08"]
+    sources: [gqa]
+    mode: implementation
+    deliverable: "MHA/MQA/GQA 数值与缓存对照"
+  20:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks: [notebooks/modern_decoder_lab.ipynb]
+    exercises: ["03"]
+    sources: [gqa]
+    mode: implementation
+    deliverable: "prefill/decode cache 等价报告"
+  21:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks: [notebooks/modern_decoder_lab.ipynb]
+    exercises: []
+    sources: [llama]
+    mode: research
+    deliverable: "经典到现代组件逐项消融表"
+  22:
+    lecture: docs/stages/05_pretraining.md
+    notebooks: [notebooks/pretraining_lab.ipynb]
+    exercises: ["14"]
+    sources: [the_pile]
+    mode: implementation
+    deliverable: "数据卡、许可与来源追踪"
+  23:
+    lecture: docs/stages/05_pretraining.md
+    notebooks: [notebooks/pretraining_lab.ipynb]
+    exercises: ["14"]
+    sources: [dedup_training_data]
+    mode: implementation
+    deliverable: "过滤、去重、混合和 packing 统计"
+  24:
+    lecture: docs/stages/05_pretraining.md
+    notebooks: [notebooks/pretraining_lab.ipynb]
+    exercises: ["15"]
+    sources: [adamw]
+    mode: implementation
+    deliverable: "AdamW 单步 oracle 与学习率曲线"
+  25:
+    lecture: docs/stages/05_pretraining.md
+    notebooks: [notebooks/pretraining_lab.ipynb]
+    exercises: []
+    sources: [llama]
+    mode: research
+    deliverable: "参数、激活和优化器内存预算"
+  26:
+    lecture: docs/stages/05_pretraining.md
+    notebooks: [notebooks/pretraining_lab.ipynb]
+    exercises: []
+    sources: [gshard]
+    mode: research
+    deliverable: "并行拓扑与可恢复检查点方案"
+  27:
+    lecture: docs/stages/05_pretraining.md
+    notebooks: [notebooks/pretraining_lab.ipynb]
+    exercises: []
+    sources: [chinchilla]
+    mode: research
+    deliverable: "Scaling Law 拟合与残差"
+  28:
+    lecture: docs/stages/05_pretraining.md
+    notebooks: [notebooks/pretraining_lab.ipynb]
+    exercises: []
+    sources: [helm]
+    mode: research
+    deliverable: "含去污染声明的评测卡"
+  29:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks: [notebooks/attention_frontiers_lab.ipynb]
+    exercises: ["16"]
+    sources: [flashattention]
+    mode: implementation
+    deliverable: "在线 Softmax 与标准注意力等价"
+  30:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks: [notebooks/attention_frontiers_lab.ipynb]
+    exercises: ["16"]
+    sources: [longformer]
+    mode: implementation
+    deliverable: "滑窗/稀疏感受野反例"
+  31:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks: [notebooks/attention_frontiers_lab.ipynb]
+    exercises: ["17"]
+    sources: [deepseek_v2]
+    mode: implementation
+    deliverable: "MLA baseline 成本与边界说明"
+  32:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks: [notebooks/attention_frontiers_lab.ipynb]
+    exercises: ["16"]
+    sources: [performer]
+    mode: implementation
+    deliverable: "线性注意力并行/递归等价"
+  33:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks: [notebooks/attention_frontiers_lab.ipynb]
+    exercises: ["17"]
+    sources: [gated_deltanet]
+    mode: implementation
+    deliverable: "Delta 状态冲突写入实验"
+  34:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks: [notebooks/attention_frontiers_lab.ipynb]
+    exercises: []
+    sources: [kimi_linear]
+    mode: research
+    deliverable: "混合架构长上下文公平消融"
+  35:
+    lecture: docs/stages/07_moe.md
+    notebooks: [notebooks/02_moe_lab.ipynb]
+    exercises: ["10"]
+    sources: [sparsely_gated_moe]
+    mode: implementation
+    deliverable: "Top-1/Top-k 路由语义和梯度核查"
+  36:
+    lecture: docs/stages/07_moe.md
+    notebooks: [notebooks/02_moe_lab.ipynb]
+    exercises: ["05"]
+    sources: [switch_transformer]
+    mode: implementation
+    deliverable: "容量、dropping 与 dropless 对照"
+  37:
+    lecture: docs/stages/07_moe.md
+    notebooks: [notebooks/02_moe_lab.ipynb]
+    exercises: ["18"]
+    sources: [st_moe]
+    mode: implementation
+    deliverable: "FP32 router、z-loss 和 BF16 实验"
+  38:
+    lecture: docs/stages/07_moe.md
+    notebooks: [notebooks/02_moe_lab.ipynb]
+    exercises: ["18"]
+    sources: [sparse_upcycling]
+    mode: implementation
+    deliverable: "共享专家与 upcycling 初始化"
+  39:
+    lecture: docs/stages/07_moe.md
+    notebooks: [notebooks/02_moe_lab.ipynb]
+    exercises: ["18"]
+    sources: [deepseekmoe]
+    mode: implementation
+    deliverable: "dispatch/all-to-all 通信估算"
+  40:
+    lecture: docs/stages/08_posttraining.md
+    notebooks: [notebooks/posttraining_lab.ipynb]
+    exercises: ["04"]
+    sources: [instructgpt]
+    mode: implementation
+    deliverable: "SFT response mask 和数据契约"
+  41:
+    lecture: docs/stages/08_posttraining.md
+    notebooks: [notebooks/posttraining_lab.ipynb]
+    exercises: ["19"]
+    sources: [lora]
+    mode: implementation
+    deliverable: "LoRA merge/unmerge 等价"
+  42:
+    lecture: docs/stages/08_posttraining.md
+    notebooks: [notebooks/posttraining_lab.ipynb]
+    exercises: ["19"]
+    sources: [ppo]
+    mode: implementation
+    deliverable: "奖励模型与 PPO toy objective 边界"
+  43:
+    lecture: docs/stages/08_posttraining.md
+    notebooks: [notebooks/posttraining_lab.ipynb]
+    exercises: ["19"]
+    sources: [dpo]
+    mode: implementation
+    deliverable: "sequence log-prob 与 DPO 数值核查"
+  44:
+    lecture: docs/stages/08_posttraining.md
+    notebooks: [notebooks/posttraining_lab.ipynb]
+    exercises: ["19"]
+    sources: [deepseekmath]
+    mode: implementation
+    deliverable: "GRPO/RLVR 组内优势与安全评测"
+  45:
+    lecture: docs/stages/09_inference.md
+    notebooks: [notebooks/inference_serving_lab.ipynb]
+    exercises: ["20"]
+    sources: [gptq]
+    mode: implementation
+    deliverable: "量化误差、体积和饱和报告"
+  46:
+    lecture: docs/stages/09_inference.md
+    notebooks: [notebooks/inference_serving_lab.ipynb]
+    exercises: ["20"]
+    sources: [pagedattention]
+    mode: implementation
+    deliverable: "分页缓存、连续批处理和随机推测解码"
+  47:
+    lecture: docs/stages/09_inference.md
+    notebooks: [notebooks/inference_serving_lab.ipynb]
+    exercises: ["20"]
+    sources: [helm]
+    mode: implementation
+    deliverable: "TTFT/TPOT/吞吐公平基准"
+  48:
+    lecture: docs/03_capstone.md
+    notebooks: [notebooks/inference_serving_lab.ipynb]
+    exercises: []
+    sources: [transformer]
+    mode: capstone
+    deliverable: "可复现毕业报告、rubric 与口述答辩"

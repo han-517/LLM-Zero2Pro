@@ -5,6 +5,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+import yaml
+
 from llm_course.paths import PROJECT_ROOT
 from llm_course.schemas import ValidationReport
 
@@ -13,94 +15,47 @@ from llm_course.schemas import ValidationReport
 class Exercise:
     exercise_id: str
     slug: str
-    week: str
+    weeks: tuple[int, ...]
     title: str
     template: str
     check: str
+    optional: bool = False
+
+    @property
+    def week_label(self) -> str:
+        return ",".join(str(week) for week in self.weeks) or "选修"
 
 
-EXERCISES = (
-    Exercise(
-        "01",
-        "softmax",
-        "4",
-        "数值稳定 Softmax",
-        "exercises/starter/01_stable_softmax.py",
-        "exercises/checks/test_01_stable_softmax.py",
-    ),
-    Exercise(
-        "02",
-        "attention",
-        "12–13",
-        "单头因果注意力",
-        "exercises/starter/02_causal_attention.py",
-        "exercises/checks/test_02_causal_attention.py",
-    ),
-    Exercise(
-        "03",
-        "kv-cache",
-        "20",
-        "KV Cache 计算与存储",
-        "exercises/starter/03_kv_cache_budget.py",
-        "exercises/checks/test_03_kv_cache_budget.py",
-    ),
-    Exercise(
-        "04",
-        "sft",
-        "40",
-        "SFT next-token 对齐",
-        "exercises/starter/04_sft_shift.py",
-        "exercises/checks/test_04_sft_shift.py",
-    ),
-    Exercise(
-        "05",
-        "moe-capacity",
-        "35–36",
-        "MoE 容量与溢出",
-        "exercises/starter/05_moe_capacity.py",
-        "exercises/checks/test_05_moe_capacity.py",
-    ),
-    Exercise(
-        "06",
-        "bpe",
-        "9–10",
-        "Byte BPE 合并",
-        "exercises/starter/06_byte_bpe.py",
-        "exercises/checks/test_06_byte_bpe.py",
-    ),
-    Exercise(
-        "07",
-        "rope",
-        "21–22",
-        "RoPE 旋转位置编码",
-        "exercises/starter/07_rope.py",
-        "exercises/checks/test_07_rope.py",
-    ),
-    Exercise(
-        "08",
-        "gqa",
-        "23–24",
-        "Grouped-Query Attention",
-        "exercises/starter/08_grouped_query_attention.py",
-        "exercises/checks/test_08_grouped_query_attention.py",
-    ),
-    Exercise(
-        "09",
-        "decoder",
-        "21–22",
-        "RMSNorm 与 SwiGLU",
-        "exercises/starter/09_modern_decoder.py",
-        "exercises/checks/test_09_modern_decoder.py",
-    ),
-    Exercise(
-        "10",
-        "moe-router",
-        "35–36",
-        "Top-k MoE 路由",
-        "exercises/starter/10_moe_router.py",
-        "exercises/checks/test_10_moe_router.py",
-    ),
-)
+MANIFEST_PATH = PROJECT_ROOT / "exercises" / "manifest.yaml"
+
+
+def load_exercises(path: Path = MANIFEST_PATH) -> tuple[Exercise, ...]:
+    """从唯一清单加载练习；README、CLI 与课程核查不得再维护另一份注册表。"""
+
+    with path.open("r", encoding="utf-8") as handle:
+        data = yaml.safe_load(handle)
+    if not isinstance(data, dict) or not isinstance(data.get("exercises"), list):
+        raise ValueError("exercise manifest 必须包含 exercises 列表")
+
+    exercises: list[Exercise] = []
+    for item in data["exercises"]:
+        if not isinstance(item, dict):
+            raise ValueError("exercise manifest 中的每条记录必须是 mapping")
+        exercises.append(
+            Exercise(
+                exercise_id=str(item["id"]),
+                slug=str(item["slug"]),
+                weeks=tuple(int(week) for week in item.get("weeks", ())),
+                title=str(item["title"]),
+                template=str(item["template"]),
+                check=str(item["check"]),
+                optional=bool(item.get("optional", False)),
+            )
+        )
+    return tuple(exercises)
+
+
+EXERCISES = load_exercises()
 
 
 def select_exercises(identifier: str) -> tuple[Exercise, ...]:
@@ -129,10 +84,10 @@ def _template_state(exercise: Exercise) -> str:
 
 
 def print_exercises() -> int:
-    print("编号  周次   状态             核心代码模板")
+    print("编号  周次       状态             核心代码模板")
     for exercise in EXERCISES:
         print(
-            f"{exercise.exercise_id:<4}  {exercise.week:<5}  "
+            f"{exercise.exercise_id:<4}  {exercise.week_label:<9}  "
             f"{_template_state(exercise):<15}  {exercise.title} ({exercise.slug})"
         )
     print("\n核查示例: uv run llm-course exercises check 07")
@@ -164,13 +119,28 @@ def validate_exercise_assets() -> ValidationReport:
     report = ValidationReport()
     seen_ids: set[str] = set()
     seen_slugs: set[str] = set()
+    previous_first_week = 0
     for exercise in EXERCISES:
+        if not exercise.exercise_id.isdigit() or len(exercise.exercise_id) != 2:
+            report.errors.append(f"练习编号必须是两位数字: {exercise.exercise_id}")
         if exercise.exercise_id in seen_ids:
             report.errors.append(f"练习编号重复: {exercise.exercise_id}")
         if exercise.slug in seen_slugs:
             report.errors.append(f"练习别名重复: {exercise.slug}")
         seen_ids.add(exercise.exercise_id)
         seen_slugs.add(exercise.slug)
+
+        if not exercise.optional and (
+            not exercise.weeks or any(not 1 <= week <= 48 for week in exercise.weeks)
+        ):
+            report.errors.append(f"必修练习周次无效: {exercise.exercise_id}: {exercise.weeks}")
+        if tuple(sorted(set(exercise.weeks))) != exercise.weeks:
+            report.errors.append(f"练习周次必须升序且不重复: {exercise.exercise_id}")
+        if exercise.weeks:
+            if exercise.weeks[0] < previous_first_week:
+                report.errors.append("exercise manifest 必须按首次出现周次排序")
+            previous_first_week = exercise.weeks[0]
+
         for relative_path in (exercise.template, exercise.check):
             path = PROJECT_ROOT / relative_path
             if not path.is_file():

@@ -1,52 +1,47 @@
 # 核心代码模板与核查
 
-这套练习把“阅读参考实现”和“自己完成核心代码”分开：`exercises/starter/` 保留函数签名、输入输出形状、分步提示和空缺实现；`exercises/checks/` 只包含公开行为测试，不包含答案。
+starter 只保留函数签名、形状契约、分步提示和关键空缺；checker 公开边界、梯度和小规模数值 oracle，但不提供完整答案。清单由 `exercises/manifest.yaml` 驱动，CLI 与课程校验不再维护第二份编号表。
 
-## 三种命令
+## 命令
 
-在仓库根目录运行：
-
-```powershell
-# 查看编号、周次、主题和当前填写状态
+```text
 uv run llm-course exercises list
-
-# 按编号或别名核查单题
 uv run llm-course exercises check 07
 uv run llm-course exercises check rope
-
-# 核查全部模板
 uv run llm-course exercises check all
 ```
 
-模板初始包含 `raise NotImplementedError`，所以第一次运行核查应当失败。这代表练习尚未填写，不代表 Python、PyTorch 或 pytest 安装损坏。
+第一次核查未填写 starter 会失败，这是学习起点，不是环境损坏。`all` 会检查所有模板，学习期间更适合只检查当前编号。
 
 ## 模板地图
 
-| 编号 | 周次 | 模板 | 核心空缺 | 核查重点 |
-|---|---:|---|---|---|
-| 01 | 4 | `01_stable_softmax.py` | 减最大值、指数与归一化 | 大 logits、平移不变性、均匀分布 |
-| 02 | 12–13 | `02_causal_attention.py` | 缩放点积、因果 mask、聚合 | PyTorch oracle、梯度、未来隔离 |
-| 03 | 20 | `03_kv_cache_budget.py` | Prefill/decode 账本、KV 元素数 | 缓存与重算工作量、K/V 双份存储 |
-| 04 | 40 | `04_sft_shift.py` | labels 与 answer mask 同步右移 | 两个 batch、形状、输入不变 |
-| 05 | 35–36 | `05_moe_capacity.py` | 容量、accepted/dropped | Top-k assignment、向上取整、守恒 |
-| 06 | 9–10 | `06_byte_bpe.py` | pair 计数、选择、合并 | 重叠计数、确定性 tie-break、非重叠合并 |
-| 07 | 21–22 | `07_rope.py` | 频率、二维旋转、维度交错 | 范数不变、position=0、奇数维拒绝 |
-| 08 | 23–24 | `08_grouped_query_attention.py` | 分组 Query、共享 KV、因果聚合 | 显式 oracle、cache 对齐、梯度 |
-| 09 | 21–22 | `09_modern_decoder.py` | RMSNorm、SwiGLU | 不减均值、门控顺序、反向传播 |
-| 10 | 35–36 | `10_moe_router.py` | Top-k 路由、balance loss | 权重重归一、均衡基线、坍缩惩罚 |
+| 编号 | 周次 | 别名 | 核心实现 |
+|---|---:|---|---|
+| 11 | 3 | autograd | 计算图、分支求和、重复 backward |
+| 01 | 4 | softmax | 数值稳定 Softmax |
+| 12 | 6–8 | neural-lm | Bigram、MLP、RNN 状态 |
+| 06 | 10 | bpe | Byte BPE pair/merge |
+| 02 | 12–13 | attention | 因果注意力与安全 mask |
+| 13 | 14–15 | tiny-gpt | MHA、Block、TinyGPT |
+| 09 | 16–17 | decoder | RMSNorm、SwiGLU |
+| 07 | 18 | rope | 频率与二维旋转 |
+| 08 | 19 | gqa | 分组 Query 与共享 KV |
+| 03 | 20 | kv-cache | Prefill/decode 缓存账本 |
+| 14 | 22–23 | data-pipeline | 去重、污染切分、packing |
+| 15 | 24 | adamw-schedule | AdamW、warmup-cosine |
+| 16 | 29–30, 32 | attention-frontiers | 分块、滑窗、线性注意力 |
+| 17 | 31, 33 | mla-delta | latent KV 与 Delta 状态更新 |
+| 10 | 35 | moe-router | Top-k 路由与 balance loss |
+| 05 | 36 | moe-capacity | 容量、accepted/dropped 守恒 |
+| 18 | 37–39 | moe-systems | 稳定性、共享专家、dispatch |
+| 04 | 40 | sft | next-token shift 与 response mask |
+| 19 | 41–44 | posttraining | LoRA、DPO、组内优势 |
+| 20 | 45–47 | inference-systems | 量化、分页缓存、推测解码 |
+| 21 | 选修 | multimodal-bridge | patch/projector/文本接口 |
 
-## 推荐学习循环
+## 两类检查
 
-1. 学对应讲义或操作交互图，先写下公式和每个张量形状。
-2. 打开一个 starter，只填写 `TODO`，不要同时打开 `src/llm_from_scratch/`。
-3. 先运行单题核查，从第一条失败信息构造最小反例。
-4. 公开测试通过后，自己再添加一个边界输入。
-5. 口述时间复杂度、空间复杂度和至少一个常见错误。
-6. 最后才对照参考实现，记录两种实现的差异，而不是直接覆盖自己的版本。
+- `uv run llm-course course check`：维护者检查 48/48 周讲义、Notebook、starter/checker、来源与文档契约；不把空白 starter 当成仓库失败。
+- `uv run llm-course exercises check <ID>`：学员检查自己的填写；失败退出码可用于编辑器与 CI。
 
-## 两类检查的边界
-
-- `uv run llm-course course check`：验证 48 周清单、论文目录、模板资产、参考实现和必修 Notebook 是否健康。它故意不执行未完成的 starter。
-- `uv run llm-course exercises check ...`：加载你当前的 starter，执行独立公开测试；失败退出码可用于终端、编辑器任务或 CI。
-
-公开测试通过不是最终掌握标准。特判固定输入、复制参考答案，或无法解释张量形状，都应视为尚未完成。需要分层提示时先看 [`exercises/hints.md`](../exercises/hints.md)，再看 `src/llm_from_scratch/`。
+公开测试通过仍不是最终掌握。你还应能解释每个维度、至少一个非法输入、时间/空间复杂度和实现与论文完整算法之间的边界。
