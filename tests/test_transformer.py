@@ -1,12 +1,21 @@
 import pytest
 import torch
+from torch import nn
 
 from llm_from_scratch.transformer import GPTConfig, RMSNorm, TinyGPT
 
 
-def tiny_model() -> TinyGPT:
+def tiny_model(*, modern: bool = False) -> TinyGPT:
+    factory = GPTConfig.modern if modern else GPTConfig
     return TinyGPT(
-        GPTConfig(vocab_size=13, block_size=8, n_layer=2, n_head=4, n_kv_head=2, d_model=16)
+        factory(
+            vocab_size=13,
+            block_size=8,
+            n_layer=2,
+            n_head=4,
+            n_kv_head=2,
+            d_model=16,
+        )
     )
 
 
@@ -17,30 +26,55 @@ def test_rmsnorm_matches_formula() -> None:
     torch.testing.assert_close(module(x), expected)
 
 
-def test_tiny_gpt_shapes_loss_and_gradients() -> None:
+def test_classic_and_modern_presets_select_real_components() -> None:
+    classic = TinyGPT(GPTConfig.classic(vocab_size=13, n_layer=1, n_head=4, d_model=16))
+    modern = TinyGPT(GPTConfig.modern(vocab_size=13, n_layer=1, n_head=4, d_model=16))
+    assert isinstance(classic.blocks[0].attention_norm, nn.LayerNorm)
+    assert classic.position_embedding is not None
+    assert classic.config.kv_heads == 4
+    assert isinstance(modern.blocks[0].attention_norm, RMSNorm)
+    assert modern.position_embedding is None
+    assert modern.config.kv_heads == 1
+    assert modern.blocks[0].attention.rope_base == 10_000
+
+
+def test_tiny_gpt_shapes_loss_gradients_and_optional_cache() -> None:
     torch.manual_seed(10)
-    model = tiny_model()
+    model = tiny_model(modern=True)
     tokens = torch.randint(0, 13, (3, 6))
     targets = torch.randint(0, 13, (3, 6))
-    logits, loss, caches = model(tokens, targets)
+    logits, loss, caches = model(tokens, targets, return_caches=False)
     assert logits.shape == (3, 6, 13)
     assert loss is not None and loss.ndim == 0
-    assert len(caches) == 2
+    assert caches is None
     loss.backward()
     assert model.token_embedding.weight.grad is not None
 
 
-def test_tiny_gpt_cache_matches_full_forward() -> None:
+@pytest.mark.parametrize("modern", [False, True])
+def test_tiny_gpt_cache_matches_full_forward(modern: bool) -> None:
     torch.manual_seed(11)
-    model = tiny_model().eval()
+    model = tiny_model(modern=modern).eval()
     tokens = torch.randint(0, 13, (1, 6))
     full, _, _ = model(tokens)
     caches = None
     pieces = []
     for index in range(tokens.shape[1]):
         current, _, caches = model(tokens[:, index : index + 1], caches=caches)
+        assert caches is not None
         pieces.append(current)
     torch.testing.assert_close(full, torch.cat(pieces, dim=1), atol=1e-5, rtol=1e-5)
+
+
+def test_modern_gpt_accepts_batched_position_ids_and_uses_relative_rope() -> None:
+    torch.manual_seed(19)
+    model = tiny_model(modern=True).eval()
+    tokens = torch.randint(0, 13, (2, 5))
+    positions = torch.arange(5).expand(2, -1)
+    shifted = positions + torch.tensor([[7], [13]])
+    baseline, _, _ = model(tokens, position_ids=positions)
+    moved, _, _ = model(tokens, position_ids=shifted)
+    torch.testing.assert_close(baseline, moved, atol=1e-5, rtol=1e-5)
 
 
 def test_tiny_gpt_can_overfit_one_batch() -> None:
@@ -52,19 +86,20 @@ def test_tiny_gpt_can_overfit_one_batch() -> None:
     with torch.no_grad():
         _, initial_loss, _ = model(tokens, targets)
     for _ in range(35):
-        _, loss, _ = model(tokens, targets)
+        _, loss, _ = model(tokens, targets, return_caches=False)
         assert loss is not None
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
     with torch.no_grad():
-        _, final_loss, _ = model(tokens, targets)
+        _, final_loss, _ = model(tokens, targets, return_caches=False)
     assert initial_loss is not None and final_loss is not None
     assert final_loss < initial_loss * 0.35
 
 
-def test_cached_and_uncached_greedy_generation_match_and_restore_mode() -> None:
-    model = tiny_model()
+@pytest.mark.parametrize("modern", [False, True])
+def test_cached_and_uncached_greedy_generation_match_and_restore_mode(modern: bool) -> None:
+    model = tiny_model(modern=modern)
     model.train()
     prefix = torch.tensor([[1, 2]])
     cached = model.generate(prefix, 3, temperature=0, use_cache=True)
@@ -75,8 +110,13 @@ def test_cached_and_uncached_greedy_generation_match_and_restore_mode() -> None:
     assert cached.shape == (1, 5)
 
 
-def test_generation_rejects_invalid_sampling_arguments() -> None:
+def test_configuration_and_sampling_validation() -> None:
+    with pytest.raises(ValueError, match="n_kv_head"):
+        GPTConfig(vocab_size=8, n_head=4, d_model=16, n_kv_head=0)
+    with pytest.raises(ValueError, match="position_encoding"):
+        GPTConfig(vocab_size=8, position_encoding="unknown")
     model = tiny_model()
     with pytest.raises(ValueError, match="top_k"):
         model.generate(torch.tensor([[1]]), 1, top_k=0)
-
+    with pytest.raises(ValueError, match="position_ids"):
+        model(torch.ones(2, 3, dtype=torch.long), position_ids=torch.arange(4))

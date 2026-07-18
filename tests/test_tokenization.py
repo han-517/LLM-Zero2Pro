@@ -20,4 +20,3 @@ def test_training_is_deterministic_and_serializable() -> None:
 def test_unknown_token_fails_loudly() -> None:
     with pytest.raises(ValueError, match="未知 token"):
         BytePairTokenizer().decode([999])
-

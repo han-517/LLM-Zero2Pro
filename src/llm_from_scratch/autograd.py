@@ -5,7 +5,12 @@ from collections.abc import Callable
 
 
 class Value:
-    """一个最小标量自动微分节点，帮助观察计算图和链式法则。"""
+    """一个最小标量自动微分节点，帮助观察计算图和链式法则。
+
+    叶子节点的梯度和 PyTorch 参数梯度一样会在多次 ``backward`` 之间累加。
+    中间节点只服务于一次反向传播，因此每次反传前都会清零，避免旧的链式
+    法则贡献再次流入叶子。需要开始一个全新实验时，对输出调用 ``zero_grad``。
+    """
 
     def __init__(
         self,
@@ -111,7 +116,7 @@ class Value:
         output._backward = _backward
         return output
 
-    def backward(self) -> None:
+    def _topological_order(self) -> list[Value]:
         order: list[Value] = []
         visited: set[Value] = set()
 
@@ -124,7 +129,25 @@ class Value:
             order.append(node)
 
         visit(self)
-        self.grad = 1.0
+        return order
+
+    def zero_grad(self) -> None:
+        """把当前输出可达的整张计算图梯度清零。"""
+
+        for node in self._topological_order():
+            node.grad = 0.0
+
+    def backward(self) -> None:
+        """从当前标量反向传播；中间梯度重算，叶子梯度累加。"""
+
+        order = self._topological_order()
+        for node in order:
+            if node._prev:
+                node.grad = 0.0
+
+        if self._prev:
+            self.grad = 1.0
+        else:
+            self.grad += 1.0
         for node in reversed(order):
             node._backward()
-

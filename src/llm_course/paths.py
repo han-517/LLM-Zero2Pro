@@ -5,4 +5,3 @@ ROADMAP_PATH = PROJECT_ROOT / "course" / "roadmap.yaml"
 PAPER_CATALOG_PATH = PROJECT_ROOT / "papers" / "catalog.yaml"
 PAPER_INBOX_PATH = PROJECT_ROOT / "papers" / "inbox.yaml"
 PAPER_GRAPH_PATH = PROJECT_ROOT / "knowledge" / "paper_graph.md"
-

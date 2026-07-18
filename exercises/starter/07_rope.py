@@ -1,4 +1,4 @@
-"""Week 21–22：实现 Rotary Position Embedding。"""
+"""Week 18：实现 Rotary Position Embedding。"""
 
 from __future__ import annotations
 

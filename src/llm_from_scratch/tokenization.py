@@ -106,4 +106,3 @@ class BytePairTokenizer:
         if [merge.token_id for merge in merges] != expected_ids:
             raise ValueError("merge token_id 必须从 256 连续递增")
         return cls(merges)
-

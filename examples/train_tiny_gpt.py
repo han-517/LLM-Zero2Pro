@@ -11,9 +11,7 @@ from llm_from_scratch.transformer import GPTConfig, TinyGPT
 
 def main() -> None:
     seed_everything()
-    text = ("语言模型通过根据前文预测下一个符号来学习。" * 30) + (
-        "attention reads history. " * 30
-    )
+    text = ("语言模型通过根据前文预测下一个符号来学习。" * 30) + ("attention reads history. " * 30)
     tokenizer = BytePairTokenizer.train(text, vocab_size=280)
     tokens = torch.tensor(tokenizer.encode(text), dtype=torch.long)
     model = TinyGPT(
@@ -43,9 +41,7 @@ def main() -> None:
     generated = model.generate(prefix, max_new_tokens=30, temperature=0.8, top_k=20)
     decoded = tokenizer.decode(generated[0].tolist(), errors="backslashreplace")
     output_encoding = sys.stdout.encoding or "utf-8"
-    printable = decoded.encode(output_encoding, errors="backslashreplace").decode(
-        output_encoding
-    )
+    printable = decoded.encode(output_encoding, errors="backslashreplace").decode(output_encoding)
     print("生成结果（不完整 UTF-8 字节以转义形式显示）:")
     print(printable)
 
