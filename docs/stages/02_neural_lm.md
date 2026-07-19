@@ -122,7 +122,7 @@ assert logits.shape == (4, 6)
 
 ## 实验
 
-运行 [`neural_lm_lab.ipynb`](../../notebooks/neural_lm_lab.ipynb)，按顺序完成：
+运行 [`core/02_neural_language_models.ipynb`](../../notebooks/core/02_neural_language_models.ipynb)，按顺序完成：
 
 1. 观察“先切文档再造窗口”，确认样本不跨文档边界。
 2. 在确定的玩具序列上训练 Bigram，并查看转移概率。

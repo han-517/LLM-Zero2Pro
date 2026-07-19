@@ -53,11 +53,56 @@ CORE_PATH_DOCUMENT = PROJECT_ROOT / "docs" / "core_learning_path.md"
 
 
 def load_roadmap(path: Path = ROADMAP_PATH) -> dict[str, Any]:
-    with path.open("r", encoding="utf-8") as handle:
-        data = yaml.safe_load(handle)
-    if not isinstance(data, dict):
-        raise ValueError("roadmap 根节点必须是 mapping")
-    return data
+    """加载课程清单，并兼容旧版单文件结构。"""
+
+    def read_mapping(candidate: Path) -> dict[str, Any]:
+        with candidate.open("r", encoding="utf-8") as handle:
+            value = yaml.safe_load(handle)
+        if not isinstance(value, dict):
+            raise ValueError(f"{candidate} 根节点必须是 mapping")
+        return value
+
+    data = read_mapping(path)
+    if "stage_files" not in data:
+        return data
+
+    base_dir = path.parent.resolve()
+
+    def resolve_local(relative_path: object) -> Path:
+        if not isinstance(relative_path, str) or not relative_path:
+            raise ValueError("课程入口中的文件路径必须是非空字符串")
+        candidate = (base_dir / relative_path).resolve()
+        if not candidate.is_relative_to(base_dir):
+            raise ValueError(f"课程入口不得引用 course/ 之外的文件: {relative_path}")
+        return candidate
+
+    metadata = read_mapping(resolve_local(data.get("course_file")))
+    stage_files = data.get("stage_files")
+    if not isinstance(stage_files, list) or not stage_files:
+        raise ValueError("roadmap.stage_files 必须是非空列表")
+
+    stages: list[dict[str, Any]] = []
+    weeks: list[dict[str, Any]] = []
+    assets: dict[int, dict[str, Any]] = {}
+    for relative_path in stage_files:
+        stage_data = read_mapping(resolve_local(relative_path))
+        stage = stage_data.get("stage")
+        lessons = stage_data.get("lessons")
+        if not isinstance(stage, dict) or not isinstance(lessons, list):
+            raise ValueError(f"阶段文件 {relative_path} 必须包含 stage 和 lessons")
+        stages.append(stage)
+        for lesson_with_assets in lessons:
+            if not isinstance(lesson_with_assets, dict):
+                raise ValueError(f"阶段文件 {relative_path} 的 lesson 必须是 mapping")
+            lesson = dict(lesson_with_assets)
+            asset = lesson.pop("assets", None)
+            week = int(lesson["week"])
+            if week in assets or not isinstance(asset, dict):
+                raise ValueError(f"week {week} 重复或缺少 assets")
+            weeks.append(lesson)
+            assets[week] = asset
+
+    return {**metadata, "stages": stages, "weeks": weeks, "assets": assets}
 
 
 def _stage_week_set(stage: dict[str, Any]) -> set[int]:
@@ -298,7 +343,7 @@ def render_learning_path(week_count: int = 15) -> str:
         "<!-- 由 uv run llm-course course path --weeks 15 --write 生成，请勿手工维护表格。 -->",
         f"# {title}",
         "",
-        "这份路径直接读取 course/roadmap.yaml。每周都按讲义、CPU Notebook、",
+        "这份路径由 course/roadmap.yaml 聚合 course.yaml 与 stages/。每周都按讲义、CPU Notebook、",
         "starter/研究产出、自动核查或 rubric、一手来源形成闭环。",
         "互动实验统一入口：docs/interactive/index.html；代码练习清单：",
         "exercises/manifest.yaml。二者都由课程健康检查纳入契约。",

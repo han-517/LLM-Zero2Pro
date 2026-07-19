@@ -1,57 +1,61 @@
-"""同步 roadmap 的 Notebook 契约，并创建可离线执行的阶段实验。"""
+"""从分层课程清单同步 Notebook 契约，并创建可离线执行的阶段实验。"""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 import nbformat
-import yaml
 from nbformat.v4 import new_code_cell, new_markdown_cell, new_notebook
 
+from llm_course.course import load_roadmap
+
 ROOT = Path(__file__).resolve().parents[1]
-ROADMAP = ROOT / "course" / "roadmap.yaml"
 
 SPECS = {
     "notebooks/00_START_HERE.ipynb": (20, ["会打开终端"], "能运行 doctor 并找到当前周资产"),
-    "notebooks/00_shapes_and_autograd.ipynb": (100, ["Python 基础"], "有限差分与分支反传断言通过"),
-    "notebooks/neural_lm_lab.ipynb": (
+    "notebooks/core/01_shapes_and_autograd.ipynb": (
+        100,
+        ["Python 基础"],
+        "有限差分与分支反传断言通过",
+    ),
+    "notebooks/core/02_neural_language_models.ipynb": (
         120,
         ["张量形状", "交叉熵"],
         "Bigram/MLP/RNN 的损失与因果性断言通过",
     ),
-    "notebooks/tokenization_lab.ipynb": (
+    "notebooks/core/03_tokenization_and_bpe.ipynb": (
         90,
         ["Unicode 与 Python bytes"],
         "Byte BPE encode/decode 往返一致",
     ),
-    "notebooks/01_attention_lab.ipynb": (
+    "notebooks/core/04_attention_mechanics.ipynb": (
         100,
         ["矩阵乘法", "Softmax"],
         "未来扰动和全遮蔽行断言通过",
     ),
-    "notebooks/03_tiny_gpt.ipynb": (130, ["注意力", "残差连接"], "TinyGPT 可保存、加载并生成"),
-    "notebooks/modern_decoder_lab.ipynb": (
+    "notebooks/core/05_tiny_gpt.ipynb": (130, ["注意力", "残差连接"], "TinyGPT 可保存、加载并生成"),
+    "notebooks/core/06_modern_decoder.ipynb": (
         120,
         ["经典 Decoder"],
         "经典/现代配置的形状与 cache 等价断言通过",
     ),
-    "notebooks/pretraining_lab.ipynb": (
+    "notebooks/core/07_pretraining_systems.ipynb": (
         110,
         ["训练循环"],
         "去重、packing、AdamW 与内存账本断言通过",
     ),
-    "notebooks/attention_frontiers_lab.ipynb": (
+    "notebooks/core/08_attention_frontiers.ipynb": (
         120,
         ["RoPE", "KV Cache"],
         "稀疏 mask 与线性注意力两条路径数值一致",
     ),
-    "notebooks/02_moe_lab.ipynb": (110, ["现代 Decoder"], "路由、容量、负载和梯度断言通过"),
-    "notebooks/posttraining_lab.ipynb": (
+    "notebooks/core/09_moe.ipynb": (110, ["现代 Decoder"], "路由、容量、负载和梯度断言通过"),
+    "notebooks/core/10_posttraining.ipynb": (
         120,
         ["next-token loss"],
         "response mask、LoRA、DPO/GRPO toy 断言通过",
     ),
-    "notebooks/inference_serving_lab.ipynb": (
+    "notebooks/core/11_inference_serving.ipynb": (
         120,
         ["KV Cache", "概率采样"],
         "分页、推测采样与 TTFT/TPOT 指标断言通过",
@@ -59,7 +63,7 @@ SPECS = {
 }
 
 NEW_NOTEBOOK_CELLS = {
-    "notebooks/tokenization_lab.ipynb": [
+    "notebooks/core/03_tokenization_and_bpe.ipynb": [
         (
             "markdown",
             """# Byte BPE：字符、字节与 token
@@ -86,7 +90,7 @@ assert tokenizer.decode(ids) == text""",
     uv run llm-course exercises check 06""",
         ),
     ],
-    "notebooks/modern_decoder_lab.ipynb": [
+    "notebooks/core/06_modern_decoder.ipynb": [
         (
             "markdown",
             """# 经典 Decoder → 现代 Decoder
@@ -116,7 +120,7 @@ print({"classic_parameters": sum(p.numel() for p in classic.parameters()),
             "完成 07、08、03 后分别核查。",
         ),
     ],
-    "notebooks/pretraining_lab.ipynb": [
+    "notebooks/core/07_pretraining_systems.ipynb": [
         (
             "markdown",
             """# 预训练数据与训练系统
@@ -144,7 +148,7 @@ print({"packed": packed.tolist(), "loss_mask": mask.tolist(), "ledger": ledger})
             """下一步完成 14、15；报告每条规则的保留率，不把 toy 内存账本称为峰值显存保证。""",
         ),
     ],
-    "notebooks/attention_frontiers_lab.ipynb": [
+    "notebooks/core/08_attention_frontiers.ipynb": [
         (
             "markdown",
             """# 注意力前沿：IO、稀疏、latent cache 与线性状态
@@ -161,14 +165,14 @@ from llm_from_scratch.attention import (
     sliding_window_mask,
 )
 
-mask = sliding_window_mask(2, 4, window_size=2)
+mask = sliding_window_mask(2, 2, key_length=4)
 q = torch.randn(1, 2, 6, 4)
 k = torch.randn(1, 2, 6, 4)
 v = torch.randn(1, 2, 6, 3)
 recurrent = causal_linear_attention(q, k, v)
 parallel = causal_linear_attention_parallel(q, k, v)
 torch.testing.assert_close(recurrent, parallel, atol=2e-5, rtol=2e-5)
-cost = mla_cache_cost(batch=1, sequence=128, latent_dim=16, num_heads=4, head_dim=8)
+cost = mla_cache_cost(batch_size=1, layers=1, sequence_length=128, d_model=32, latent_dim=16)
 print(mask.int(), cost)""",
         ),
         (
@@ -177,7 +181,7 @@ print(mask.int(), cost)""",
             "历史重建与 absorbed decode。",
         ),
     ],
-    "notebooks/posttraining_lab.ipynb": [
+    "notebooks/core/10_posttraining.ipynb": [
         (
             "markdown",
             """# 后训练：mask、log-prob 与相对目标
@@ -204,7 +208,7 @@ print({"sequence_logprob": scores, "advantages": advantages})""",
             "response mask、KL、奖励和安全评测。",
         ),
     ],
-    "notebooks/inference_serving_lab.ipynb": [
+    "notebooks/core/11_inference_serving.ipynb": [
         (
             "markdown",
             """# 推理服务：分页缓存、推测解码与服务指标
@@ -237,10 +241,6 @@ print({"fragmentation": table.internal_fragmentation_tokens,
 }
 
 
-def load_roadmap() -> dict:
-    return yaml.safe_load(ROADMAP.read_text(encoding="utf-8"))
-
-
 def build_missing(path: Path, relative_path: str) -> None:
     cells = NEW_NOTEBOOK_CELLS.get(relative_path)
     if cells is None:
@@ -250,6 +250,7 @@ def build_missing(path: Path, relative_path: str) -> None:
         for kind, source in cells
     ]
     notebook = new_notebook(cells=notebook_cells)
+    path.parent.mkdir(parents=True, exist_ok=True)
     nbformat.write(notebook, path)
 
 
@@ -294,7 +295,7 @@ def main() -> None:
             notebook.cells.insert(0, cell)
         nbformat.write(notebook, path)
 
-    optional_path = ROOT / "notebooks" / "80_multimodal_bridge.ipynb"
+    optional_path = ROOT / "notebooks" / "optional" / "80_multimodal_bridge.ipynb"
     if not optional_path.exists():
         optional = new_notebook(
             cells=[

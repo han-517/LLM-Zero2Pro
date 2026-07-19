@@ -1,0 +1,130 @@
+stage:
+  id: posttraining
+  weeks: 40-44
+  title: 后训练与推理能力
+lessons:
+- week: 40
+  stage: posttraining
+  title: 指令数据与 SFT
+  objectives:
+  - 理解 prompt/response masking
+  - 建立 chat template 概念
+  readings:
+  - docs/stages/08_posttraining.md
+  experiments:
+  - 玩具指令微调
+  - 只对回答计算损失
+  exercise: 实现 SFT loss mask
+  acceptance:
+  - prompt token 不计损失
+  - 保留基础能力评测
+  assets:
+    lecture: docs/stages/08_posttraining.md
+    notebooks:
+    - notebooks/core/10_posttraining.ipynb
+    exercises:
+    - '04'
+    sources:
+    - instructgpt
+    mode: implementation
+    deliverable: SFT response mask 和数据契约
+- week: 41
+  stage: posttraining
+  title: LoRA 与 QLoRA
+  objectives:
+  - 理解低秩更新
+  - 区分训练参数和冻结参数
+  readings:
+  - docs/stages/08_posttraining.md
+  experiments:
+  - 低秩矩阵拟合
+  - rank 消融
+  exercise: 实现 LoRALinear
+  acceptance:
+  - 合并前后输出一致
+  - 仅 LoRA 参数获得梯度
+  assets:
+    lecture: docs/stages/08_posttraining.md
+    notebooks:
+    - notebooks/core/10_posttraining.ipynb
+    exercises:
+    - '19'
+    sources:
+    - lora
+    mode: implementation
+    deliverable: LoRA merge/unmerge 等价
+- week: 42
+  stage: posttraining
+  title: 偏好、奖励模型与 PPO
+  objectives:
+  - 把偏好转为相对分数
+  - 理解策略、价值和 KL 约束
+  readings:
+  - docs/stages/08_posttraining.md
+  experiments:
+  - 成对奖励损失
+  - KL 惩罚曲线
+  exercise: 实现 pairwise reward loss
+  acceptance:
+  - 优选样本分数上升
+  - 解释 reward hacking
+  assets:
+    lecture: docs/stages/08_posttraining.md
+    notebooks:
+    - notebooks/core/10_posttraining.ipynb
+    exercises:
+    - '19'
+    sources:
+    - ppo
+    mode: implementation
+    deliverable: 奖励模型与 PPO toy objective 边界
+- week: 43
+  stage: posttraining
+  title: DPO：绕开奖励模型的偏好优化
+  objectives:
+  - 理解策略/参考模型 log-ratio
+  - 实现稳定 DPO loss
+  readings:
+  - docs/stages/08_posttraining.md
+  experiments:
+  - 玩具偏好数据
+  - beta 消融
+  exercise: 从四组 log-prob 实现 DPO
+  acceptance:
+  - 数值测试通过
+  - 说明 DPO 的数据假设
+  assets:
+    lecture: docs/stages/08_posttraining.md
+    notebooks:
+    - notebooks/core/10_posttraining.ipynb
+    exercises:
+    - '19'
+    sources:
+    - dpo
+    mode: implementation
+    deliverable: sequence log-prob 与 DPO 数值核查
+- week: 44
+  stage: posttraining
+  title: GRPO、RLVR 与推理训练
+  objectives:
+  - 理解组内相对优势
+  - 区分可验证奖励和主观奖励
+  readings:
+  - docs/stages/08_posttraining.md
+  experiments:
+  - group advantage
+  - 玩具算术 verifier
+  exercise: 实现归一化 group advantage
+  acceptance:
+  - 常数奖励时优势为零
+  - 解释奖励稀疏与作弊
+  assets:
+    lecture: docs/stages/08_posttraining.md
+    notebooks:
+    - notebooks/core/10_posttraining.ipynb
+    exercises:
+    - '19'
+    sources:
+    - deepseekmath
+    mode: implementation
+    deliverable: GRPO/RLVR 组内优势与安全评测

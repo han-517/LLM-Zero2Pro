@@ -1,0 +1,33 @@
+course:
+  title: 从零到前沿：文本 LLM
+  version: '2026.07'
+  as_of: '2026-07-19'
+  language: zh-CN
+  weeks: 48
+  weekly_hours: 8-10
+  required_device: cpu
+  scope: text-llm-core; multimodal optional outside 48 weeks
+  teaching_loop:
+  - 直觉与图
+  - 张量形状
+  - 必要公式
+  - 最小实现
+  - 对照实验
+  - 常见误区
+paths:
+  core_15:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 7
+  - 10
+  - 12
+  - 13
+  - 15
+  - 16
+  - 18
+  - 19
+  - 20
+  - 35
+  - 48

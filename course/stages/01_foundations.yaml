@@ -1,0 +1,104 @@
+stage:
+  id: foundations
+  weeks: 1-4
+  title: 工具、数学与 PyTorch
+lessons:
+- week: 1
+  stage: foundations
+  title: 命令行、Git、Python 与可复现环境
+  objectives:
+  - 理解仓库、环境和依赖的区别
+  - 会运行 Python、测试和 Notebook
+  readings:
+  - docs/00_environment.md
+  - docs/02_learning_method.md
+  experiments:
+  - 运行 doctor
+  - 修改并执行一个 Python 函数
+  exercise: 解释为什么不把课程依赖装进系统 Python
+  acceptance:
+  - doctor 通过
+  - 能说明工作区、解释器、虚拟环境和锁文件
+  assets:
+    lecture: docs/00_environment.md
+    notebooks:
+    - notebooks/00_START_HERE.ipynb
+    exercises: []
+    sources:
+    - https://docs.python.org/3/library/venv.html
+    mode: research
+    deliverable: 环境诊断快照与复现命令
+- week: 2
+  stage: foundations
+  title: 向量、矩阵与张量形状
+  objectives:
+  - 用几何和表格理解向量/矩阵
+  - 熟练追踪 batch、time、feature 维
+  readings:
+  - docs/stages/01_foundations.md
+  experiments:
+  - NumPy 广播
+  - 矩阵乘法可视化
+  exercise: 为三段张量代码手写每一步形状
+  acceptance:
+  - 解释点积和矩阵乘法
+  - 通过形状练习
+  assets:
+    lecture: docs/stages/01_foundations.md
+    notebooks:
+    - notebooks/core/01_shapes_and_autograd.ipynb
+    exercises: []
+    sources:
+    - https://docs.pytorch.org/docs/stable/notes/broadcasting.html
+    mode: research
+    deliverable: 三段张量代码的逐步形状表
+- week: 3
+  stage: foundations
+  title: 导数、链式法则与自动微分
+  objectives:
+  - 把导数理解为局部敏感度
+  - 手算并实现反向传播
+  readings:
+  - docs/stages/01_foundations.md
+  experiments:
+  - 有限差分
+  - 标量自动微分
+  exercise: 实现 Value 的加法、乘法、tanh 反传
+  acceptance:
+  - 数值梯度与解析梯度一致
+  - 画出一个计算图
+  assets:
+    lecture: docs/stages/01_foundations.md
+    notebooks:
+    - notebooks/core/01_shapes_and_autograd.ipynb
+    exercises:
+    - '11'
+    sources:
+    - https://github.com/karpathy/micrograd
+    mode: implementation
+    deliverable: 分支计算图、有限差分和 starter 核查
+- week: 4
+  stage: foundations
+  title: 概率、Softmax、交叉熵与 PyTorch
+  objectives:
+  - 理解概率分布和负对数似然
+  - 会写基础 PyTorch 训练循环
+  readings:
+  - docs/stages/01_foundations.md
+  experiments:
+  - 稳定 Softmax
+  - 交叉熵曲线
+  exercise: 解释正确类别概率变大时损失为何下降
+  acceptance:
+  - 实现稳定 Softmax
+  - 完成一个线性分类器训练
+  assets:
+    lecture: docs/stages/01_foundations.md
+    notebooks:
+    - notebooks/core/01_shapes_and_autograd.ipynb
+    exercises:
+    - '01'
+    sources:
+    - bengio_nplm
+    mode: implementation
+    deliverable: 稳定 Softmax 与训练循环记录

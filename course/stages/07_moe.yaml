@@ -1,0 +1,130 @@
+stage:
+  id: moe
+  weeks: 35-39
+  title: Mixture of Experts
+lessons:
+- week: 35
+  stage: moe
+  title: 条件计算与 Top-k 路由
+  objectives:
+  - 区分总参数和活跃参数
+  - 实现 token-choice routing
+  readings:
+  - docs/stages/07_moe.md
+  experiments:
+  - 路由热力图
+  - Dense/MoE 活跃 FLOPs
+  exercise: 实现 Top-2 MoE
+  acceptance:
+  - 门控权重归一化
+  - 所有被选择且未丢弃的专家可反传；构造批次覆盖全部专家
+  assets:
+    lecture: docs/stages/07_moe.md
+    notebooks:
+    - notebooks/core/09_moe.ipynb
+    exercises:
+    - '10'
+    sources:
+    - sparsely_gated_moe
+    mode: implementation
+    deliverable: Top-1/Top-k 路由语义和梯度核查
+- week: 36
+  stage: moe
+  title: 容量、token dropping 与负载均衡
+  objectives:
+  - 理解系统容量约束
+  - 测量 expert utilization
+  readings:
+  - docs/stages/07_moe.md
+  experiments:
+  - 容量溢出
+  - 均衡损失前后对照
+  exercise: 实现 capacity factor 和辅助损失
+  acceptance:
+  - 溢出行为显式
+  - 负载统计正确
+  assets:
+    lecture: docs/stages/07_moe.md
+    notebooks:
+    - notebooks/core/09_moe.ipynb
+    exercises:
+    - '05'
+    sources:
+    - switch_transformer
+    mode: implementation
+    deliverable: 容量、dropping 与 dropless 对照
+- week: 37
+  stage: moe
+  title: Router z-loss、数值精度与稳定性
+  objectives:
+  - 控制 router logits
+  - 理解路由专用 FP32
+  readings:
+  - docs/stages/07_moe.md
+  experiments:
+  - 极端 logits
+  - z-loss 消融
+  exercise: 构造路由崩溃并修复
+  acceptance:
+  - 无 NaN
+  - 能解释 z-loss 不等于负载均衡
+  assets:
+    lecture: docs/stages/07_moe.md
+    notebooks:
+    - notebooks/core/09_moe.ipynb
+    exercises:
+    - '18'
+    sources:
+    - st_moe
+    mode: implementation
+    deliverable: FP32 router、z-loss 和 BF16 实验
+- week: 38
+  stage: moe
+  title: 共享专家、细粒度专家与 upcycling
+  objectives:
+  - 理解公共知识和专业知识拆分
+  - 从 Dense 初始化 MoE
+  readings:
+  - docs/stages/07_moe.md
+  experiments:
+  - 复制 FFN 权重
+  - 共享专家消融
+  exercise: 实现教学版 upcycling
+  acceptance:
+  - 初始化输出可比较
+  - 说明对称性如何被打破
+  assets:
+    lecture: docs/stages/07_moe.md
+    notebooks:
+    - notebooks/core/09_moe.ipynb
+    exercises:
+    - '18'
+    sources:
+    - sparse_upcycling
+    mode: implementation
+    deliverable: 共享专家与 upcycling 初始化
+- week: 39
+  stage: moe
+  title: 专家并行、DeepSeekMoE 与现代变体
+  objectives:
+  - 理解 all-to-all 通信
+  - 串起 DeepSeek V1-V3 路由演化
+  readings:
+  - docs/stages/07_moe.md
+  experiments:
+  - 通信量纸面估算
+  - aux-loss-free bias 模拟
+  exercise: 画出一次 MoE 前向的数据流
+  acceptance:
+  - 区分算法收益与系统收益
+  - 能批判技术报告证据
+  assets:
+    lecture: docs/stages/07_moe.md
+    notebooks:
+    - notebooks/core/09_moe.ipynb
+    exercises:
+    - '18'
+    sources:
+    - deepseekmoe
+    mode: implementation
+    deliverable: dispatch/all-to-all 通信估算

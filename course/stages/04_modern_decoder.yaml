@@ -1,0 +1,154 @@
+stage:
+  id: modern_decoder
+  weeks: 16-21
+  title: 现代 Decoder 组件
+lessons:
+- week: 16
+  stage: modern_decoder
+  title: Pre-Norm 与 RMSNorm
+  objectives:
+  - 理解归一化位置对梯度的影响
+  - 从零实现 RMSNorm
+  readings:
+  - docs/stages/04_modern_decoder.md
+  experiments:
+  - LayerNorm/RMSNorm 对照
+  - 深层梯度
+  exercise: 证明 RMSNorm 不减均值
+  acceptance:
+  - 与参考公式一致
+  - 解释 Pre-Norm 的训练优势
+  assets:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks:
+    - notebooks/core/06_modern_decoder.ipynb
+    exercises:
+    - 09
+    sources:
+    - rmsnorm
+    mode: implementation
+    deliverable: 经典与 RMSNorm 消融
+- week: 17
+  stage: modern_decoder
+  title: SwiGLU 与门控 MLP
+  objectives:
+  - 把门控理解为内容过滤
+  - 匹配参数预算
+  readings:
+  - docs/stages/04_modern_decoder.md
+  experiments:
+  - GELU/SwiGLU 对照
+  - 激活分布
+  exercise: 在相似参数量下替换 MLP
+  acceptance:
+  - 实现 SwiGLU
+  - 说明隐藏维为何常改变
+  assets:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks:
+    - notebooks/core/06_modern_decoder.ipynb
+    exercises:
+    - 09
+    sources:
+    - swiglu
+    mode: implementation
+    deliverable: 等参数预算 MLP/SwiGLU 对照
+- week: 18
+  stage: modern_decoder
+  title: RoPE：用旋转编码相对位置
+  objectives:
+  - 从二维旋转理解 RoPE
+  - 正确处理频率和维度
+  readings:
+  - docs/stages/04_modern_decoder.md
+  experiments:
+  - 旋转向量动画
+  - 相对位移点积
+  exercise: 实现 apply_rope
+  acceptance:
+  - 保持向量范数
+  - 相对位置测试通过
+  assets:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks:
+    - notebooks/core/06_modern_decoder.ipynb
+    exercises:
+    - '07'
+    sources:
+    - rope
+    mode: implementation
+    deliverable: RoPE 范数与相对位移核查
+- week: 19
+  stage: modern_decoder
+  title: MQA 与 GQA
+  objectives:
+  - 理解共享 KV 如何节省缓存
+  - 追踪 query head 到 KV head 映射
+  readings:
+  - docs/stages/04_modern_decoder.md
+  experiments:
+  - MHA/GQA 缓存估算
+  - 重复 KV 数值对照
+  exercise: 实现 GQA 并匹配展开后的 MHA
+  acceptance:
+  - 数值一致
+  - 能计算缓存节省比例
+  assets:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks:
+    - notebooks/core/06_modern_decoder.ipynb
+    exercises:
+    - 08
+    sources:
+    - gqa
+    mode: implementation
+    deliverable: MHA/MQA/GQA 数值与缓存对照
+- week: 20
+  stage: modern_decoder
+  title: KV Cache 与逐 token 解码
+  objectives:
+  - 区分 prefill 和 decode
+  - 避免重复计算历史 K/V
+  readings:
+  - docs/stages/04_modern_decoder.md
+  experiments:
+  - 完整前缀/缓存解码对照
+  - 缓存增长曲线
+  exercise: 为注意力加入 cache API
+  acceptance:
+  - 缓存与非缓存 logits 一致
+  - 说明速度与内存权衡
+  assets:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks:
+    - notebooks/core/06_modern_decoder.ipynb
+    exercises:
+    - '03'
+    sources:
+    - gqa
+    mode: implementation
+    deliverable: prefill/decode cache 等价报告
+- week: 21
+  stage: modern_decoder
+  title: 初始化、AdamW 与训练稳定性
+  objectives:
+  - 理解方差传播
+  - 区分权重衰减和 L2
+  readings:
+  - docs/stages/04_modern_decoder.md
+  experiments:
+  - 不同初始化的激活
+  - 梯度裁剪
+  exercise: 记录并诊断 loss spike
+  acceptance:
+  - 训练无 NaN
+  - 能解释 warmup 和 clipping
+  assets:
+    lecture: docs/stages/04_modern_decoder.md
+    notebooks:
+    - notebooks/core/06_modern_decoder.ipynb
+    exercises: []
+    sources:
+    - llama
+    mode: research
+    deliverable: 经典到现代组件逐项消融表

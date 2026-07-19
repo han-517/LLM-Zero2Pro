@@ -1,0 +1,178 @@
+stage:
+  id: transformer
+  weeks: 9-15
+  title: 从分词到 GPT
+lessons:
+- week: 9
+  stage: transformer
+  title: 文本、Unicode、字节与 token
+  objectives:
+  - 理解字符不等于字节也不等于 token
+  - 能构造确定的词表
+  readings:
+  - docs/stages/03_transformer.md
+  experiments:
+  - UTF-8 拆解
+  - 字符级 tokenizer
+  exercise: 比较中英文字符串的字符、字节和 token 数
+  acceptance:
+  - encode/decode 往返一致
+  - 解释未知 token 问题
+  assets:
+    lecture: docs/stages/03_transformer.md
+    notebooks:
+    - notebooks/core/03_tokenization_and_bpe.ipynb
+    exercises: []
+    sources:
+    - gpt2
+    mode: research
+    deliverable: 中英文字符、字节和 token 对照表
+- week: 10
+  stage: transformer
+  title: 从零实现 BPE
+  objectives:
+  - 理解频繁相邻对合并
+  - 处理确定性和特殊 token
+  readings:
+  - docs/stages/03_transformer.md
+  experiments:
+  - 训练 Byte-level BPE
+  - 查看合并过程
+  exercise: 补完 BPE 训练和编码
+  acceptance:
+  - BPE 往返一致
+  - 合并顺序可复现
+  assets:
+    lecture: docs/stages/03_transformer.md
+    notebooks:
+    - notebooks/core/03_tokenization_and_bpe.ipynb
+    exercises:
+    - '06'
+    sources:
+    - gpt2
+    mode: implementation
+    deliverable: 确定性 Byte BPE 往返核查
+- week: 11
+  stage: transformer
+  title: Embedding 与位置信息
+  objectives:
+  - 理解 token/position embedding
+  - 知道没有位置时注意力看不见顺序
+  readings:
+  - docs/stages/03_transformer.md
+  experiments:
+  - 打乱 token 测试
+  - 绝对位置 embedding
+  exercise: 构造一个必须依赖位置才能区分的样例
+  acceptance:
+  - 解释 permutation equivariance
+  - 实现位置向量相加
+  assets:
+    lecture: docs/stages/03_transformer.md
+    notebooks:
+    - notebooks/core/04_attention_mechanics.ipynb
+    exercises: []
+    sources:
+    - transformer
+    mode: research
+    deliverable: 无位置编码时的顺序反例
+- week: 12
+  stage: transformer
+  title: 缩放点积注意力
+  objectives:
+  - 从查询、钥匙、内容理解 QKV
+  - 推导缩放与 Softmax
+  readings:
+  - docs/stages/03_transformer.md
+  experiments:
+  - 单头注意力热力图
+  - 有无缩放的熵
+  exercise: 纯 PyTorch 实现单头注意力
+  acceptance:
+  - 形状正确
+  - 与 PyTorch SDPA 数值一致
+  assets:
+    lecture: docs/stages/03_transformer.md
+    notebooks:
+    - notebooks/core/04_attention_mechanics.ipynb
+    exercises:
+    - '02'
+    sources:
+    - transformer
+    mode: implementation
+    deliverable: 可编辑 Q/K/V 与缩放注意力
+- week: 13
+  stage: transformer
+  title: 因果掩码与多头注意力
+  objectives:
+  - 阻止未来信息泄漏
+  - 理解多头的独立投影与拼接
+  readings:
+  - docs/stages/03_transformer.md
+  experiments:
+  - 未来 token 扰动测试
+  - 多头注意力
+  exercise: 实现 causal MHA
+  acceptance:
+  - 未来 token 不影响过去输出
+  - 梯度通过所有投影
+  assets:
+    lecture: docs/stages/03_transformer.md
+    notebooks:
+    - notebooks/core/04_attention_mechanics.ipynb
+    exercises:
+    - '02'
+    sources:
+    - transformer
+    mode: implementation
+    deliverable: 未来扰动与全遮蔽行测试
+- week: 14
+  stage: transformer
+  title: Transformer Block 与残差
+  objectives:
+  - 组装 Attention、MLP、Norm、Residual
+  - 理解残差的信息高速路
+  readings:
+  - docs/stages/03_transformer.md
+  experiments:
+  - 无残差消融
+  - 梯度范数记录
+  exercise: 实现一个 Pre-Norm Block
+  acceptance:
+  - 端到端前反传
+  - 参数量计算正确
+  assets:
+    lecture: docs/stages/03_transformer.md
+    notebooks:
+    - notebooks/core/05_tiny_gpt.ipynb
+    exercises:
+    - '13'
+    sources:
+    - transformer
+    mode: implementation
+    deliverable: Pre-Norm Block 与梯度范数
+- week: 15
+  stage: transformer
+  title: 训练并采样 Tiny GPT
+  objectives:
+  - 完成数据到生成的闭环
+  - 理解温度和 top-k 采样
+  readings:
+  - docs/stages/03_transformer.md
+  experiments:
+  - 单 batch 过拟合
+  - 短语料训练
+  exercise: 训练并解释三个生成失败案例
+  acceptance:
+  - 损失显著下降
+  - 可保存/加载并生成文本
+  assets:
+    lecture: docs/stages/03_transformer.md
+    notebooks:
+    - notebooks/core/05_tiny_gpt.ipynb
+    exercises:
+    - '13'
+    sources:
+    - gpt2
+    mode: implementation
+    deliverable: TinyGPT 保存、加载和生成样例

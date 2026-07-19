@@ -1,0 +1,177 @@
+stage:
+  id: pretraining
+  weeks: 22-28
+  title: 预训练、数据、训练系统与评测
+lessons:
+- week: 22
+  stage: pretraining
+  title: 预训练数据从哪里来
+  objectives:
+  - 理解数据来源、许可和泄漏
+  - 设计数据卡
+  readings:
+  - docs/stages/05_pretraining.md
+  experiments:
+  - 检查小语料编码
+  - 数据统计
+  exercise: 为一个数据集写 data card
+  acceptance:
+  - 记录来源与许可
+  - 区分训练和评测污染
+  assets:
+    lecture: docs/stages/05_pretraining.md
+    notebooks:
+    - notebooks/core/07_pretraining_systems.ipynb
+    exercises:
+    - '14'
+    sources:
+    - the_pile
+    mode: implementation
+    deliverable: 数据卡、许可与来源追踪
+- week: 23
+  stage: pretraining
+  title: 过滤、去重与数据混合
+  objectives:
+  - 理解质量过滤和近重复
+  - 观察数据配比影响
+  readings:
+  - docs/stages/05_pretraining.md
+  experiments:
+  - MinHash 概念实验
+  - 重复数据过拟合
+  exercise: 实现精确去重和简单质量规则
+  acceptance:
+  - 统计每步保留率
+  - 避免静默丢数据
+  assets:
+    lecture: docs/stages/05_pretraining.md
+    notebooks:
+    - notebooks/core/07_pretraining_systems.ipynb
+    exercises:
+    - '14'
+    sources:
+    - dedup_training_data
+    mode: implementation
+    deliverable: 过滤、去重、混合和 packing 统计
+- week: 24
+  stage: pretraining
+  title: 优化器、Warmup 与学习率计划
+  objectives:
+  - 理解动量和自适应缩放
+  - 设计可解释的 scheduler
+  readings:
+  - docs/stages/05_pretraining.md
+  experiments:
+  - SGD/AdamW 对照
+  - cosine schedule
+  exercise: 从公式实现 AdamW 更新
+  acceptance:
+  - 与 PyTorch 单步一致
+  - 绘制学习率曲线
+  assets:
+    lecture: docs/stages/05_pretraining.md
+    notebooks:
+    - notebooks/core/07_pretraining_systems.ipynb
+    exercises:
+    - '15'
+    sources:
+    - adamw
+    mode: implementation
+    deliverable: AdamW 单步 oracle 与学习率曲线
+- week: 25
+  stage: pretraining
+  title: FLOPs、显存与混合精度
+  objectives:
+  - 估算参数/激活/优化器内存
+  - 理解算力与带宽瓶颈
+  readings:
+  - docs/stages/05_pretraining.md
+  experiments:
+  - resource accounting
+  - dtype 误差
+  exercise: 估算一个 1B 模型的训练内存
+  acceptance:
+  - 写清估算假设
+  - 区分训练与推理内存
+  assets:
+    lecture: docs/stages/05_pretraining.md
+    notebooks:
+    - notebooks/core/07_pretraining_systems.ipynb
+    exercises: []
+    sources:
+    - llama
+    mode: research
+    deliverable: 参数、激活和优化器内存预算
+- week: 26
+  stage: pretraining
+  title: 并行训练、检查点与故障恢复
+  objectives:
+  - 区分数据/张量/流水线并行
+  - 理解 ZeRO/FSDP 的状态分片
+  readings:
+  - docs/stages/05_pretraining.md
+  experiments:
+  - 纸面内存分片
+  - 可恢复检查点清单
+  exercise: 为 8 卡训练设计并行与恢复方案
+  acceptance:
+  - 标明通信边界
+  - 恢复后数据顺序和优化器状态可追溯
+  assets:
+    lecture: docs/stages/05_pretraining.md
+    notebooks:
+    - notebooks/core/07_pretraining_systems.ipynb
+    exercises: []
+    sources:
+    - gshard
+    mode: research
+    deliverable: 并行拓扑与可恢复检查点方案
+- week: 27
+  stage: pretraining
+  title: Scaling Laws 与计算最优
+  objectives:
+  - 理解幂律拟合
+  - 不外推到证据范围之外
+  readings:
+  - docs/stages/05_pretraining.md
+  experiments:
+  - 拟合微型 scaling curve
+  - 置信区间
+  exercise: 用多组小模型拟合趋势
+  acceptance:
+  - 报告拟合残差
+  - 说明缩尺结论局限
+  assets:
+    lecture: docs/stages/05_pretraining.md
+    notebooks:
+    - notebooks/core/07_pretraining_systems.ipynb
+    exercises: []
+    sources:
+    - chinchilla
+    mode: research
+    deliverable: Scaling Law 拟合与残差
+- week: 28
+  stage: pretraining
+  title: 可靠评测、去污染与故障诊断
+  objectives:
+  - 建立可重复评测
+  - 区分能力、污染和实现故障
+  readings:
+  - docs/stages/05_pretraining.md
+  experiments:
+  - 随机基线
+  - 一次一变量消融
+  - 近重复污染检查
+  exercise: 为 Tiny GPT 写评测卡
+  acceptance:
+  - 训练/验证分离
+  - 结果包含种子、环境和污染声明
+  assets:
+    lecture: docs/stages/05_pretraining.md
+    notebooks:
+    - notebooks/core/07_pretraining_systems.ipynb
+    exercises: []
+    sources:
+    - helm
+    mode: research
+    deliverable: 含去污染声明的评测卡

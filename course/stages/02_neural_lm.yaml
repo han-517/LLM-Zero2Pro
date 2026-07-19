@@ -1,0 +1,104 @@
+stage:
+  id: neural_lm
+  weeks: 5-8
+  title: 神经网络与早期语言模型
+lessons:
+- week: 5
+  stage: neural_lm
+  title: 监督学习、泛化与数据切分
+  objectives:
+  - 区分训练、验证和测试
+  - 理解欠拟合与过拟合
+  readings:
+  - docs/stages/02_neural_lm.md
+  experiments:
+  - 拟合一维函数
+  - 观察训练/验证曲线
+  exercise: 诊断三个典型学习曲线
+  acceptance:
+  - 不会用测试集调参
+  - 能解释泛化间隙
+  assets:
+    lecture: docs/stages/02_neural_lm.md
+    notebooks:
+    - notebooks/core/02_neural_language_models.ipynb
+    exercises: []
+    sources:
+    - the_pile
+    mode: research
+    deliverable: 无泄漏数据切分说明
+- week: 6
+  stage: neural_lm
+  title: MLP、激活函数与优化
+  objectives:
+  - 理解层的组合
+  - 观察 ReLU、tanh、SiLU 的差异
+  readings:
+  - docs/stages/02_neural_lm.md
+  experiments:
+  - 从零 MLP
+  - 梯度流可视化
+  exercise: 在无 nn.Sequential 的情况下训练两层 MLP
+  acceptance:
+  - 小数据过拟合
+  - 解释非线性的作用
+  assets:
+    lecture: docs/stages/02_neural_lm.md
+    notebooks:
+    - notebooks/core/02_neural_language_models.ipynb
+    exercises:
+    - '12'
+    sources:
+    - bengio_nplm
+    mode: implementation
+    deliverable: MLP 小数据过拟合与梯度图
+- week: 7
+  stage: neural_lm
+  title: 词向量与神经语言模型
+  objectives:
+  - 把 token 映射为可学习向量
+  - 理解 next-token prediction
+  readings:
+  - docs/stages/02_neural_lm.md
+  experiments:
+  - Bigram 表
+  - Embedding + MLP LM
+  exercise: 比较 one-hot 乘权重与 embedding lookup
+  acceptance:
+  - 实现 bigram LM
+  - 能解释 logits 和概率
+  assets:
+    lecture: docs/stages/02_neural_lm.md
+    notebooks:
+    - notebooks/core/02_neural_language_models.ipynb
+    exercises:
+    - '12'
+    sources:
+    - bengio_nplm
+    mode: implementation
+    deliverable: Bigram 与固定窗口 MLP 对照
+- week: 8
+  stage: neural_lm
+  title: RNN、状态与序列瓶颈
+  objectives:
+  - 理解循环状态
+  - 知道长依赖和串行计算为何困难
+  readings:
+  - docs/stages/02_neural_lm.md
+  experiments:
+  - 手写 Elman RNN
+  - 梯度随时间变化
+  exercise: 对比固定窗口 MLP 与 RNN
+  acceptance:
+  - 实现 RNN 单元
+  - 说出注意力替代 RNN 的动机
+  assets:
+    lecture: docs/stages/02_neural_lm.md
+    notebooks:
+    - notebooks/core/02_neural_language_models.ipynb
+    exercises:
+    - '12'
+    sources:
+    - seq2seq
+    mode: implementation
+    deliverable: RNN 状态、BPTT 和长依赖反例

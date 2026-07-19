@@ -1,0 +1,106 @@
+stage:
+  id: inference_capstone
+  weeks: 45-48
+  title: 推理优化与毕业项目
+lessons:
+- week: 45
+  stage: inference_capstone
+  title: 权重量化与误差
+  objectives:
+  - 理解 scale/zero-point/group
+  - 测量大小与误差权衡
+  readings:
+  - docs/stages/09_inference.md
+  experiments:
+  - 对称 int8/int4 伪量化
+  - 层级误差
+  exercise: 实现 per-tensor 对称量化
+  acceptance:
+  - 饱和处理正确
+  - 报告误差和理论体积
+  assets:
+    lecture: docs/stages/09_inference.md
+    notebooks:
+    - notebooks/core/11_inference_serving.ipynb
+    exercises:
+    - '20'
+    sources:
+    - gptq
+    mode: implementation
+    deliverable: 量化误差、体积和饱和报告
+- week: 46
+  stage: inference_capstone
+  title: PagedAttention 与推测解码
+  objectives:
+  - 理解非连续 KV 页面
+  - 理解 draft/verify 保持分布正确
+  readings:
+  - docs/stages/09_inference.md
+  experiments:
+  - 页面分配模拟
+  - 块式贪心推测解码：一次 target 调用验证多个候选
+  exercise: 实现教学版 speculative decoding
+  acceptance:
+  - draft 等于 target 时完整接受
+  - 解释拒绝后的修正
+  assets:
+    lecture: docs/stages/09_inference.md
+    notebooks:
+    - notebooks/core/11_inference_serving.ipynb
+    exercises:
+    - '20'
+    sources:
+    - pagedattention
+    mode: implementation
+    deliverable: 分页缓存、连续批处理和随机推测解码
+- week: 47
+  stage: inference_capstone
+  title: 基准设计与公平比较
+  objectives:
+  - 区分 latency、throughput、TTFT、TPOT
+  - 记录完整实验条件
+  readings:
+  - docs/03_capstone.md
+  - docs/stages/09_inference.md
+  experiments:
+  - 预热与重复测量
+  - 参数/FLOPs 匹配
+  exercise: 写毕业项目预注册表
+  acceptance:
+  - 一次只改变一个因素
+  - 原始结果可追溯
+  assets:
+    lecture: docs/stages/09_inference.md
+    notebooks:
+    - notebooks/core/11_inference_serving.ipynb
+    exercises:
+    - '20'
+    sources:
+    - helm
+    mode: implementation
+    deliverable: TTFT/TPOT/吞吐公平基准
+- week: 48
+  stage: inference_capstone
+  title: 毕业项目与知识答辩
+  objectives:
+  - 完成 Dense/Attention/MoE 对照
+  - 区分证据、推断和限制
+  readings:
+  - docs/03_capstone.md
+  experiments:
+  - 三个模型公平训练
+  - 生成和失败案例分析
+  exercise: 提交可复现报告并进行口述答辩
+  acceptance:
+  - 测试全部通过
+  - 报告损失/速度/内存/路由/限制
+  - 能解释关键实现而非只运行代码
+  assets:
+    lecture: docs/03_capstone.md
+    notebooks:
+    - notebooks/core/11_inference_serving.ipynb
+    exercises: []
+    sources:
+    - transformer
+    mode: capstone
+    deliverable: 可复现毕业报告、rubric 与口述答辩

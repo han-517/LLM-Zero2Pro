@@ -154,7 +154,7 @@ for _ in range(50):
 
 ## 实验
 
-1. 运行 [`00_shapes_and_autograd.ipynb`](../../notebooks/00_shapes_and_autograd.ipynb)，完成形状、广播、分支求和、有限差分和两层网络过拟合。
+1. 运行 [`core/01_shapes_and_autograd.ipynb`](../../notebooks/core/01_shapes_and_autograd.ipynb)，完成形状、广播、分支求和、有限差分和两层网络过拟合。
 2. 打开 [Softmax 交互图](../interactive/core-concepts.html#softmax)，先预测共同平移和温度的效果，再拖动滑块。
 3. 独立完成 [`01_stable_softmax.py`](../../exercises/starter/01_stable_softmax.py)，用大 logits、平移不变性和概率和核查。
 4. 改变 MLP 的学习率、去掉非线性，各记录一个失败现象，不要只保留成功曲线。

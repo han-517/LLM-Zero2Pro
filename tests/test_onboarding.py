@@ -19,7 +19,7 @@ def test_welcome_notebook_is_valid_and_has_clear_routes() -> None:
     for marker in (
         "从这里开始",
         "15 周核心路径",
-        "00_shapes_and_autograd.ipynb",
+        "core/01_shapes_and_autograd.ipynb",
         "exercises check 11",
         "NotImplementedError",
     ):

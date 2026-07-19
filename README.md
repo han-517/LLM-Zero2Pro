@@ -42,7 +42,7 @@ uv run llm-course lab
 
 1. 保持启动 JupyterLab 的终端窗口运行。
 2. 在欢迎页运行第一个环境检查单元，确认 Python 3.12、PyTorch 和项目路径。
-3. 第一次学习选择 `00_shapes_and_autograd.ipynb`。
+3. 第一次学习选择 [`notebooks/core/01_shapes_and_autograd.ipynb`](notebooks/core/01_shapes_and_autograd.ipynb)。
 4. 每个 Notebook 完成后使用 **Kernel → Restart Kernel and Run All Cells**，排除残留变量。
 5. 回到终端运行对应 starter 核查，而不是直接复制 `src/` 中的参考实现。
 
@@ -53,7 +53,7 @@ uv run llm-course lab
 | 路线 | 适合谁 | 从哪里开始 | 完成目标 |
 |---|---|---|---|
 | 15 周核心路线 | 第一次系统学习 LLM，会少量 Python | [核心学习路径](docs/core_learning_path.md) | 从文本到 Tiny GPT 的完整闭环 |
-| 48 周完整路线 | 已掌握基础 Transformer | [课程清单](course/roadmap.yaml) | 现代 Decoder、前沿注意力、MoE、后训练和推理 |
+| 48 周完整路线 | 已掌握基础 Transformer | [课程控制中心](course/README.md) | 现代 Decoder、前沿注意力、MoE、后训练和推理 |
 | 专题路线 | 想专项补 RoPE、注意力或 MoE | [架构演化指南](docs/architecture_evolution.md) | 理解代表工作之间的因果关系与工程权衡 |
 
 不确定时选择 15 周路线。完全零基础可以把前 8 周各拆成两周，不需要追赶 48 周日历。
@@ -77,32 +77,53 @@ uv run llm-course lab
 | 目录 | 用途 | 什么时候打开 | 是否建议修改 |
 |---|---|---|---|
 | `docs/` | 中文讲义、环境和架构演化 | Notebook 前后都可查 | 通常只读 |
-| `notebooks/` | 可执行实验与图表 | 当前周实验阶段 | 可以添加自己的观察单元 |
+| `notebooks/core/` | 11 本按依赖排序的必修实验 | 当前周实验阶段 | 可以添加自己的观察单元 |
+| `notebooks/optional/` | 多模态桥接与 GPU 环境选修 | 完成相应前置知识后 | 按需使用 |
 | `exercises/starter/` | 故意留空的核心代码 | 学完知识点后 | **主要填写区域** |
 | `exercises/checks/` | starter 的公开行为测试 | 填写过程中 | 通常只读 |
 | `src/llm_from_scratch/` | 完整参考实现 | starter 通过之后 | 不要用它替代练习 |
-| `course/roadmap.yaml` | 48 周目标、实验和验收 | 规划本周任务 | 通常只读 |
+| [`course/`](course/README.md) | 课程控制中心：元数据、9 个阶段、48 周资产映射 | CLI 自动读取；维护课程时查看 | 学习者通常只读 |
 | `papers/` | 论文目录、候选池和笔记模板 | 建立代码直觉之后 | 在 `notes/` 写阅读记录 |
 | `progress.yaml` | 个人学习进度 | 每周结束 | **持续更新** |
+
+仓库顶层只保留入口和跨模块配置，学习资产按职责分开：
+
+```text
+LLM-Zero2Pro/
+├─ course/                 # 课程控制层，不存讲义正文
+│  ├─ course.yaml          # 课程级元数据与路径
+│  ├─ roadmap.yaml         # 小型清单，声明阶段文件
+│  └─ stages/              # 9 个阶段、48 周资产契约
+├─ docs/                   # 讲义与互动页面
+├─ notebooks/
+│  ├─ 00_START_HERE.ipynb  # 唯一 Jupyter 入口
+│  ├─ core/                # 01–11 必修实验
+│  └─ optional/            # 80/90 选修实验
+├─ exercises/              # starter、checker 与 manifest
+├─ src/                    # 完整参考实现与 CLI
+└─ tests/                  # 数值、课程资产与 Notebook 执行测试
+```
+
+`course/` 不是另一套教程。它相当于课程数据库，供 `llm-course course path/check` 和 Notebook 元数据同步读取；真正学习内容在 `docs/`、`notebooks/`、`exercises/`。
 
 ## Notebook 顺序
 
 | 顺序 | Notebook | 核心问题 |
 |---:|---|---|
-| 0 | `00_START_HERE.ipynb` | 当前环境和学习入口是否正确？ |
-| 1 | `00_shapes_and_autograd.ipynb` | 张量形状和梯度怎样流动？ |
-| 2 | `neural_lm_lab.ipynb` | Bigram、MLP 与 RNN 怎样逐步扩大上下文？ |
-| 3 | `tokenization_lab.ipynb` | Unicode、字节和 BPE merge 怎样改变 token？ |
-| 4 | `01_attention_lab.ipynb` | Q/K/V 与组合 mask 怎样阻止未来和 padding 泄漏？ |
-| 5 | `03_tiny_gpt.ipynb` | 如何训练、保存、加载并生成 Tiny GPT？ |
-| 6 | `modern_decoder_lab.ipynb` | RMSNorm、SwiGLU、RoPE、GQA 怎样组成现代 Decoder？ |
-| 7 | `pretraining_lab.ipynb` | 数据去重、packing、优化器和评测怎样形成训练闭环？ |
-| 8 | `attention_frontiers_lab.ipynb` | Flash、稀疏、MLA、线性/Delta 状态有什么边界？ |
-| 9 | `02_moe_lab.ipynb` | Top-k 路由、容量和 dropping 如何影响负载？ |
-| 10 | `posttraining_lab.ipynb` | SFT、LoRA、DPO 与 GRPO 的输入契约是什么？ |
-| 11 | `inference_serving_lab.ipynb` | 分页缓存、连续批处理和推测解码如何影响服务指标？ |
-| 选修 | `80_multimodal_bridge.ipynb` | 视觉 patch 怎样经 projector 接到文本 Decoder？ |
-| 选修 | `90_optional_gpu_check.ipynb` | 托管 GPU 是否真的可用？ |
+| 0 | `notebooks/00_START_HERE.ipynb` | 当前环境和学习入口是否正确？ |
+| 1 | `notebooks/core/01_shapes_and_autograd.ipynb` | 张量形状和梯度怎样流动？ |
+| 2 | `notebooks/core/02_neural_language_models.ipynb` | Bigram、MLP 与 RNN 怎样逐步扩大上下文？ |
+| 3 | `notebooks/core/03_tokenization_and_bpe.ipynb` | Unicode、字节和 BPE merge 怎样改变 token？ |
+| 4 | `notebooks/core/04_attention_mechanics.ipynb` | Q/K/V 与组合 mask 怎样阻止未来和 padding 泄漏？ |
+| 5 | `notebooks/core/05_tiny_gpt.ipynb` | 如何训练、保存、加载并生成 Tiny GPT？ |
+| 6 | `notebooks/core/06_modern_decoder.ipynb` | RMSNorm、SwiGLU、RoPE、GQA 怎样组成现代 Decoder？ |
+| 7 | `notebooks/core/07_pretraining_systems.ipynb` | 数据去重、packing、优化器和评测怎样形成训练闭环？ |
+| 8 | `notebooks/core/08_attention_frontiers.ipynb` | Flash、稀疏、MLA、线性/Delta 状态有什么边界？ |
+| 9 | `notebooks/core/09_moe.ipynb` | Top-k 路由、容量和 dropping 如何影响负载？ |
+| 10 | `notebooks/core/10_posttraining.ipynb` | SFT、LoRA、DPO 与 GRPO 的输入契约是什么？ |
+| 11 | `notebooks/core/11_inference_serving.ipynb` | 分页缓存、连续批处理和推测解码如何影响服务指标？ |
+| 选修 | `notebooks/optional/80_multimodal_bridge.ipynb` | 视觉 patch 怎样经 projector 接到文本 Decoder？ |
+| 选修 | `notebooks/optional/90_gpu_environment_check.ipynb` | 托管 GPU 是否真的可用？ |
 
 更详细的运行约定见 [Notebook 使用指南](notebooks/README.md)。
 

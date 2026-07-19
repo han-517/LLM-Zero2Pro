@@ -1,0 +1,155 @@
+stage:
+  id: attention_frontiers
+  weeks: 29-34
+  title: 注意力与序列建模前沿
+lessons:
+- week: 29
+  stage: attention_frontiers
+  title: FlashAttention 与 IO-aware 思维
+  objectives:
+  - 区分数学等价和执行顺序
+  - 理解分块减少 HBM 往返
+  readings:
+  - docs/stages/06_attention_frontiers.md
+  experiments:
+  - 分块在线 Softmax
+  - IO 计数模型
+  exercise: 实现 CPU tiled attention 参考版
+  acceptance:
+  - 与标准注意力一致
+  - 解释为何不是近似注意力
+  assets:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks:
+    - notebooks/core/08_attention_frontiers.ipynb
+    exercises:
+    - '16'
+    sources:
+    - flashattention
+    mode: implementation
+    deliverable: 在线 Softmax 与标准注意力等价
+- week: 30
+  stage: attention_frontiers
+  title: 滑窗、块稀疏与全局 token
+  objectives:
+  - 理解稀疏模式
+  - 分析感受野随层数增长
+  readings:
+  - docs/stages/06_attention_frontiers.md
+  experiments:
+  - 稀疏 mask 可视化
+  - 长距离复制任务
+  exercise: 实现 sliding-window attention
+  acceptance:
+  - mask 正确
+  - 给出无法连接的反例
+  assets:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks:
+    - notebooks/core/08_attention_frontiers.ipynb
+    exercises:
+    - '16'
+    sources:
+    - longformer
+    mode: implementation
+    deliverable: 滑窗/稀疏感受野反例
+- week: 31
+  stage: attention_frontiers
+  title: MLA 与低维 KV 表示
+  objectives:
+  - 理解 KV 压缩、历史重建与投影吸收
+  - 认识 decoupled RoPE
+  readings:
+  - docs/stages/06_attention_frontiers.md
+  experiments:
+  - MHA/GQA/MLA 缓存估算
+  - latent-cache reconstruction baseline
+  exercise: 实现并标注教学版 latent-cache baseline
+  acceptance:
+  - 输出/缓存形状正确
+  - 不把历史重建误称为 absorbed decode
+  assets:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks:
+    - notebooks/core/08_attention_frontiers.ipynb
+    exercises:
+    - '17'
+    sources:
+    - deepseek_v2
+    mode: implementation
+    deliverable: MLA baseline 成本与边界说明
+- week: 32
+  stage: attention_frontiers
+  title: 线性注意力的结合律与归一化状态
+  objectives:
+  - 理解正特征映射和归一化分母
+  - 连接并行训练与递归解码
+  readings:
+  - docs/stages/06_attention_frontiers.md
+  experiments:
+  - 二次/线性实现对照
+  - parallel/recurrent 数值等价
+  exercise: 实现因果归一化线性注意力
+  acceptance:
+  - 并行与递归形式一致
+  - 明确它不等于 Softmax 注意力
+  assets:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks:
+    - notebooks/core/08_attention_frontiers.ipynb
+    exercises:
+    - '16'
+    sources:
+    - performer
+    mode: implementation
+    deliverable: 线性注意力并行/递归等价
+- week: 33
+  stage: attention_frontiers
+  title: Mamba-2、DeltaNet 与选择性状态更新
+  objectives:
+  - 理解 SSD 对偶和 delta rule
+  - 观察选择性遗忘与定向擦除
+  readings:
+  - docs/stages/06_attention_frontiers.md
+  experiments:
+  - 选择性衰减
+  - 冲突键值写入
+  - 并行/递归路径
+  exercise: 实现教学版门控 Delta 状态层
+  acceptance:
+  - 状态更新数值测试通过
+  - 说明 decay、beta 与注意力的差异
+  assets:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks:
+    - notebooks/core/08_attention_frontiers.ipynb
+    exercises:
+    - '17'
+    sources:
+    - gated_deltanet
+    mode: implementation
+    deliverable: Delta 状态冲突写入实验
+- week: 34
+  stage: attention_frontiers
+  title: 混合架构、DSA 与长上下文评测
+  objectives:
+  - 理解 full/linear 混合
+  - 区分稀疏检索与固定窗口
+  readings:
+  - docs/stages/06_attention_frontiers.md
+  experiments:
+  - 混合层消融
+  - needle/复制任务
+  exercise: 为一种混合架构设计公平消融
+  acceptance:
+  - 报告质量/速度双指标
+  - 不把上下文长度等同有效利用
+  assets:
+    lecture: docs/stages/06_attention_frontiers.md
+    notebooks:
+    - notebooks/core/08_attention_frontiers.ipynb
+    exercises: []
+    sources:
+    - kimi_linear
+    mode: research
+    deliverable: 混合架构长上下文公平消融
