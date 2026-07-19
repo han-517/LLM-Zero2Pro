@@ -339,8 +339,11 @@ def render_learning_path(week_count: int = 15) -> str:
 
     week_by_number = {int(item["week"]): item for item in data["weeks"]}
     assets = {int(key): value for key, value in data["assets"].items()}
+    generator = f"uv run llm-course course path --weeks {week_count}"
+    if week_count == 15:
+        generator += " --write"
     lines = [
-        "<!-- 由 uv run llm-course course path --weeks 15 --write 生成，请勿手工维护表格。 -->",
+        f"<!-- 由 {generator} 生成，请勿手工维护表格。 -->",
         f"# {title}",
         "",
         "这份路径由 course/roadmap.yaml 聚合 course.yaml 与 stages/。每周都按讲义、CPU Notebook、",
@@ -348,23 +351,44 @@ def render_learning_path(week_count: int = 15) -> str:
         "互动实验统一入口：docs/interactive/index.html；代码练习清单：",
         "exercises/manifest.yaml。二者都由课程健康检查纳入契约。",
         "",
-        "",
-        "| 周 | 主题 | Notebook | Starter / 产出 |",
-        "|---:|---|---|---|",
     ]
-    for week in selected:
+    if week_count == 15:
+        lines.extend(
+            [
+                "15 周路线从完整课程中抽取关键单元。学习单元按 1–15 连续进行；",
+                "“原课程周”保留 48 周路线的资产编号，所以出现跳号是正常的。",
+                "",
+                "| 学习单元 | 原课程周 | 主题 | Notebook | Starter / 产出 |",
+                "|---:|---:|---|---|---|",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "| 周 | 主题 | Notebook | Starter / 产出 |",
+                "|---:|---|---|---|",
+            ]
+        )
+
+    for unit, week in enumerate(selected, start=1):
         lesson = week_by_number[week]
         asset = assets[week]
         notebook = ", ".join(Path(path).name for path in asset["notebooks"])
         starter = ", ".join(map(str, asset["exercises"]))
         output = starter or asset["deliverable"]
-        lines.append(f"| {week} | {lesson['title']} | {notebook} | {output} |")
+        if week_count == 15:
+            lines.append(f"| {unit} | {week} | {lesson['title']} | {notebook} | {output} |")
+        else:
+            lines.append(f"| {week} | {lesson['title']} | {notebook} | {output} |")
+
+    route_order = "学习单元 1 → 15" if week_count == 15 else "原课程周 1 → 48"
     lines.extend(
         [
             "",
-            "使用方法：先运行 uv run llm-course lab，完成当前周 Notebook，",
-            "再运行 uv run llm-course exercises check <编号>。维护者使用",
-            "uv run llm-course course check 核查 48 周资产闭环。",
+            f"使用方法：先运行 uv run llm-course lab，再按“{route_order}”完成当前行的 Notebook，",
+            "然后运行 uv run llm-course exercises check <编号>；",
+            "没有编号的周次按 deliverable/rubric 验收。",
+            "维护者使用 uv run llm-course course check 核查 48 周资产闭环。",
             "",
         ]
     )

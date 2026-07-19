@@ -3,7 +3,12 @@ from pathlib import Path
 
 import yaml
 
-from llm_course.course import load_roadmap, validate_course_assets, validate_roadmap
+from llm_course.course import (
+    load_roadmap,
+    render_learning_path,
+    validate_course_assets,
+    validate_roadmap,
+)
 from llm_course.papers import load_catalog, validate_catalog
 
 
@@ -15,6 +20,16 @@ def test_roadmap_has_48_decision_complete_weeks() -> None:
 
 def test_required_learning_assets_exist() -> None:
     assert validate_course_assets().ok
+
+
+def test_core_path_distinguishes_learning_units_from_source_weeks() -> None:
+    core = render_learning_path(15)
+    assert "| 学习单元 | 原课程周 |" in core
+    assert "| 5 | 7 | 词向量与神经语言模型 |" in core
+
+    complete = render_learning_path(48)
+    assert "| 周 | 主题 | Notebook | Starter / 产出 |" in complete
+    assert "| 48 | 毕业项目与知识答辩 |" in complete
 
 
 def test_paper_catalog_meets_all_three_tier_targets() -> None:

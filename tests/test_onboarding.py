@@ -76,6 +76,8 @@ def test_readme_and_environment_offer_windows_and_macos_paths() -> None:
         assert "macOS" in document
         assert "uv run llm-course lab" in document
     assert "00_START_HERE.ipynb" in readme
+    for marker in ("先用一分钟判断", "原课程周编号", "中途能否切换路线"):
+        assert marker in readme
     assert "00_START_HERE.ipynb" in notebook_guide
     assert "Apple Silicon" in environment
     assert "Intel Mac" in environment

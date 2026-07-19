@@ -19,7 +19,7 @@ uv run llm-course doctor
 uv run llm-course lab
 ```
 
-最后一条命令会启动 JupyterLab，并直接打开 `notebooks/00_START_HERE.ipynb`。不要第一次进入 Lab 后随意浏览全部目录；欢迎页会先检查 Kernel，再让你选择路线。
+最后一条命令会启动 JupyterLab，并直接打开 `notebooks/00_START_HERE.ipynb`。不要第一次进入 Lab 后随意浏览全部目录；欢迎页会先检查 Kernel，再帮助你判断路线并打开第一本 Notebook。
 
 如果你已经执行过 `uv sync`，以后回来通常只需要：
 
@@ -42,21 +42,91 @@ uv run llm-course lab
 
 1. 保持启动 JupyterLab 的终端窗口运行。
 2. 在欢迎页运行第一个环境检查单元，确认 Python 3.12、PyTorch 和项目路径。
-3. 第一次学习选择 [`notebooks/core/01_shapes_and_autograd.ipynb`](notebooks/core/01_shapes_and_autograd.ipynb)。
+3. 按下方的路线判断表选择 15 周、48 周或专题学习；不确定就从 [`notebooks/core/01_shapes_and_autograd.ipynb`](notebooks/core/01_shapes_and_autograd.ipynb) 开始。
 4. 每个 Notebook 完成后使用 **Kernel → Restart Kernel and Run All Cells**，排除残留变量。
 5. 回到终端运行对应 starter 核查，而不是直接复制 `src/` 中的参考实现。
 
 如果你使用了普通的 `uv run jupyter lab`，请手动打开 [`notebooks/00_START_HERE.ipynb`](notebooks/00_START_HERE.ipynb)。推荐始终使用课程命令，它会固定仓库根目录并打开欢迎页。
 
-## 选择学习路线
+## 先选择适合你的课程路线
 
-| 路线 | 适合谁 | 从哪里开始 | 完成目标 |
-|---|---|---|---|
-| 15 周核心路线 | 第一次系统学习 LLM，会少量 Python | [核心学习路径](docs/core_learning_path.md) | 从文本到 Tiny GPT 的完整闭环 |
-| 48 周完整路线 | 已掌握基础 Transformer | [课程控制中心](course/README.md) | 现代 Decoder、前沿注意力、MoE、后训练和推理 |
-| 专题路线 | 想专项补 RoPE、注意力或 MoE | [架构演化指南](docs/architecture_evolution.md) | 理解代表工作之间的因果关系与工程权衡 |
+这里的“选择路线”不是安装另一个版本，也不会隐藏或删除文件。三条路线共用同一套环境、讲义、Notebook 和代码模板；路线只决定**学习哪些主题、采用什么顺序以及按什么标准结课**。当前 CLI 不会替你注册账号或锁定路线，最终以你正在使用的路线表和 `progress.yaml` 中的记录为准。
 
-不确定时选择 15 周路线。完全零基础可以把前 8 周各拆成两周，不需要追赶 48 周日历。
+### 先用一分钟判断
+
+| 如果你符合下面的情况 | 选择 | 原因 |
+|---|---|---|
+| 第一次系统学习 LLM；对张量、梯度、交叉熵或注意力仍不熟 | **15 周核心路线** | 先建立从数学、分词、注意力到 Tiny GPT、现代 Decoder 和 MoE 的主干 |
+| 已经能解释并实现 causal self-attention 和 Transformer Block，希望系统学习训练、前沿架构、后训练与推理服务 | **48 周完整路线** | 不跳过数据治理、训练系统、评测、对齐和服务工程 |
+| 已完成经典 Transformer，只想补 RoPE/GQA、注意力前沿、MoE、后训练或推理中的一个主题 | **专题路线** | 先做前置自测，再按专题顺序学习；它不是独立的完整毕业路线 |
+| 主要想了解图像怎样接入文本 Decoder | **多模态选修** | 先完成 Tiny GPT 和现代 Decoder，再做课外扩展；它不占 48 周主线 |
+
+如果有任何一项拿不准，选 15 周路线。这里的“一周”表示一个学习单元，不要求与自然周严格对齐；每周只有 3–4 小时时，可以把一个单元拆成两周。
+
+### 15 周核心路线：第一次系统学习时选它
+
+它从 48 周课程中抽取 15 个关键学习单元，因此路线表中的“原课程周”会从 4 跳到 7、从 20 跳到 35，这是有意的，不是文件缺失。15 个学习单元仍然按表格从上到下连续完成。
+
+在仓库根目录执行：
+
+```text
+# 先在终端查看完整的 15 个学习单元
+uv run llm-course course path --weeks 15
+
+# 再进入统一的 Jupyter 入口
+uv run llm-course lab
+```
+
+然后打开[15 周核心学习路径](docs/core_learning_path.md)，从表格第一行开始。不要按照原课程周编号自行补齐被跳过的周次；被跳过的内容留给以后升级到 48 周路线。
+
+### 48 周完整路线：想完整掌握训练到服务时选它
+
+48 周路线按原课程周 1 → 48 顺序学习，覆盖全部九个阶段。它不要求你一开始就会所有现代主题，但默认你至少能读懂 Python/PyTorch，并愿意完整完成训练系统、评测和工程实验。
+
+```text
+# 输出 48 周逐周路线；从第 1 周顺序执行，不要按 Notebook 数量估算周数
+uv run llm-course course path --weeks 48
+
+uv run llm-course lab
+```
+
+同一本 Notebook 可能服务连续数周：例如 `06_modern_decoder.ipynb` 同时承载 RMSNorm、SwiGLU、RoPE、GQA 和 KV Cache。每一周只完成路线表指定的知识点、starter 或产出，不是第一次打开就把整本 Notebook 当作一周做完。
+
+### 专题路线：只补一个主题时这样选
+
+专题路线适合复习和补缺，不替代 15/48 周结课要求。按下面的顺序进入，不要直接从参考实现 `src/` 开始：
+
+| 目标专题 | 最低前置知识 | 建议顺序 |
+|---|---|---|
+| 注意力、RoPE、GQA 与 KV Cache | 能解释 Softmax、矩阵乘法和张量形状 | `04_attention_mechanics` → `06_modern_decoder` → 架构互动图 |
+| FlashAttention、MLA、线性注意力与 DeltaNet | 已完成经典注意力和现代 Decoder | `06_modern_decoder` → `08_attention_frontiers` |
+| MoE | 会使用 PyTorch 自动微分，并理解 Transformer MLP | `06_modern_decoder` → `09_moe` → starter 10/05/18 |
+| SFT、LoRA、DPO 与 GRPO | 能训练 Tiny GPT，并理解 token-level log-prob | `05_tiny_gpt` → `10_posttraining` |
+| 量化、PagedAttention 与推测解码 | 理解 KV Cache 和自回归生成 | `06_modern_decoder` → `11_inference_serving` |
+| 多模态接口（选修） | 已理解文本 Decoder、Embedding 和位置编码 | `05_tiny_gpt` → `06_modern_decoder` → `optional/80_multimodal_bridge` |
+
+完整的论文关系和方法演化见[架构演化指南](docs/architecture_evolution.md)，可交互实验从[互动实验总入口](docs/interactive/index.html)进入。
+
+### 选完路线以后，第一周具体做什么
+
+无论选择哪条路线，都对路线表的**当前一行**执行同一个闭环：
+
+1. 打开该行对应的 `docs/` 讲义，只读当前知识点。
+2. 运行该行对应的 Notebook 实验，并写下预测、形状和一个失败反例。
+3. 在 `exercises/starter/` 填写该行列出的 starter；如果这一周是研究产出，则按 deliverable 写笔记或报告。
+4. 运行 `uv run llm-course exercises check <编号或别名>`；没有 starter 的周次按讲义 rubric 自查。
+5. 使用 **Restart Kernel and Run All Cells** 重跑 Notebook。
+6. 在 `progress.yaml` 中把对应的**原课程周编号**更新为 `completed`，记录投入时间和复盘，再进入路线表下一行。
+
+例如，15 周路线的第一个学习单元对应原课程第 1 周：先运行环境检查并保存诊断信息；第二个学习单元对应原课程第 2 周，再进入形状与自动微分实验。15 周路线中即使下一行跳到原课程第 7 周，`progress.yaml` 也应更新第 7 周，而不是把它改写成“第 5 周”。
+
+### 中途能否切换路线
+
+- **15 周 → 48 周**：保留已经完成的原课程周状态，运行 `course path --weeks 48`，从最早一个未完成周次继续，并补齐此前跳过的内容。
+- **48 周 → 15 周**：无需删除进度，只按 15 周路线列出的原课程周继续；未选中的周次保留原状态。
+- **专题 → 主线**：专题完成记录可以保留，但仍要从 15/48 周路线中最早未完成的前置单元继续。
+
+课程选择不会改变 Git 分支或依赖环境，所以切换路线不需要重新安装。不要修改 `course/stages/*.yaml` 来记录个人选择；这些文件是全体学习者共享的课程契约。
 
 ## 每周固定学习循环
 
