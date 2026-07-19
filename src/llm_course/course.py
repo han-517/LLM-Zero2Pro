@@ -9,6 +9,7 @@ from typing import Any
 import yaml
 
 from llm_course.exercises import EXERCISES, validate_exercise_assets
+from llm_course.lectures import validate_weekly_lectures
 from llm_course.paths import PROJECT_ROOT, ROADMAP_PATH
 from llm_course.schemas import LessonManifest, ValidationReport
 
@@ -35,6 +36,9 @@ REQUIRED_COURSE_ASSETS = (
     "notebooks/00_START_HERE.ipynb",
     "notebooks/README.md",
     "docs/core_learning_path.md",
+    "docs/full_learning_path.md",
+    "docs/README.md",
+    "docs/weeks/README.md",
     "docs/code_templates.md",
     "docs/interactive/foundations-lab.html",
     "docs/interactive/index.html",
@@ -50,6 +54,7 @@ REQUIRED_COURSE_ASSETS = (
     "requirements-hosted-gpu.txt",
 )
 CORE_PATH_DOCUMENT = PROJECT_ROOT / "docs" / "core_learning_path.md"
+FULL_PATH_DOCUMENT = PROJECT_ROOT / "docs" / "full_learning_path.md"
 
 
 def load_roadmap(path: Path = ROADMAP_PATH) -> dict[str, Any]:
@@ -274,6 +279,7 @@ def validate_roadmap(path: Path = ROADMAP_PATH) -> ValidationReport:
             report.errors.append("paths.core_15 周次必须落在 1..48")
 
     _validate_week_assets(data, parsed, report)
+    report.merge(validate_weekly_lectures(data))
     return report
 
 
@@ -339,17 +345,15 @@ def render_learning_path(week_count: int = 15) -> str:
 
     week_by_number = {int(item["week"]): item for item in data["weeks"]}
     assets = {int(key): value for key, value in data["assets"].items()}
-    generator = f"uv run llm-course course path --weeks {week_count}"
-    if week_count == 15:
-        generator += " --write"
+    generator = f"uv run llm-course course path --weeks {week_count} --write"
     lines = [
         f"<!-- 由 {generator} 生成，请勿手工维护表格。 -->",
         f"# {title}",
         "",
         "这份路径由 course/roadmap.yaml 聚合 course.yaml 与 stages/。每周都按讲义、CPU Notebook、",
         "starter/研究产出、自动核查或 rubric、一手来源形成闭环。",
-        "互动实验统一入口：docs/interactive/index.html；代码练习清单：",
-        "exercises/manifest.yaml。二者都由课程健康检查纳入契约。",
+        "互动实验统一入口：[交互式实验](interactive/index.html)；代码练习清单：",
+        "[exercises/manifest.yaml](../exercises/manifest.yaml)。二者都由课程健康检查纳入契约。",
         "",
     ]
     if week_count == 15:
@@ -358,28 +362,38 @@ def render_learning_path(week_count: int = 15) -> str:
                 "15 周路线从完整课程中抽取关键单元。学习单元按 1–15 连续进行；",
                 "“原课程周”保留 48 周路线的资产编号，所以出现跳号是正常的。",
                 "",
-                "| 学习单元 | 原课程周 | 主题 | Notebook | Starter / 产出 |",
-                "|---:|---:|---|---|---|",
+                "| 学习单元 | 原课程周 | 主题 | 讲义 | Notebook | Starter / 产出 |",
+                "|---:|---:|---|---|---|---|",
             ]
         )
     else:
         lines.extend(
             [
-                "| 周 | 主题 | Notebook | Starter / 产出 |",
-                "|---:|---|---|---|",
+                "| 周 | 主题 | 讲义 | Notebook | Starter / 产出 |",
+                "|---:|---|---|---|---|",
             ]
         )
 
     for unit, week in enumerate(selected, start=1):
         lesson = week_by_number[week]
         asset = assets[week]
-        notebook = ", ".join(Path(path).name for path in asset["notebooks"])
+        lecture_path = Path(asset["lecture"])
+        try:
+            lecture_target = lecture_path.relative_to("docs").as_posix()
+        except ValueError:
+            lecture_target = f"../{lecture_path.as_posix()}"
+        lecture = f"[本周讲义]({lecture_target})"
+        notebook = ", ".join(
+            f"[{Path(path).name}](../{Path(path).as_posix()})" for path in asset["notebooks"]
+        )
         starter = ", ".join(map(str, asset["exercises"]))
         output = starter or asset["deliverable"]
         if week_count == 15:
-            lines.append(f"| {unit} | {week} | {lesson['title']} | {notebook} | {output} |")
+            lines.append(
+                f"| {unit} | {week} | {lesson['title']} | {lecture} | {notebook} | {output} |"
+            )
         else:
-            lines.append(f"| {week} | {lesson['title']} | {notebook} | {output} |")
+            lines.append(f"| {week} | {lesson['title']} | {lecture} | {notebook} | {output} |")
 
     route_order = "学习单元 1 → 15" if week_count == 15 else "原课程周 1 → 48"
     lines.extend(
@@ -395,7 +409,9 @@ def render_learning_path(week_count: int = 15) -> str:
     return "\n".join(lines)
 
 
-def write_learning_path(week_count: int = 15, path: Path = CORE_PATH_DOCUMENT) -> Path:
+def write_learning_path(week_count: int = 15, path: Path | None = None) -> Path:
+    if path is None:
+        path = CORE_PATH_DOCUMENT if week_count == 15 else FULL_PATH_DOCUMENT
     path.write_text(render_learning_path(week_count), encoding="utf-8")
     return path
 
@@ -407,17 +423,23 @@ def validate_course_assets() -> ValidationReport:
     for relative_path in REQUIRED_COURSE_ASSETS:
         if not (PROJECT_ROOT / relative_path).is_file():
             report.errors.append(f"缺少课程资产: {relative_path}")
-    if CORE_PATH_DOCUMENT.is_file():
+    generated_paths = (
+        (15, CORE_PATH_DOCUMENT, "15 周"),
+        (48, FULL_PATH_DOCUMENT, "48 周"),
+    )
+    for week_count, path, label in generated_paths:
+        if not path.is_file():
+            continue
         try:
-            actual = CORE_PATH_DOCUMENT.read_text(encoding="utf-8").replace("\r\n", "\n")
-            expected = render_learning_path(15).replace("\r\n", "\n")
+            actual = path.read_text(encoding="utf-8").replace("\r\n", "\n")
+            expected = render_learning_path(week_count).replace("\r\n", "\n")
             if actual != expected:
                 report.errors.append(
-                    "docs/core_learning_path.md 已与 roadmap 漂移；运行 "
-                    "uv run llm-course course path --weeks 15 --write"
+                    f"{path.relative_to(PROJECT_ROOT)} 已与 roadmap 漂移；运行 "
+                    f"uv run llm-course course path --weeks {week_count} --write"
                 )
         except (OSError, KeyError, TypeError, ValueError, yaml.YAMLError) as exc:
-            report.errors.append(f"无法核对 15 周路径: {exc}")
+            report.errors.append(f"无法核对 {label}路径: {exc}")
     report.merge(validate_notebook_contracts())
     return report
 

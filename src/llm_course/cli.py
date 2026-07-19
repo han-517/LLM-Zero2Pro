@@ -72,7 +72,7 @@ def _build_parser() -> argparse.ArgumentParser:
     path_parser.add_argument(
         "--write",
         action="store_true",
-        help="把 15 周路线同步到 docs/core_learning_path.md",
+        help="把所选路线同步到 docs/ 下对应的 15/48 周路径文档",
     )
 
     exercises_parser = subparsers.add_parser("exercises", help="代码模板与独立核查")
@@ -109,9 +109,6 @@ def main(argv: list[str] | None = None) -> int:
             return check_course(run_tests=not args.no_tests)
         if args.course_command == "path":
             if args.write:
-                if args.weeks != 15:
-                    print("错误: --write 只用于同步 15 周核心路线")
-                    return 2
                 path = write_learning_path(args.weeks)
                 print(f"已同步 {path}")
             else:

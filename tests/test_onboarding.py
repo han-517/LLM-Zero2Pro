@@ -19,6 +19,8 @@ def test_welcome_notebook_is_valid_and_has_clear_routes() -> None:
     for marker in (
         "从这里开始",
         "15 周核心路径",
+        "48 周完整路径",
+        "docs/weeks/NN_*.md",
         "core/01_shapes_and_autograd.ipynb",
         "exercises check 11",
         "NotImplementedError",
@@ -76,6 +78,11 @@ def test_readme_and_environment_offer_windows_and_macos_paths() -> None:
         assert "macOS" in document
         assert "uv run llm-course lab" in document
     assert "00_START_HERE.ipynb" in readme
+    assert "[教程讲义入口](docs/README.md)" in readme
+    assert "[48 周完整学习路径](docs/full_learning_path.md)" in readme
+    docs_entry = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
+    assert "逐周正文" in docs_entry
+    assert "阶段综述" in docs_entry
     for marker in ("先用一分钟判断", "原课程周编号", "中途能否切换路线"):
         assert marker in readme
     assert "00_START_HERE.ipynb" in notebook_guide

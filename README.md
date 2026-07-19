@@ -19,7 +19,7 @@ uv run llm-course doctor
 uv run llm-course lab
 ```
 
-最后一条命令会启动 JupyterLab，并直接打开 `notebooks/00_START_HERE.ipynb`。不要第一次进入 Lab 后随意浏览全部目录；欢迎页会先检查 Kernel，再帮助你判断路线并打开第一本 Notebook。
+最后一条命令会启动 JupyterLab，并直接打开 `notebooks/00_START_HERE.ipynb`。不要第一次进入 Lab 后随意浏览全部目录；欢迎页会先检查 Kernel，再帮助你判断路线并打开第一本 Notebook。所有正文统一从[教程讲义入口](docs/README.md)进入。
 
 如果你已经执行过 `uv sync`，以后回来通常只需要：
 
@@ -90,6 +90,8 @@ uv run llm-course course path --weeks 48
 uv run llm-course lab
 ```
 
+然后打开[48 周完整学习路径](docs/full_learning_path.md)，按第 1 周到第 48 周逐行完成。
+
 同一本 Notebook 可能服务连续数周：例如 `06_modern_decoder.ipynb` 同时承载 RMSNorm、SwiGLU、RoPE、GQA 和 KV Cache。每一周只完成路线表指定的知识点、starter 或产出，不是第一次打开就把整本 Notebook 当作一周做完。
 
 ### 专题路线：只补一个主题时这样选
@@ -111,7 +113,7 @@ uv run llm-course lab
 
 无论选择哪条路线，都对路线表的**当前一行**执行同一个闭环：
 
-1. 打开该行对应的 `docs/` 讲义，只读当前知识点。
+1. 从[讲义总入口](docs/README.md)打开该行对应的 `docs/weeks/NN_*.md` 逐周讲义；`docs/stages/` 只是阶段复盘摘要。
 2. 运行该行对应的 Notebook 实验，并写下预测、形状和一个失败反例。
 3. 在 `exercises/starter/` 填写该行列出的 starter；如果这一周是研究产出，则按 deliverable 写笔记或报告。
 4. 运行 `uv run llm-course exercises check <编号或别名>`；没有 starter 的周次按讲义 rubric 自查。
@@ -146,7 +148,9 @@ uv run llm-course lab
 
 | 目录 | 用途 | 什么时候打开 | 是否建议修改 |
 |---|---|---|---|
-| `docs/` | 中文讲义、环境和架构演化 | Notebook 前后都可查 | 通常只读 |
+| `docs/weeks/` | 48 篇逐周完整讲义：推导、代码、反例、实验与验收 | 每周最先打开 | 通常只读 |
+| `docs/stages/` | 9 个阶段知识地图与复盘摘要 | 阶段开始和结束 | 通常只读；不能代替逐周讲义 |
+| `docs/interactive/` | 交互图与参数实验 | 阅读公式后、Notebook 前 | 通常只读 |
 | `notebooks/core/` | 11 本按依赖排序的必修实验 | 当前周实验阶段 | 可以添加自己的观察单元 |
 | `notebooks/optional/` | 多模态桥接与 GPU 环境选修 | 完成相应前置知识后 | 按需使用 |
 | `exercises/starter/` | 故意留空的核心代码 | 学完知识点后 | **主要填写区域** |
@@ -164,7 +168,10 @@ LLM-Zero2Pro/
 │  ├─ course.yaml          # 课程级元数据与路径
 │  ├─ roadmap.yaml         # 小型清单，声明阶段文件
 │  └─ stages/              # 9 个阶段、48 周资产契约
-├─ docs/                   # 讲义与互动页面
+├─ docs/                   # 学习内容入口
+│  ├─ weeks/               # 48 篇逐周完整讲义（学习主入口）
+│  ├─ stages/              # 9 篇阶段摘要（导航与复盘）
+│  └─ interactive/         # 交互图与离线实验页
 ├─ notebooks/
 │  ├─ 00_START_HERE.ipynb  # 唯一 Jupyter 入口
 │  ├─ core/                # 01–11 必修实验
@@ -240,7 +247,7 @@ uv run llm-course exercises check all
 | 校验论文目录 | `uv run llm-course papers validate` |
 | 生成论文关系图 | `uv run llm-course papers graph` |
 | 完整课程健康检查 | `uv run llm-course course check` |
-| 生成 15/48 周路线 | `uv run llm-course course path --weeks 15` |
+| 查看 15/48 周路线 | `uv run llm-course course path --weeks 15` / `--weeks 48` |
 | 验证 48 周资产闭环但不跑测试 | `uv run llm-course course check --no-tests` |
 
 论文候选更新和三遍阅读法分别见 [论文目录](papers/README.md)与[论文阅读工作流](docs/01_paper_workflow.md)。
