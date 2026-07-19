@@ -1,7 +1,15 @@
 # 阶段四：现代 Decoder 组件——从经典 GPT 到 RoPE + GQA
 
-> 本章对应第 16–21 周。目标不是背组件名，而是把 RMSNorm、SwiGLU、RoPE、
-> GQA 与 KV Cache 真正接进同一个可训练 Decoder，并用经典配置作受控对照。
+## 逐周讲义导航
+
+> 本页是阶段知识地图，用于预习和复盘；完整推导、代码、反例、实验与验收请进入下面的逐周讲义。
+
+- [第 16 周：Pre-Norm 与 RMSNorm](../weeks/16_rmsnorm_prenorm.md)
+- [第 17 周：SwiGLU 与门控 MLP](../weeks/17_swiglu.md)
+- [第 18 周：RoPE：用旋转编码相对位置](../weeks/18_rope_and_extensions.md)
+- [第 19 周：MQA 与 GQA](../weeks/19_mqa_gqa.md)
+- [第 20 周：KV Cache 与逐 token 解码](../weeks/20_kv_cache_decode.md)
+- [第 21 周：初始化、AdamW 与训练稳定性](../weeks/21_initialization_stability.md)
 
 ## 1. 两个可运行的配置预设
 

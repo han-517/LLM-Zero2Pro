@@ -10,6 +10,7 @@ lessons:
   - 区分数学等价和执行顺序
   - 理解分块减少 HBM 往返
   readings:
+  - docs/weeks/29_flashattention.md
   - docs/stages/06_attention_frontiers.md
   experiments:
   - 分块在线 Softmax
@@ -19,7 +20,7 @@ lessons:
   - 与标准注意力一致
   - 解释为何不是近似注意力
   assets:
-    lecture: docs/stages/06_attention_frontiers.md
+    lecture: docs/weeks/29_flashattention.md
     notebooks:
     - notebooks/core/08_attention_frontiers.ipynb
     exercises:
@@ -35,6 +36,7 @@ lessons:
   - 理解稀疏模式
   - 分析感受野随层数增长
   readings:
+  - docs/weeks/30_sparse_attention.md
   - docs/stages/06_attention_frontiers.md
   experiments:
   - 稀疏 mask 可视化
@@ -44,7 +46,7 @@ lessons:
   - mask 正确
   - 给出无法连接的反例
   assets:
-    lecture: docs/stages/06_attention_frontiers.md
+    lecture: docs/weeks/30_sparse_attention.md
     notebooks:
     - notebooks/core/08_attention_frontiers.ipynb
     exercises:
@@ -60,6 +62,7 @@ lessons:
   - 理解 KV 压缩、历史重建与投影吸收
   - 认识 decoupled RoPE
   readings:
+  - docs/weeks/31_mla.md
   - docs/stages/06_attention_frontiers.md
   experiments:
   - MHA/GQA/MLA 缓存估算
@@ -69,7 +72,7 @@ lessons:
   - 输出/缓存形状正确
   - 不把历史重建误称为 absorbed decode
   assets:
-    lecture: docs/stages/06_attention_frontiers.md
+    lecture: docs/weeks/31_mla.md
     notebooks:
     - notebooks/core/08_attention_frontiers.ipynb
     exercises:
@@ -85,6 +88,7 @@ lessons:
   - 理解正特征映射和归一化分母
   - 连接并行训练与递归解码
   readings:
+  - docs/weeks/32_linear_attention.md
   - docs/stages/06_attention_frontiers.md
   experiments:
   - 二次/线性实现对照
@@ -94,7 +98,7 @@ lessons:
   - 并行与递归形式一致
   - 明确它不等于 Softmax 注意力
   assets:
-    lecture: docs/stages/06_attention_frontiers.md
+    lecture: docs/weeks/32_linear_attention.md
     notebooks:
     - notebooks/core/08_attention_frontiers.ipynb
     exercises:
@@ -110,6 +114,7 @@ lessons:
   - 理解 SSD 对偶和 delta rule
   - 观察选择性遗忘与定向擦除
   readings:
+  - docs/weeks/33_gated_deltanet.md
   - docs/stages/06_attention_frontiers.md
   experiments:
   - 选择性衰减
@@ -120,7 +125,7 @@ lessons:
   - 状态更新数值测试通过
   - 说明 decay、beta 与注意力的差异
   assets:
-    lecture: docs/stages/06_attention_frontiers.md
+    lecture: docs/weeks/33_gated_deltanet.md
     notebooks:
     - notebooks/core/08_attention_frontiers.ipynb
     exercises:
@@ -136,6 +141,7 @@ lessons:
   - 理解 full/linear 混合
   - 区分稀疏检索与固定窗口
   readings:
+  - docs/weeks/34_hybrid_dsa_evaluation.md
   - docs/stages/06_attention_frontiers.md
   experiments:
   - 混合层消融
@@ -145,7 +151,7 @@ lessons:
   - 报告质量/速度双指标
   - 不把上下文长度等同有效利用
   assets:
-    lecture: docs/stages/06_attention_frontiers.md
+    lecture: docs/weeks/34_hybrid_dsa_evaluation.md
     notebooks:
     - notebooks/core/08_attention_frontiers.ipynb
     exercises: []

@@ -1,5 +1,14 @@
 # 阶段二：神经语言模型——把“猜下一个 token”变成可检验任务
 
+## 逐周讲义导航
+
+> 本页是阶段知识地图，用于预习和复盘；完整推导、代码、反例、实验与验收请进入下面的逐周讲义。
+
+- [第 5 周：监督学习、泛化与数据切分](../weeks/05_supervision_generalization.md)
+- [第 6 周：MLP、激活函数与优化](../weeks/06_mlp_activations_optimization.md)
+- [第 7 周：词向量与神经语言模型](../weeks/07_embeddings_neural_lm.md)
+- [第 8 周：RNN、状态与序列瓶颈](../weeks/08_rnn_state_and_sequence_bottleneck.md)
+
 本阶段对应第 5–8 周。Bigram、固定窗口 MLP 和 RNN 不是为了追求现代性能，而是逐步回答三个问题：训练样本怎样构造、共享表示怎样泛化、历史信息怎样进入预测。
 
 ## 目标

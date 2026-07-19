@@ -12,6 +12,8 @@ lessons:
   readings:
   - docs/00_environment.md
   - docs/02_learning_method.md
+  - docs/stages/01_foundations.md
+  - docs/weeks/01_environment_reproducibility.md
   experiments:
   - 运行 doctor
   - 修改并执行一个 Python 函数
@@ -20,7 +22,7 @@ lessons:
   - doctor 通过
   - 能说明工作区、解释器、虚拟环境和锁文件
   assets:
-    lecture: docs/00_environment.md
+    lecture: docs/weeks/01_environment_reproducibility.md
     notebooks:
     - notebooks/00_START_HERE.ipynb
     exercises: []
@@ -36,6 +38,7 @@ lessons:
   - 熟练追踪 batch、time、feature 维
   readings:
   - docs/stages/01_foundations.md
+  - docs/weeks/02_tensor_shapes.md
   experiments:
   - NumPy 广播
   - 矩阵乘法可视化
@@ -44,7 +47,7 @@ lessons:
   - 解释点积和矩阵乘法
   - 通过形状练习
   assets:
-    lecture: docs/stages/01_foundations.md
+    lecture: docs/weeks/02_tensor_shapes.md
     notebooks:
     - notebooks/core/01_shapes_and_autograd.ipynb
     exercises: []
@@ -60,6 +63,7 @@ lessons:
   - 手算并实现反向传播
   readings:
   - docs/stages/01_foundations.md
+  - docs/weeks/03_chain_rule_autograd.md
   experiments:
   - 有限差分
   - 标量自动微分
@@ -68,7 +72,7 @@ lessons:
   - 数值梯度与解析梯度一致
   - 画出一个计算图
   assets:
-    lecture: docs/stages/01_foundations.md
+    lecture: docs/weeks/03_chain_rule_autograd.md
     notebooks:
     - notebooks/core/01_shapes_and_autograd.ipynb
     exercises:
@@ -85,6 +89,7 @@ lessons:
   - 会写基础 PyTorch 训练循环
   readings:
   - docs/stages/01_foundations.md
+  - docs/weeks/04_softmax_cross_entropy.md
   experiments:
   - 稳定 Softmax
   - 交叉熵曲线
@@ -93,7 +98,7 @@ lessons:
   - 实现稳定 Softmax
   - 完成一个线性分类器训练
   assets:
-    lecture: docs/stages/01_foundations.md
+    lecture: docs/weeks/04_softmax_cross_entropy.md
     notebooks:
     - notebooks/core/01_shapes_and_autograd.ipynb
     exercises:

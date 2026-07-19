@@ -11,6 +11,7 @@ lessons:
   - 能构造确定的词表
   readings:
   - docs/stages/03_transformer.md
+  - docs/weeks/09_text_unicode_bytes_tokens.md
   experiments:
   - UTF-8 拆解
   - 字符级 tokenizer
@@ -19,7 +20,7 @@ lessons:
   - encode/decode 往返一致
   - 解释未知 token 问题
   assets:
-    lecture: docs/stages/03_transformer.md
+    lecture: docs/weeks/09_text_unicode_bytes_tokens.md
     notebooks:
     - notebooks/core/03_tokenization_and_bpe.ipynb
     exercises: []
@@ -35,6 +36,7 @@ lessons:
   - 处理确定性和特殊 token
   readings:
   - docs/stages/03_transformer.md
+  - docs/weeks/10_byte_bpe_from_scratch.md
   experiments:
   - 训练 Byte-level BPE
   - 查看合并过程
@@ -43,7 +45,7 @@ lessons:
   - BPE 往返一致
   - 合并顺序可复现
   assets:
-    lecture: docs/stages/03_transformer.md
+    lecture: docs/weeks/10_byte_bpe_from_scratch.md
     notebooks:
     - notebooks/core/03_tokenization_and_bpe.ipynb
     exercises:
@@ -60,6 +62,7 @@ lessons:
   - 知道没有位置时注意力看不见顺序
   readings:
   - docs/stages/03_transformer.md
+  - docs/weeks/11_embeddings_and_position.md
   experiments:
   - 打乱 token 测试
   - 绝对位置 embedding
@@ -68,7 +71,7 @@ lessons:
   - 解释 permutation equivariance
   - 实现位置向量相加
   assets:
-    lecture: docs/stages/03_transformer.md
+    lecture: docs/weeks/11_embeddings_and_position.md
     notebooks:
     - notebooks/core/04_attention_mechanics.ipynb
     exercises: []
@@ -84,6 +87,7 @@ lessons:
   - 推导缩放与 Softmax
   readings:
   - docs/stages/03_transformer.md
+  - docs/weeks/12_scaled_dot_product_attention.md
   experiments:
   - 单头注意力热力图
   - 有无缩放的熵
@@ -92,7 +96,7 @@ lessons:
   - 形状正确
   - 与 PyTorch SDPA 数值一致
   assets:
-    lecture: docs/stages/03_transformer.md
+    lecture: docs/weeks/12_scaled_dot_product_attention.md
     notebooks:
     - notebooks/core/04_attention_mechanics.ipynb
     exercises:
@@ -109,6 +113,7 @@ lessons:
   - 理解多头的独立投影与拼接
   readings:
   - docs/stages/03_transformer.md
+  - docs/weeks/13_causal_mask_and_multihead_attention.md
   experiments:
   - 未来 token 扰动测试
   - 多头注意力
@@ -117,7 +122,7 @@ lessons:
   - 未来 token 不影响过去输出
   - 梯度通过所有投影
   assets:
-    lecture: docs/stages/03_transformer.md
+    lecture: docs/weeks/13_causal_mask_and_multihead_attention.md
     notebooks:
     - notebooks/core/04_attention_mechanics.ipynb
     exercises:
@@ -134,6 +139,7 @@ lessons:
   - 理解残差的信息高速路
   readings:
   - docs/stages/03_transformer.md
+  - docs/weeks/14_transformer_block_and_residual.md
   experiments:
   - 无残差消融
   - 梯度范数记录
@@ -142,7 +148,7 @@ lessons:
   - 端到端前反传
   - 参数量计算正确
   assets:
-    lecture: docs/stages/03_transformer.md
+    lecture: docs/weeks/14_transformer_block_and_residual.md
     notebooks:
     - notebooks/core/05_tiny_gpt.ipynb
     exercises:
@@ -159,6 +165,7 @@ lessons:
   - 理解温度和 top-k 采样
   readings:
   - docs/stages/03_transformer.md
+  - docs/weeks/15_train_and_sample_tiny_gpt.md
   experiments:
   - 单 batch 过拟合
   - 短语料训练
@@ -167,7 +174,7 @@ lessons:
   - 损失显著下降
   - 可保存/加载并生成文本
   assets:
-    lecture: docs/stages/03_transformer.md
+    lecture: docs/weeks/15_train_and_sample_tiny_gpt.md
     notebooks:
     - notebooks/core/05_tiny_gpt.ipynb
     exercises:

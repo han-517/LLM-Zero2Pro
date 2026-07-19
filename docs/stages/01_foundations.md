@@ -1,5 +1,14 @@
 # 阶段一：数学与 PyTorch——只学会真正用到的部分
 
+## 逐周讲义导航
+
+> 本页是阶段知识地图，用于预习和复盘；完整推导、代码、反例、实验与验收请进入下面的逐周讲义。
+
+- [第 1 周：命令行、Git、Python 与可复现环境](../weeks/01_environment_reproducibility.md)
+- [第 2 周：向量、矩阵与张量形状](../weeks/02_tensor_shapes.md)
+- [第 3 周：导数、链式法则与自动微分](../weeks/03_chain_rule_autograd.md)
+- [第 4 周：概率、Softmax、交叉熵与 PyTorch](../weeks/04_softmax_cross_entropy.md)
+
 本阶段对应第 1–4 周。目标不是先学完一本数学教材，而是建立三种调试习惯：给轴命名、用最小反例检验直觉、用数值结果核对公式。
 
 ## 目标

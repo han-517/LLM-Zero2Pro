@@ -1,5 +1,14 @@
 # 阶段九：推理优化、服务评测与毕业项目
 
+## 逐周讲义导航
+
+> 本页是阶段知识地图，用于预习和复盘；完整推导、代码、反例、实验与验收请进入下面的逐周讲义。
+
+- [第 45 周：权重量化与误差](../weeks/45_quantization.md)
+- [第 46 周：PagedAttention 与推测解码](../weeks/46_paged_attention_continuous_batching.md)
+- [第 47 周：基准设计与公平比较](../weeks/47_speculative_decoding_benchmarks.md)
+- [第 48 周：毕业项目与知识答辩](../weeks/48_capstone_defense.md)
+
 > 本章对应第 45–48 周。目标是建立从单算子正确性到在线服务 SLO 的完整测量链，
 > 并清楚区分课程模拟器、算法 reference 与生产 runtime。
 

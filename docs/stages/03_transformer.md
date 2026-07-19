@@ -1,5 +1,17 @@
 # 阶段三：Transformer——每个 token 都能查阅历史
 
+## 逐周讲义导航
+
+> 本页是阶段知识地图，用于预习和复盘；完整推导、代码、反例、实验与验收请进入下面的逐周讲义。
+
+- [第 9 周：文本、Unicode、字节与 token](../weeks/09_text_unicode_bytes_tokens.md)
+- [第 10 周：从零实现 BPE](../weeks/10_byte_bpe_from_scratch.md)
+- [第 11 周：Embedding 与位置信息](../weeks/11_embeddings_and_position.md)
+- [第 12 周：缩放点积注意力](../weeks/12_scaled_dot_product_attention.md)
+- [第 13 周：因果掩码与多头注意力](../weeks/13_causal_mask_and_multihead_attention.md)
+- [第 14 周：Transformer Block 与残差](../weeks/14_transformer_block_and_residual.md)
+- [第 15 周：训练并采样 Tiny GPT](../weeks/15_train_and_sample_tiny_gpt.md)
+
 > 学完本章，你应能从张量形状推导 causal self-attention，正确组合 causal/padding
 > mask，解释显式 `position_ids`，并用“完整前向 vs. cached decode”验证 Tiny GPT。
 

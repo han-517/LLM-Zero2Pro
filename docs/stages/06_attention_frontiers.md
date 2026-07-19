@@ -1,7 +1,15 @@
 # 阶段六：注意力与序列建模前沿
 
-> 本章对应第 28–34 周。先判断方法解决的是计算、HBM IO、KV Cache、连接数还是
-> 固定状态，再比较质量与真实硬件性能；“理论复杂度更低”不是充分结论。
+## 逐周讲义导航
+
+> 本页是阶段知识地图，用于预习和复盘；完整推导、代码、反例、实验与验收请进入下面的逐周讲义。
+
+- [第 29 周：FlashAttention 与 IO-aware 思维](../weeks/29_flashattention.md)
+- [第 30 周：滑窗、块稀疏与全局 token](../weeks/30_sparse_attention.md)
+- [第 31 周：MLA 与低维 KV 表示](../weeks/31_mla.md)
+- [第 32 周：线性注意力的结合律与归一化状态](../weeks/32_linear_attention.md)
+- [第 33 周：Mamba-2、DeltaNet 与选择性状态更新](../weeks/33_gated_deltanet.md)
+- [第 34 周：混合架构、DSA 与长上下文评测](../weeks/34_hybrid_dsa_evaluation.md)
 
 ## 1. 用瓶颈而不是缩写组织知识
 

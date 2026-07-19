@@ -1,5 +1,15 @@
 # 阶段八：后训练——从“续写文本”到“按要求回答”
 
+## 逐周讲义导航
+
+> 本页是阶段知识地图，用于预习和复盘；完整推导、代码、反例、实验与验收请进入下面的逐周讲义。
+
+- [第 40 周：指令数据与 SFT](../weeks/40_sft_data_contract.md)
+- [第 41 周：LoRA 与 QLoRA](../weeks/41_lora_qlora.md)
+- [第 42 周：偏好、奖励模型与 PPO](../weeks/42_reward_model_ppo.md)
+- [第 43 周：DPO：绕开奖励模型的偏好优化](../weeks/43_dpo_preference_optimization.md)
+- [第 44 周：GRPO、RLVR 与推理训练](../weeks/44_grpo_rlvr_reasoning.md)
+
 后训练不是一个损失函数，而是一条数据、监督、偏好、在线采样、验证器和安全评测共同组成的
 流水线。本章把“教学最小实现”和“生产训练系统”分开命名，避免跑通一个公式就误以为复现了算法。
 

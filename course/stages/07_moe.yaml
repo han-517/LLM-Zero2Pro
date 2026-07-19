@@ -10,6 +10,7 @@ lessons:
   - 区分总参数和活跃参数
   - 实现 token-choice routing
   readings:
+  - docs/weeks/35_topk_routing.md
   - docs/stages/07_moe.md
   experiments:
   - 路由热力图
@@ -19,7 +20,7 @@ lessons:
   - 门控权重归一化
   - 所有被选择且未丢弃的专家可反传；构造批次覆盖全部专家
   assets:
-    lecture: docs/stages/07_moe.md
+    lecture: docs/weeks/35_topk_routing.md
     notebooks:
     - notebooks/core/09_moe.ipynb
     exercises:
@@ -35,6 +36,7 @@ lessons:
   - 理解系统容量约束
   - 测量 expert utilization
   readings:
+  - docs/weeks/36_capacity_and_balance.md
   - docs/stages/07_moe.md
   experiments:
   - 容量溢出
@@ -44,7 +46,7 @@ lessons:
   - 溢出行为显式
   - 负载统计正确
   assets:
-    lecture: docs/stages/07_moe.md
+    lecture: docs/weeks/36_capacity_and_balance.md
     notebooks:
     - notebooks/core/09_moe.ipynb
     exercises:
@@ -60,6 +62,7 @@ lessons:
   - 控制 router logits
   - 理解路由专用 FP32
   readings:
+  - docs/weeks/37_router_stability.md
   - docs/stages/07_moe.md
   experiments:
   - 极端 logits
@@ -69,7 +72,7 @@ lessons:
   - 无 NaN
   - 能解释 z-loss 不等于负载均衡
   assets:
-    lecture: docs/stages/07_moe.md
+    lecture: docs/weeks/37_router_stability.md
     notebooks:
     - notebooks/core/09_moe.ipynb
     exercises:
@@ -85,6 +88,7 @@ lessons:
   - 理解公共知识和专业知识拆分
   - 从 Dense 初始化 MoE
   readings:
+  - docs/weeks/38_shared_experts_upcycling.md
   - docs/stages/07_moe.md
   experiments:
   - 复制 FFN 权重
@@ -94,7 +98,7 @@ lessons:
   - 初始化输出可比较
   - 说明对称性如何被打破
   assets:
-    lecture: docs/stages/07_moe.md
+    lecture: docs/weeks/38_shared_experts_upcycling.md
     notebooks:
     - notebooks/core/09_moe.ipynb
     exercises:
@@ -110,6 +114,7 @@ lessons:
   - 理解 all-to-all 通信
   - 串起 DeepSeek V1-V3 路由演化
   readings:
+  - docs/weeks/39_expert_parallel.md
   - docs/stages/07_moe.md
   experiments:
   - 通信量纸面估算
@@ -119,7 +124,7 @@ lessons:
   - 区分算法收益与系统收益
   - 能批判技术报告证据
   assets:
-    lecture: docs/stages/07_moe.md
+    lecture: docs/weeks/39_expert_parallel.md
     notebooks:
     - notebooks/core/09_moe.ipynb
     exercises:

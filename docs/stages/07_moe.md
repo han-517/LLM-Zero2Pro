@@ -1,5 +1,15 @@
 # 阶段七：MoE——稀疏激活不自动等于更快
 
+## 逐周讲义导航
+
+> 本页是阶段知识地图，用于预习和复盘；完整推导、代码、反例、实验与验收请进入下面的逐周讲义。
+
+- [第 35 周：条件计算与 Top-k 路由](../weeks/35_topk_routing.md)
+- [第 36 周：容量、token dropping 与负载均衡](../weeks/36_capacity_and_balance.md)
+- [第 37 周：Router z-loss、数值精度与稳定性](../weeks/37_router_stability.md)
+- [第 38 周：共享专家、细粒度专家与 upcycling](../weeks/38_shared_experts_upcycling.md)
+- [第 39 周：专家并行、DeepSeekMoE 与现代变体](../weeks/39_expert_parallel.md)
+
 Mixture of Experts 用条件计算扩大总参数容量：模型存有多个 FFN 专家，但每个 token 只激活少数
 专家。学习本章时始终分开四件事：总参数、每 token 活跃参数、路由质量、真实系统吞吐。
 

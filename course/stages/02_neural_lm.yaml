@@ -11,6 +11,7 @@ lessons:
   - 理解欠拟合与过拟合
   readings:
   - docs/stages/02_neural_lm.md
+  - docs/weeks/05_supervision_generalization.md
   experiments:
   - 拟合一维函数
   - 观察训练/验证曲线
@@ -19,7 +20,7 @@ lessons:
   - 不会用测试集调参
   - 能解释泛化间隙
   assets:
-    lecture: docs/stages/02_neural_lm.md
+    lecture: docs/weeks/05_supervision_generalization.md
     notebooks:
     - notebooks/core/02_neural_language_models.ipynb
     exercises: []
@@ -35,6 +36,7 @@ lessons:
   - 观察 ReLU、tanh、SiLU 的差异
   readings:
   - docs/stages/02_neural_lm.md
+  - docs/weeks/06_mlp_activations_optimization.md
   experiments:
   - 从零 MLP
   - 梯度流可视化
@@ -43,7 +45,7 @@ lessons:
   - 小数据过拟合
   - 解释非线性的作用
   assets:
-    lecture: docs/stages/02_neural_lm.md
+    lecture: docs/weeks/06_mlp_activations_optimization.md
     notebooks:
     - notebooks/core/02_neural_language_models.ipynb
     exercises:
@@ -60,6 +62,7 @@ lessons:
   - 理解 next-token prediction
   readings:
   - docs/stages/02_neural_lm.md
+  - docs/weeks/07_embeddings_neural_lm.md
   experiments:
   - Bigram 表
   - Embedding + MLP LM
@@ -68,7 +71,7 @@ lessons:
   - 实现 bigram LM
   - 能解释 logits 和概率
   assets:
-    lecture: docs/stages/02_neural_lm.md
+    lecture: docs/weeks/07_embeddings_neural_lm.md
     notebooks:
     - notebooks/core/02_neural_language_models.ipynb
     exercises:
@@ -85,6 +88,7 @@ lessons:
   - 知道长依赖和串行计算为何困难
   readings:
   - docs/stages/02_neural_lm.md
+  - docs/weeks/08_rnn_state_and_sequence_bottleneck.md
   experiments:
   - 手写 Elman RNN
   - 梯度随时间变化
@@ -93,7 +97,7 @@ lessons:
   - 实现 RNN 单元
   - 说出注意力替代 RNN 的动机
   assets:
-    lecture: docs/stages/02_neural_lm.md
+    lecture: docs/weeks/08_rnn_state_and_sequence_bottleneck.md
     notebooks:
     - notebooks/core/02_neural_language_models.ipynb
     exercises:

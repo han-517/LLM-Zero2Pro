@@ -11,6 +11,7 @@ lessons:
   - 建立 chat template 概念
   readings:
   - docs/stages/08_posttraining.md
+  - docs/weeks/40_sft_data_contract.md
   experiments:
   - 玩具指令微调
   - 只对回答计算损失
@@ -19,7 +20,7 @@ lessons:
   - prompt token 不计损失
   - 保留基础能力评测
   assets:
-    lecture: docs/stages/08_posttraining.md
+    lecture: docs/weeks/40_sft_data_contract.md
     notebooks:
     - notebooks/core/10_posttraining.ipynb
     exercises:
@@ -36,6 +37,7 @@ lessons:
   - 区分训练参数和冻结参数
   readings:
   - docs/stages/08_posttraining.md
+  - docs/weeks/41_lora_qlora.md
   experiments:
   - 低秩矩阵拟合
   - rank 消融
@@ -44,7 +46,7 @@ lessons:
   - 合并前后输出一致
   - 仅 LoRA 参数获得梯度
   assets:
-    lecture: docs/stages/08_posttraining.md
+    lecture: docs/weeks/41_lora_qlora.md
     notebooks:
     - notebooks/core/10_posttraining.ipynb
     exercises:
@@ -61,6 +63,7 @@ lessons:
   - 理解策略、价值和 KL 约束
   readings:
   - docs/stages/08_posttraining.md
+  - docs/weeks/42_reward_model_ppo.md
   experiments:
   - 成对奖励损失
   - KL 惩罚曲线
@@ -69,7 +72,7 @@ lessons:
   - 优选样本分数上升
   - 解释 reward hacking
   assets:
-    lecture: docs/stages/08_posttraining.md
+    lecture: docs/weeks/42_reward_model_ppo.md
     notebooks:
     - notebooks/core/10_posttraining.ipynb
     exercises:
@@ -86,6 +89,7 @@ lessons:
   - 实现稳定 DPO loss
   readings:
   - docs/stages/08_posttraining.md
+  - docs/weeks/43_dpo_preference_optimization.md
   experiments:
   - 玩具偏好数据
   - beta 消融
@@ -94,7 +98,7 @@ lessons:
   - 数值测试通过
   - 说明 DPO 的数据假设
   assets:
-    lecture: docs/stages/08_posttraining.md
+    lecture: docs/weeks/43_dpo_preference_optimization.md
     notebooks:
     - notebooks/core/10_posttraining.ipynb
     exercises:
@@ -111,6 +115,7 @@ lessons:
   - 区分可验证奖励和主观奖励
   readings:
   - docs/stages/08_posttraining.md
+  - docs/weeks/44_grpo_rlvr_reasoning.md
   experiments:
   - group advantage
   - 玩具算术 verifier
@@ -119,7 +124,7 @@ lessons:
   - 常数奖励时优势为零
   - 解释奖励稀疏与作弊
   assets:
-    lecture: docs/stages/08_posttraining.md
+    lecture: docs/weeks/44_grpo_rlvr_reasoning.md
     notebooks:
     - notebooks/core/10_posttraining.ipynb
     exercises:
