@@ -35,11 +35,11 @@ def _lecture_text(week: int, *, body_size: int = MIN_NON_WHITESPACE_CHARS) -> st
 def _valid_course(tmp_path: Path) -> dict:
     assets = {}
     for week in range(1, 49):
-        relative = f"docs/weeks/{week:02d}_topic.md"
+        relative = f"learning/readings/lessons/{week:02d}_topic.md"
         path = tmp_path / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(_lecture_text(week), encoding="utf-8")
-        assets[week] = {"lecture": relative}
+        assets[week] = {"lesson": relative}
     return {"assets": assets}
 
 
@@ -54,8 +54,8 @@ def test_weekly_lecture_contract_rejects_reuse_and_short_outline(
     tmp_path: Path,
 ) -> None:
     data = _valid_course(tmp_path)
-    data["assets"][2]["lecture"] = data["assets"][1]["lecture"]
-    short_path = tmp_path / data["assets"][3]["lecture"]
+    data["assets"][2]["lesson"] = data["assets"][1]["lesson"]
+    short_path = tmp_path / data["assets"][3]["lesson"]
     short_path.write_text(_lecture_text(3, body_size=1), encoding="utf-8")
 
     report = validate_weekly_lectures(data, tmp_path)
@@ -66,7 +66,7 @@ def test_weekly_lecture_contract_rejects_reuse_and_short_outline(
 
 def test_weekly_lecture_contract_rejects_broken_local_link(tmp_path: Path) -> None:
     data = _valid_course(tmp_path)
-    path = tmp_path / data["assets"][4]["lecture"]
+    path = tmp_path / data["assets"][4]["lesson"]
     path.write_text(
         path.read_text(encoding="utf-8") + "\n[missing](../../not-here.ipynb)\n",
         encoding="utf-8",
@@ -80,9 +80,10 @@ def test_weekly_lecture_contract_rejects_broken_inline_repo_path(
     tmp_path: Path,
 ) -> None:
     data = _valid_course(tmp_path)
-    path = tmp_path / data["assets"][5]["lecture"]
+    path = tmp_path / data["assets"][5]["lesson"]
     path.write_text(
-        path.read_text(encoding="utf-8") + "\n请打开 `docs/interactive/does-not-exist.html`。\n",
+        path.read_text(encoding="utf-8")
+        + "\n请打开 `learning/readings/interactive/does-not-exist.html`。\n",
         encoding="utf-8",
     )
 

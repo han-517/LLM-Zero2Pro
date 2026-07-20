@@ -34,7 +34,7 @@ def test_interactive_pages_run_without_console_errors_and_fit_mobile() -> None:
                     errors.append(message.text) if message.type == "error" else None
                 ),
             )
-            page.goto((ROOT / "docs" / "interactive" / name).as_uri())
+            page.goto((ROOT / "learning" / "readings" / "interactive" / name).as_uri())
             page.wait_for_load_state("domcontentloaded")
             control = page.locator("input, button, select").first
             if control.count():

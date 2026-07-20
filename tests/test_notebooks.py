@@ -1,3 +1,8 @@
+from __future__ import annotations
+
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import nbformat
@@ -5,19 +10,19 @@ import pytest
 from nbclient import NotebookClient
 
 ROOT = Path(__file__).resolve().parents[1]
+LAB_ROOT = ROOT / "learning" / "labs"
 REQUIRED_CPU_NOTEBOOKS = [
-    "00_START_HERE.ipynb",
-    "core/01_shapes_and_autograd.ipynb",
-    "core/02_neural_language_models.ipynb",
-    "core/03_tokenization_and_bpe.ipynb",
-    "core/04_attention_mechanics.ipynb",
-    "core/05_tiny_gpt.ipynb",
-    "core/06_modern_decoder.ipynb",
-    "core/07_pretraining_systems.ipynb",
-    "core/08_attention_frontiers.ipynb",
-    "core/09_moe.ipynb",
-    "core/10_posttraining.ipynb",
-    "core/11_inference_serving.ipynb",
+    "01_shapes_and_autograd.ipynb",
+    "02_neural_language_models.ipynb",
+    "03_tokenization_and_bpe.ipynb",
+    "04_attention_mechanics.ipynb",
+    "05_tiny_gpt.ipynb",
+    "06_modern_decoder.ipynb",
+    "07_pretraining_systems.ipynb",
+    "08_attention_frontiers.ipynb",
+    "09_moe.ipynb",
+    "10_posttraining.ipynb",
+    "11_inference_serving.ipynb",
 ]
 NETWORK_OR_INSTALL_MARKERS = (
     "!pip ",
@@ -33,7 +38,7 @@ NETWORK_OR_INSTALL_MARKERS = (
 
 
 def _load_valid_notebook(name: str):
-    path = ROOT / "notebooks" / name
+    path = LAB_ROOT / name
     notebook = nbformat.read(path, as_version=4)
     nbformat.validate(notebook)
     assert notebook.nbformat == 4
@@ -68,6 +73,26 @@ def test_required_notebook_is_valid_offline_and_executes_on_cpu(name: str) -> No
     _execute_on_cpu(path, notebook)
 
 
+@pytest.mark.parametrize("name", REQUIRED_CPU_NOTEBOOKS)
+def test_paired_vscode_python_lab_executes_on_cpu(name: str) -> None:
+    path = (LAB_ROOT / name).with_suffix(".py")
+    source = path.read_text(encoding="utf-8")
+    assert "# %%" in source
+    compile(source, str(path), "exec")
+    env = {**os.environ, "MPLBACKEND": "Agg", "PYTHONUTF8": "1"}
+    completed = subprocess.run(
+        [sys.executable, str(path)],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=90,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
+
+
 def test_multimodal_bridge_is_valid_offline_and_executes_on_cpu() -> None:
     path, notebook = _load_valid_notebook("optional/80_multimodal_bridge.ipynb")
     _assert_code_is_offline(notebook)
@@ -77,10 +102,11 @@ def test_multimodal_bridge_is_valid_offline_and_executes_on_cpu() -> None:
 def test_optional_gpu_notebook_is_valid_but_not_part_of_cpu_execution() -> None:
     _, notebook = _load_valid_notebook("optional/90_gpu_environment_check.ipynb")
     assert notebook.nbformat == 4
+    assert (LAB_ROOT / "optional/90_gpu_environment_check.py").is_file()
 
 
 def test_core_notebooks_have_a_complete_learning_loop() -> None:
-    for name in REQUIRED_CPU_NOTEBOOKS[1:]:
+    for name in REQUIRED_CPU_NOTEBOOKS:
         _, notebook = _load_valid_notebook(name)
         markdown = [cell for cell in notebook.cells if cell.cell_type == "markdown"]
         code = [cell for cell in notebook.cells if cell.cell_type == "code"]

@@ -106,7 +106,7 @@ def test_elman_rnn_is_causal_and_all_parameters_receive_gradients() -> None:
 
 
 def test_neural_lm_notebook_executes_on_cpu() -> None:
-    path = ROOT / "notebooks" / "core/02_neural_language_models.ipynb"
+    path = ROOT / "learning" / "labs" / "02_neural_language_models.ipynb"
     notebook = nbformat.read(path, as_version=4)
     client = NotebookClient(
         notebook,

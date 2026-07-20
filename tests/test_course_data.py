@@ -20,10 +20,10 @@ def test_roadmap_and_learning_path_cover_all_48_weeks() -> None:
     assert validate_course_assets().ok
 
     text = render_learning_path()
-    assert "# LLM 学习路径（1–48）" in text
-    assert "| 1 |" in text
-    assert "| 48 |" in text
-    assert text.count("](weeks/") == 48
+    assert "# LLM-Zero2Pro 学习目录（第 1–48 课）" in text
+    assert "### 第 01 课" in text
+    assert "### 第 48 课" in text
+    assert text.count("[本课完整讲义](readings/lessons/") == 48
     assert "15 周" not in text
 
 
@@ -31,8 +31,8 @@ def test_write_one_learning_path(tmp_path: Path) -> None:
     target = tmp_path / "learning_path.md"
     assert write_learning_path(target) == target
     text = target.read_text(encoding="utf-8")
-    assert "# LLM 学习路径（1–48）" in text
-    assert text.count("](weeks/") == 48
+    assert "# LLM-Zero2Pro 学习目录（第 1–48 课）" in text
+    assert text.count("[本课完整讲义](readings/lessons/") == 48
 
 
 def test_paper_catalog_meets_all_three_tier_targets() -> None:
@@ -72,11 +72,11 @@ def test_stage_overviews_link_every_weekly_lecture() -> None:
             reading
             for lesson in lessons
             for reading in lesson["readings"]
-            if reading.startswith("docs/stages/")
+            if reading.startswith("learning/readings/stages/")
         }
         assert len(overview_paths) == 1, stage["id"]
         overview = (root / overview_paths.pop()).read_text(encoding="utf-8")
         assert "完整推导、代码、反例、实验与验收" in overview
         for lesson in lessons:
-            lecture_name = Path(data["assets"][lesson["week"]]["lecture"]).name
-            assert f"(../weeks/{lecture_name})" in overview
+            lecture_name = Path(data["assets"][lesson["week"]]["lesson"]).name
+            assert f"(../lessons/{lecture_name})" in overview

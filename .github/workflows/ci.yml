@@ -25,6 +25,7 @@ jobs:
           enable-cache: true
       - run: uv python install 3.12
       - run: uv sync --locked
+      - run: uv run python scripts/sync_labs.py --check
       - run: uv run llm-course course check --no-tests
       - run: uv run ruff check .
       - run: uv run pytest -q -m "not browser"

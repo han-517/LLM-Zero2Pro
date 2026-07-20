@@ -8,7 +8,7 @@ from urllib.parse import urlsplit
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-INTERACTIVE = ROOT / "docs" / "interactive"
+INTERACTIVE = ROOT / "learning" / "readings" / "interactive"
 
 LAB_PAGES = {
     "foundations-lab.html": (
@@ -223,11 +223,12 @@ def test_architecture_evolution_covers_three_tracks_and_current_models() -> None
 
 def test_interactive_map_is_linked_from_readme() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "docs/interactive/index.html" in readme
+    assert "learning/readings/interactive/index.html" in readme
 
 
 def test_architecture_evolution_source_map_has_current_2026_review_date() -> None:
-    guide = (ROOT / "docs" / "architecture_evolution.md").read_text(encoding="utf-8")
+    guide_path = ROOT / "learning" / "readings" / "references" / "architecture_evolution.md"
+    guide = guide_path.read_text(encoding="utf-8")
     for topic in ("RoPE", "注意力机制演化", "MoE 演化", "2026 年公开模型"):
         assert topic in guide
     assert "2026-07-19" in guide

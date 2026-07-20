@@ -11,7 +11,7 @@ PYTHON_FENCE = re.compile(r"(?ms)^(?P<fence>`{3}|~~~)python[^\n]*\n(?P<code>.*?)
 
 def _weekly_lectures() -> list[tuple[int, Path]]:
     assets = load_roadmap()["assets"]
-    return [(week, PROJECT_ROOT / assets[week]["lecture"]) for week in range(1, 49)]
+    return [(week, PROJECT_ROOT / assets[week]["lesson"]) for week in range(1, 49)]
 
 
 @pytest.mark.parametrize(
