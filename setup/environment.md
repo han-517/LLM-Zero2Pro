@@ -42,7 +42,7 @@ uv run llm-course doctor
 uv run llm-course vscode
 ```
 
-如果 `code` 不在 PATH，运行 `code .` 也失败，请重新运行 VS Code 安装器并勾选 **Add to PATH**。环境仍可通过 `uv run llm-course doctor` 验证。
+如果 `code` 不在 PATH，请重新运行 VS Code 安装器并勾选 **Add to PATH**。环境仍可通过 `uv run llm-course doctor` 验证。
 
 ## macOS Apple Silicon 安装
 
@@ -90,10 +90,10 @@ uv run llm-course doctor
 
 成功时应看到 Python 3.12、PyTorch 版本、正确的项目根目录和 `matmul_ok: true`。之后打开 [课程目录](../learning/README.md)。
 
-VS Code 的解释器和 Notebook Kernel 必须来自：
+在只显示 `learning/` 的学习 workspace 中，VS Code 的解释器和 Notebook Kernel 必须来自父级仓库：
 
-- Windows：`.venv\Scripts\python.exe`
-- macOS/Linux：`.venv/bin/python`
+- Windows：`..\.venv\Scripts\python.exe`
+- macOS/Linux：`../.venv/bin/python`
 
 ## 托管 GPU 选修
 

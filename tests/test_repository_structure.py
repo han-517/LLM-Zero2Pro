@@ -72,3 +72,12 @@ def test_vscode_configuration_is_valid_json() -> None:
     )
     for path in files:
         assert isinstance(json.loads(path.read_text(encoding="utf-8")), dict)
+
+
+def test_learning_workspace_exposes_only_learning_but_runs_tasks_from_root() -> None:
+    workspace = json.loads((ROOT / "LLM-Zero2Pro.code-workspace").read_text(encoding="utf-8"))
+    assert workspace["folders"] == [{"name": "LLM-Zero2Pro 学习空间", "path": "learning"}]
+    assert workspace["settings"]["python.defaultInterpreterPath"] == ("${workspaceFolder}/../.venv")
+    tasks = workspace["tasks"]["tasks"]
+    assert tasks
+    assert all(task["options"]["cwd"] == "${workspaceFolder}/.." for task in tasks)

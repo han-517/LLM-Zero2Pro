@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -50,6 +51,8 @@ def test_vscode_command_opens_workspace_and_catalog() -> None:
     assert command[:2] == ["code", "--reuse-window"]
     assert Path(command[2]) == WORKSPACE_PATH
     assert Path(command[3]) == CATALOG_PATH
+    workspace = json.loads(WORKSPACE_PATH.read_text(encoding="utf-8"))
+    assert workspace["folders"][0]["path"] == "learning"
 
 
 def test_launch_vscode_reports_missing_code(monkeypatch, capsys) -> None:
@@ -89,6 +92,7 @@ def test_readme_defaults_to_vscode_and_supports_windows_and_macos() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "[learning/README.md](learning/README.md)" in readme
     assert "llm-course vscode" in readme
+    assert "只显示 `learning/`" in readme
     assert "JupyterLab" in readme and "可选" in readme
     assert "Windows" in readme and "macOS" in readme
     assert "15 周" not in readme and "15/48" not in readme

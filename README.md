@@ -28,18 +28,18 @@ uv run llm-course doctor
 uv run llm-course vscode
 ```
 
-最后一条命令只打开 VS Code workspace 和课程目录，不会启动 JupyterLab。也可以手动运行：
+最后一条命令打开学习专用 workspace：Explorer 只显示 `learning/`，不会显示配置、测试和参考实现，也不会启动 JupyterLab。也可以手动运行：
 
 ```text
-code .
+code LLM-Zero2Pro.code-workspace learning/README.md
 ```
 
-然后打开 `learning/README.md`。完整操作见 [VS Code 学习指南](setup/vscode.md)。
+如果只需要阅读和运行实验，也可以执行 `code learning`。需要维护整个仓库时才使用 `code .`。完整操作见 [VS Code 学习指南](setup/vscode.md)。
 
 在 VS Code 中选择项目解释器：
 
-- Windows：`.venv\Scripts\python.exe`
-- macOS/Linux：`.venv/bin/python`
+- Windows：`..\.venv\Scripts\python.exe`
+- macOS/Linux：`../.venv/bin/python`
 
 每个实验同时提供 `.ipynb` 和带 `# %%` 单元的 `.py`，同一实验任选一种即可。
 
@@ -77,7 +77,8 @@ src/                         # CLI 与完整参考实现
 solutions/                   # 选定答案说明，核查通过后再读
 tests/                       # 仓库级回归测试
 scripts/                     # 课程资产同步工具
-.vscode/                     # 推荐扩展、设置和课程任务
+.vscode/                     # 完整仓库维护设置；普通学习无需打开
+LLM-Zero2Pro.code-workspace  # 只显示 learning/ 的学习专用工作区
 ```
 
 互动资源总入口是 [learning/readings/interactive/index.html](learning/readings/interactive/index.html)。学习时通常只需要打开 `learning/`。`course/` 是课程数据库，不是另一套教程；`checks/`、`src/` 和 `tests/` 也不是阅读入口。

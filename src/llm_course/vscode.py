@@ -10,7 +10,7 @@ WORKSPACE_PATH = PROJECT_ROOT / "LLM-Zero2Pro.code-workspace"
 
 
 def build_vscode_command(code_executable: str) -> list[str]:
-    """构造 VS Code 命令，不启动 Jupyter 服务。"""
+    """构造学习专用 VS Code workspace 命令，不启动 Jupyter 服务。"""
 
     return [
         code_executable,
@@ -21,18 +21,17 @@ def build_vscode_command(code_executable: str) -> list[str]:
 
 
 def launch_vscode() -> int:
-    """打开项目 workspace 和唯一课程目录。"""
+    """打开只显示 learning/ 的 workspace 和唯一课程目录。"""
 
     code_executable = shutil.which("code")
     if code_executable is None:
         print("错误: PATH 中找不到 `code` 命令。")
-        print("可先在 VS Code 中安装 code shell command，或手动执行 `code .`。")
+        print("可先在 VS Code 中安装 code shell command。")
+        print("之后手动执行 `code LLM-Zero2Pro.code-workspace learning/README.md`。")
         print(f"然后打开课程目录: {CATALOG_PATH}")
         return 1
     if not CATALOG_PATH.is_file() or not WORKSPACE_PATH.is_file():
         print("错误: 缺少 learning/README.md 或 VS Code workspace 文件。")
         return 1
-    completed = subprocess.run(
-        build_vscode_command(code_executable), cwd=PROJECT_ROOT, check=False
-    )
+    completed = subprocess.run(build_vscode_command(code_executable), cwd=PROJECT_ROOT, check=False)
     return completed.returncode
