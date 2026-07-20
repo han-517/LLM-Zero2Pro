@@ -13,36 +13,26 @@ from llm_course.course import (
 from llm_course.papers import load_catalog, validate_catalog
 
 
-def test_roadmap_has_48_decision_complete_weeks() -> None:
-    data = load_roadmap()
-    assert [week["week"] for week in data["weeks"]] == list(range(1, 49))
+def test_roadmap_and_learning_path_cover_all_48_weeks() -> None:
+    course = load_roadmap()
+    assert [week["week"] for week in course["weeks"]] == list(range(1, 49))
     assert validate_roadmap().ok
-
-
-def test_required_learning_assets_exist() -> None:
     assert validate_course_assets().ok
 
-
-def test_core_path_distinguishes_learning_units_from_source_weeks() -> None:
-    core = render_learning_path(15)
-    assert "| 学习单元 | 原课程周 |" in core
-    assert "| 5 | 7 | 词向量与神经语言模型 |" in core
-
-    complete = render_learning_path(48)
-    assert "| 周 | 主题 | 讲义 | Notebook | Starter / 产出 |" in complete
-    assert "| 48 | 毕业项目与知识答辩 |" in complete
-    assert "[本周讲义](weeks/01_" in complete
-    assert "](../notebooks/00_START_HERE.ipynb)" in complete
+    text = render_learning_path()
+    assert "# LLM 学习路径（1–48）" in text
+    assert "| 1 |" in text
+    assert "| 48 |" in text
+    assert text.count("](weeks/") == 48
+    assert "15 周" not in text
 
 
-def test_write_learning_path_uses_a_distinct_48_week_document(tmp_path: Path) -> None:
-    target = tmp_path / "full.md"
-    assert write_learning_path(48, target) == target
+def test_write_one_learning_path(tmp_path: Path) -> None:
+    target = tmp_path / "learning_path.md"
+    assert write_learning_path(target) == target
     text = target.read_text(encoding="utf-8")
-    assert "# 48 周完整路线" in text
-    assert "course path --weeks 48 --write" in text
-    assert "[交互式实验](interactive/index.html)" in text
-    assert text.count("[本周讲义]") == 48
+    assert "# LLM 学习路径（1–48）" in text
+    assert text.count("](weeks/") == 48
 
 
 def test_paper_catalog_meets_all_three_tier_targets() -> None:

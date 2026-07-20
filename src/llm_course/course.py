@@ -35,8 +35,7 @@ REQUIRED_COURSE_ASSETS = (
     "docs/00_environment.md",
     "notebooks/00_START_HERE.ipynb",
     "notebooks/README.md",
-    "docs/core_learning_path.md",
-    "docs/full_learning_path.md",
+    "docs/learning_path.md",
     "docs/README.md",
     "docs/weeks/README.md",
     "docs/code_templates.md",
@@ -53,8 +52,7 @@ REQUIRED_COURSE_ASSETS = (
     "exercises/starter/README.md",
     "requirements-hosted-gpu.txt",
 )
-CORE_PATH_DOCUMENT = PROJECT_ROOT / "docs" / "core_learning_path.md"
-FULL_PATH_DOCUMENT = PROJECT_ROOT / "docs" / "full_learning_path.md"
+LEARNING_PATH_DOCUMENT = PROJECT_ROOT / "docs" / "learning_path.md"
 
 
 def load_roadmap(path: Path = ROADMAP_PATH) -> dict[str, Any]:
@@ -268,16 +266,6 @@ def validate_roadmap(path: Path = ROADMAP_PATH) -> ValidationReport:
     if union != set(range(1, 49)) or sum(map(len, stage_weeks.values())) != 48:
         report.errors.append("stage 周次必须无重叠地覆盖 1..48")
 
-    paths = data.get("paths")
-    if not isinstance(paths, dict) or paths.get("core_15") is None:
-        report.errors.append("roadmap.paths.core_15 缺失")
-    else:
-        core = paths["core_15"]
-        if not isinstance(core, list) or len(core) != 15 or core != sorted(set(core)):
-            report.errors.append("paths.core_15 必须是 15 个升序且不重复的周次")
-        elif any(not 1 <= int(week) <= 48 for week in core):
-            report.errors.append("paths.core_15 周次必须落在 1..48")
-
     _validate_week_assets(data, parsed, report)
     report.merge(validate_weekly_lectures(data))
     return report
@@ -332,87 +320,56 @@ def validate_notebook_contracts() -> ValidationReport:
     return report
 
 
-def render_learning_path(week_count: int = 15) -> str:
+def render_learning_path() -> str:
+    """渲染唯一的 1–48 学习路径。"""
     data = load_roadmap()
-    if week_count == 15:
-        selected = list(map(int, data["paths"]["core_15"]))
-        title = "15 周核心路线"
-    elif week_count == 48:
-        selected = list(range(1, 49))
-        title = "48 周完整路线"
-    else:
-        raise ValueError("week_count 只能是 15 或 48")
-
     week_by_number = {int(item["week"]): item for item in data["weeks"]}
     assets = {int(key): value for key, value in data["assets"].items()}
-    generator = f"uv run llm-course course path --weeks {week_count} --write"
     lines = [
-        f"<!-- 由 {generator} 生成，请勿手工维护表格。 -->",
-        f"# {title}",
+        "<!-- 由 `uv run llm-course course path --write` 生成，请勿手动维护。 -->",
+        "# LLM 学习路径（1–48）",
         "",
-        "这份路径由 course/roadmap.yaml 聚合 course.yaml 与 stages/。每周都按讲义、CPU Notebook、",
-        "starter/研究产出、自动核查或 rubric、一手来源形成闭环。",
-        "互动实验统一入口：[交互式实验](interactive/index.html)；代码练习清单：",
-        "[exercises/manifest.yaml](../exercises/manifest.yaml)。二者都由课程健康检查纳入契约。",
+        "所有人都按 1 → 48 推进；学习节奏可以不同，完成标准保持一致。",
+        "可以根据自己的基础调整每一周所用的时间，但完成标准保持一致。",
         "",
+        "[课程使用说明](../README.md#统一的学习路径怎么使用) · "
+        "[架构演进图](architecture_evolution.md) · "
+        "[练习清单](../exercises/manifest.yaml)",
+        "",
+        "| 周次 | 主题 | 讲义 | Notebook | 练习 / 交付物 |",
+        "|---:|---|---|---|---|",
     ]
-    if week_count == 15:
-        lines.extend(
-            [
-                "15 周路线从完整课程中抽取关键单元。学习单元按 1–15 连续进行；",
-                "“原课程周”保留 48 周路线的资产编号，所以出现跳号是正常的。",
-                "",
-                "| 学习单元 | 原课程周 | 主题 | 讲义 | Notebook | Starter / 产出 |",
-                "|---:|---:|---|---|---|---|",
-            ]
-        )
-    else:
-        lines.extend(
-            [
-                "| 周 | 主题 | 讲义 | Notebook | Starter / 产出 |",
-                "|---:|---|---|---|---|",
-            ]
-        )
-
-    for unit, week in enumerate(selected, start=1):
+    for week in range(1, 49):
         lesson = week_by_number[week]
         asset = assets[week]
         lecture_path = Path(asset["lecture"])
         try:
-            lecture_target = lecture_path.relative_to("docs").as_posix()
+            lecture_path = lecture_path.relative_to("docs")
         except ValueError:
-            lecture_target = f"../{lecture_path.as_posix()}"
-        lecture = f"[本周讲义]({lecture_target})"
-        notebook = ", ".join(
-            f"[{Path(path).name}](../{Path(path).as_posix()})" for path in asset["notebooks"]
+            pass
+        lecture = f"[进入讲义]({lecture_path.as_posix()})"
+        notebooks = ", ".join(
+            f"[{Path(notebook).name}](../{Path(notebook).as_posix()})"
+            for notebook in asset["notebooks"]
         )
-        starter = ", ".join(map(str, asset["exercises"]))
-        output = starter or asset["deliverable"]
-        if week_count == 15:
-            lines.append(
-                f"| {unit} | {week} | {lesson['title']} | {lecture} | {notebook} | {output} |"
-            )
-        else:
-            lines.append(f"| {week} | {lesson['title']} | {lecture} | {notebook} | {output} |")
-
-    route_order = "学习单元 1 → 15" if week_count == 15 else "原课程周 1 → 48"
+        exercise_ids = ", ".join(map(str, asset["exercises"]))
+        output = exercise_ids or asset["deliverable"]
+        lines.append(f"| {week} | {lesson['title']} | {lecture} | {notebooks} | {output} |")
     lines.extend(
         [
             "",
-            f"使用方法：先运行 uv run llm-course lab，再按“{route_order}”完成当前行的 Notebook，",
-            "然后运行 uv run llm-course exercises check <编号>；",
-            "没有编号的周次按 deliverable/rubric 验收。",
-            "维护者使用 uv run llm-course course check 核查 48 周资产闭环。",
+            "使用方式：从第 1 周开始，依次完成对应讲义、Notebook 与练习；通过本周的完成标准后，",
+            "再进入下一周。中途回来时，从第一个尚未完成的周次继续即可。",
             "",
         ]
     )
     return "\n".join(lines)
 
 
-def write_learning_path(week_count: int = 15, path: Path | None = None) -> Path:
-    if path is None:
-        path = CORE_PATH_DOCUMENT if week_count == 15 else FULL_PATH_DOCUMENT
-    path.write_text(render_learning_path(week_count), encoding="utf-8")
+def write_learning_path(path: Path | None = None) -> Path:
+    """同步唯一的学习路径文档。"""
+    path = path or LEARNING_PATH_DOCUMENT
+    path.write_text(render_learning_path(), encoding="utf-8")
     return path
 
 
@@ -423,23 +380,17 @@ def validate_course_assets() -> ValidationReport:
     for relative_path in REQUIRED_COURSE_ASSETS:
         if not (PROJECT_ROOT / relative_path).is_file():
             report.errors.append(f"缺少课程资产: {relative_path}")
-    generated_paths = (
-        (15, CORE_PATH_DOCUMENT, "15 周"),
-        (48, FULL_PATH_DOCUMENT, "48 周"),
-    )
-    for week_count, path, label in generated_paths:
-        if not path.is_file():
-            continue
+    if LEARNING_PATH_DOCUMENT.is_file():
         try:
-            actual = path.read_text(encoding="utf-8").replace("\r\n", "\n")
-            expected = render_learning_path(week_count).replace("\r\n", "\n")
+            actual = LEARNING_PATH_DOCUMENT.read_text(encoding="utf-8").replace("\r\n", "\n")
+            expected = render_learning_path().replace("\r\n", "\n")
             if actual != expected:
                 report.errors.append(
-                    f"{path.relative_to(PROJECT_ROOT)} 已与 roadmap 漂移；运行 "
-                    f"uv run llm-course course path --weeks {week_count} --write"
+                    "docs/learning_path.md 已经漂移；"
+                    "请运行 `uv run llm-course course path --write` 重新生成。"
                 )
         except (OSError, KeyError, TypeError, ValueError, yaml.YAMLError) as exc:
-            report.errors.append(f"无法核对 {label}路径: {exc}")
+            report.errors.append(f"无法核对统一学习路径: {exc}")
     report.merge(validate_notebook_contracts())
     return report
 

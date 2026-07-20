@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 from typing import TextIO
 
 from llm_course.course import (
@@ -67,12 +68,13 @@ def _build_parser() -> argparse.ArgumentParser:
     course_sub = course_parser.add_subparsers(dest="course_command", required=True)
     check_parser = course_sub.add_parser("check", help="校验 48 周闭环并运行测试")
     check_parser.add_argument("--no-tests", action="store_true", help="只校验数据，不运行 pytest")
-    path_parser = course_sub.add_parser("path", help="从 roadmap 输出 15/48 周路线")
-    path_parser.add_argument("--weeks", type=int, choices=(15, 48), default=15)
+    path_parser = course_sub.add_parser("path", help="查看统一的 1–48 学习路线")
+    path_parser.add_argument("--write", action="store_true", help="同步到 docs/learning_path.md")
     path_parser.add_argument(
-        "--write",
-        action="store_true",
-        help="把所选路线同步到 docs/ 下对应的 15/48 周路径文档",
+        "--output",
+        type=Path,
+        default=None,
+        help="可选的输出路径；不提供时只打印",
     )
 
     exercises_parser = subparsers.add_parser("exercises", help="代码模板与独立核查")
@@ -108,11 +110,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.course_command == "check":
             return check_course(run_tests=not args.no_tests)
         if args.course_command == "path":
-            if args.write:
-                path = write_learning_path(args.weeks)
+            if args.write or args.output is not None:
+                path = write_learning_path(args.output)
                 print(f"已同步 {path}")
             else:
-                print(render_learning_path(args.weeks))
+                print(render_learning_path())
             return 0
     if args.command == "exercises":
         if args.exercises_command == "list":

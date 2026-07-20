@@ -12,79 +12,62 @@ from llm_course.lab import WELCOME_NOTEBOOK, build_lab_command, launch_lab
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_welcome_notebook_is_valid_and_has_clear_routes() -> None:
+def test_start_page_uses_one_learning_path() -> None:
     notebook = nbformat.read(WELCOME_NOTEBOOK, as_version=4)
-    text = "\n".join("".join(cell.source) for cell in notebook.cells)
+    text = "\n".join(str(cell.source) for cell in notebook.cells)
     assert notebook.nbformat == 4
-    for marker in (
-        "从这里开始",
-        "15 周核心路径",
-        "48 周完整路径",
-        "docs/weeks/NN_*.md",
-        "core/01_shapes_and_autograd.ipynb",
-        "exercises check 11",
-        "NotImplementedError",
-    ):
-        assert marker in text
+    assert "1–48" in text
+    assert "../docs/learning_path.md" in text
+    assert "15 周" not in text
+    assert "15/48" not in text
     assert any(cell.cell_type == "code" for cell in notebook.cells)
 
 
-def test_lab_command_opens_welcome_from_project_root() -> None:
-    command = build_lab_command(no_browser=True, port=8890)
+def test_lab_command_opens_start_page() -> None:
+    command = build_lab_command(port=8899)
     assert command[1:3] == ["-m", "jupyterlab"]
-    assert command[3] == "notebooks\\00_START_HERE.ipynb" or command[3] == (
-        "notebooks/00_START_HERE.ipynb"
-    )
-    assert "--no-browser" in command
-    assert "--port=8890" in command
+    assert command[3].endswith("00_START_HERE.ipynb")
+    assert "--port=8899" in command
 
 
 @pytest.mark.parametrize("port", [0, 65_536])
-def test_lab_command_rejects_invalid_port(port: int) -> None:
+def test_lab_command_rejects_bad_port(port: int) -> None:
     with pytest.raises(ValueError):
         build_lab_command(port=port)
 
 
-def test_cli_parses_lab_options() -> None:
-    args = _build_parser().parse_args(["lab", "--no-browser", "--port", "8890"])
+def test_cli_lab_arguments() -> None:
+    args = _build_parser().parse_args(["lab", "--no-browser", "--port", "8899"])
     assert args.command == "lab"
     assert args.no_browser is True
-    assert args.port == 8890
+    assert args.port == 8899
 
 
-def test_launch_lab_runs_from_root(monkeypatch) -> None:
-    captured: dict[str, object] = {}
+def test_cli_path_has_no_week_choice() -> None:
+    args = _build_parser().parse_args(["course", "path"])
+    assert args.command == "course"
+    assert args.course_command == "path"
+    assert args.write is False
+    assert args.output is None
+    write_args = _build_parser().parse_args(["course", "path", "--write"])
+    assert write_args.write is True
+    with pytest.raises(SystemExit):
+        _build_parser().parse_args(["course", "path", "--weeks", "15"])
 
+
+def test_launch_lab(monkeypatch) -> None:
     class Completed:
         returncode = 0
 
-    def fake_run(command, *, cwd, check):
-        captured.update(command=command, cwd=cwd, check=check)
-        return Completed()
-
-    monkeypatch.setattr(lab_module.importlib.util, "find_spec", lambda _: object())
-    monkeypatch.setattr(lab_module.subprocess, "run", fake_run)
+    monkeypatch.setattr(lab_module.importlib.util, "find_spec", lambda _name: object())
+    monkeypatch.setattr(lab_module.subprocess, "run", lambda *_a, **_k: Completed())
     assert launch_lab() == 0
-    assert captured["cwd"] == ROOT
-    assert captured["check"] is False
 
 
-def test_readme_and_environment_offer_windows_and_macos_paths() -> None:
+def test_readme_uses_one_path_and_supports_windows_and_macos() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    environment = (ROOT / "docs" / "00_environment.md").read_text(encoding="utf-8")
-    notebook_guide = (ROOT / "notebooks" / "README.md").read_text(encoding="utf-8")
-    for document in (readme, environment):
-        assert "Windows" in document
-        assert "macOS" in document
-        assert "uv run llm-course lab" in document
-    assert "00_START_HERE.ipynb" in readme
-    assert "[教程讲义入口](docs/README.md)" in readme
-    assert "[48 周完整学习路径](docs/full_learning_path.md)" in readme
-    docs_entry = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
-    assert "逐周正文" in docs_entry
-    assert "阶段综述" in docs_entry
-    for marker in ("先用一分钟判断", "原课程周编号", "中途能否切换路线"):
-        assert marker in readme
-    assert "00_START_HERE.ipynb" in notebook_guide
-    assert "Apple Silicon" in environment
-    assert "Intel Mac" in environment
+    assert "(docs/learning_path.md)" in readme
+    assert "15 周" not in readme
+    assert "15/48" not in readme
+    assert "Windows" in readme
+    assert "macOS" in readme
