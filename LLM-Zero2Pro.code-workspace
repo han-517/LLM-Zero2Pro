@@ -1,0 +1,28 @@
+{
+  "folders": [
+    {
+      "name": "LLM-Zero2Pro",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
+    "python.terminal.activateEnvironment": true,
+    "jupyter.notebookFileRoot": "${workspaceFolder}",
+    "files.exclude": {
+      "**/.ipynb_checkpoints": true,
+      "**/__pycache__": true,
+      ".pytest_cache": true,
+      ".ruff_cache": true,
+      ".venv": true
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-toolsai.jupyter",
+      "yzhang.markdown-all-in-one",
+      "ms-vscode.live-server"
+    ]
+  }
+}

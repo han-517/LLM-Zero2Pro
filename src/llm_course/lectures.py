@@ -25,7 +25,7 @@ MARKDOWN_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 HTTPS_RE = re.compile(r"https://[^\s)>]+")
 HEADING_RE = re.compile(r"(?m)^##+\s+(.+?)\s*$")
 INLINE_REPO_PATH_RE = re.compile(
-    r"`((?:docs|notebooks|exercises|src|course|papers)/[^`\n#]+"
+    r"`((?:learning|setup|checks|solutions|src|course)/[^`\n#]+"
     r"(?:#[^`\n]+)?)`"
 )
 
@@ -49,14 +49,14 @@ def validate_weekly_lectures(data: dict[str, Any], root: Path = PROJECT_ROOT) ->
         if not isinstance(item, dict):
             report.errors.append(f"第 {week} 周缺少讲义资产")
             continue
-        lecture = item.get("lecture")
+        lecture = item.get("lesson")
         if not isinstance(lecture, str):
-            report.errors.append(f"第 {week} 周 lecture 必须是字符串")
+            report.errors.append(f"第 {week} 课 lesson 必须是字符串")
             continue
-        expected_prefix = f"docs/weeks/{week:02d}_"
+        expected_prefix = f"learning/readings/lessons/{week:02d}_"
         if not lecture.replace("\\", "/").startswith(expected_prefix):
             report.errors.append(
-                f"第 {week} 周必须使用独立讲义 {expected_prefix}*.md，当前为 {lecture!r}"
+                f"第 {week} 课必须使用独立讲义 {expected_prefix}*.md，当前为 {lecture!r}"
             )
         lecture_by_week[week] = lecture
 

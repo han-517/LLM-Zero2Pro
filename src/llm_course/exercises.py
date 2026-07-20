@@ -26,7 +26,7 @@ class Exercise:
         return ",".join(str(week) for week in self.weeks) or "选修"
 
 
-MANIFEST_PATH = PROJECT_ROOT / "exercises" / "manifest.yaml"
+MANIFEST_PATH = PROJECT_ROOT / "course" / "exercises.yaml"
 
 
 def load_exercises(path: Path = MANIFEST_PATH) -> tuple[Exercise, ...]:

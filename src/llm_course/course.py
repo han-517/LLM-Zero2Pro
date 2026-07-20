@@ -23,7 +23,7 @@ LESSON_FIELDS = {
     "exercise",
     "acceptance",
 }
-ASSET_FIELDS = {"lecture", "notebooks", "exercises", "sources", "mode", "deliverable"}
+ASSET_FIELDS = {"lesson", "lab", "interactive", "exercises", "sources", "mode", "deliverable"}
 NOTEBOOK_CONTRACT_FIELDS = {
     "weeks",
     "estimated_minutes",
@@ -32,27 +32,32 @@ NOTEBOOK_CONTRACT_FIELDS = {
     "completion_assertion",
 }
 REQUIRED_COURSE_ASSETS = (
-    "docs/00_environment.md",
-    "notebooks/00_START_HERE.ipynb",
-    "notebooks/README.md",
-    "docs/learning_path.md",
-    "docs/README.md",
-    "docs/weeks/README.md",
-    "docs/code_templates.md",
-    "docs/interactive/foundations-lab.html",
-    "docs/interactive/index.html",
-    "docs/interactive/core-concepts.html",
-    "docs/interactive/architecture-evolution.html",
-    "docs/interactive/architecture-lab.html",
-    "docs/interactive/training-and-alignment.html",
-    "docs/interactive/serving-lab.html",
-    "docs/interactive/multimodal-flow.html",
-    "docs/extensions/multimodal.md",
-    "exercises/manifest.yaml",
-    "exercises/starter/README.md",
+    "setup/environment.md",
+    "setup/vscode.md",
+    "setup/jupyterlab.md",
+    "learning/README.md",
+    "learning/labs/README.md",
+    "learning/readings/lessons/README.md",
+    "learning/readings/references/code_templates.md",
+    "learning/readings/interactive/foundations-lab.html",
+    "learning/readings/interactive/index.html",
+    "learning/readings/interactive/core-concepts.html",
+    "learning/readings/interactive/architecture-evolution.html",
+    "learning/readings/interactive/architecture-lab.html",
+    "learning/readings/interactive/training-and-alignment.html",
+    "learning/readings/interactive/serving-lab.html",
+    "learning/readings/interactive/multimodal-flow.html",
+    "learning/readings/extensions/multimodal.md",
+    "course/exercises.yaml",
+    "learning/labs/starter/README.md",
+    "checks/exercises/__init__.py",
+    "LLM-Zero2Pro.code-workspace",
+    ".vscode/extensions.json",
+    ".vscode/settings.json",
+    ".vscode/tasks.json",
     "requirements-hosted-gpu.txt",
 )
-LEARNING_PATH_DOCUMENT = PROJECT_ROOT / "docs" / "learning_path.md"
+LEARNING_PATH_DOCUMENT = PROJECT_ROOT / "learning" / "README.md"
 
 
 def load_roadmap(path: Path = ROADMAP_PATH) -> dict[str, Any]:
@@ -127,7 +132,7 @@ def _validate_week_assets(
 
     assets = data.get("assets")
     if not isinstance(assets, dict):
-        report.errors.append("roadmap.assets 必须是 week 1..48 的 mapping")
+        report.errors.append("roadmap.assets 必须是 lesson 1..48 的 mapping")
         return
 
     normalized_assets: dict[int, dict[str, Any]] = {}
@@ -135,14 +140,14 @@ def _validate_week_assets(
         try:
             week = int(raw_week)
         except (TypeError, ValueError):
-            report.errors.append(f"assets 周次必须是整数: {raw_week!r}")
+            report.errors.append(f"assets 课次必须是整数: {raw_week!r}")
             continue
         if not isinstance(item, dict):
             report.errors.append(f"assets.{week} 必须是 mapping")
             continue
         normalized_assets[week] = item
     if sorted(normalized_assets) != list(range(1, 49)):
-        report.errors.append("roadmap.assets 必须恰好覆盖 week 1..48")
+        report.errors.append("roadmap.assets 必须恰好覆盖 lesson 1..48")
 
     exercise_by_id = {exercise.exercise_id: exercise for exercise in EXERCISES}
     paper_ids = {paper.id for paper in load_catalog()}
@@ -156,40 +161,60 @@ def _validate_week_assets(
             report.errors.append(f"assets.{week} 缺字段: {sorted(missing)}")
             continue
 
-        lecture = item["lecture"]
-        notebooks = item["notebooks"]
+        lesson_path = item["lesson"]
+        lab = item["lab"]
+        interactive = item["interactive"]
         exercise_ids = item["exercises"]
         sources = item["sources"]
         mode = item["mode"]
         deliverable = item["deliverable"]
-        if not isinstance(lecture, str) or not (PROJECT_ROOT / lecture).is_file():
-            report.errors.append(f"assets.{week} 讲义不存在: {lecture!r}")
-        elif week in lesson_by_week and lecture not in lesson_by_week[week].readings:
-            report.errors.append(f"assets.{week} 的 lecture 必须出现在该周 readings 中")
+        if not isinstance(lesson_path, str) or not (PROJECT_ROOT / lesson_path).is_file():
+            report.errors.append(f"assets.{week} 讲义不存在: {lesson_path!r}")
+        elif week in lesson_by_week and lesson_path not in lesson_by_week[week].readings:
+            report.errors.append(f"assets.{week} 的 lesson 必须出现在该课 readings 中")
 
-        if not isinstance(notebooks, list) or not notebooks:
-            report.errors.append(f"assets.{week}.notebooks 必须是非空列表")
+        if lab is not None:
+            if not isinstance(lab, dict) or set(lab) != {"ipynb", "python"}:
+                report.errors.append(f"assets.{week}.lab 必须为 null 或包含 ipynb/python")
+            else:
+                for label, relative_path in lab.items():
+                    if (
+                        not isinstance(relative_path, str)
+                        or not (PROJECT_ROOT / relative_path).is_file()
+                    ):
+                        report.errors.append(f"assets.{week} {label} 实验不存在: {relative_path!r}")
+                if isinstance(lab.get("ipynb"), str) and isinstance(lab.get("python"), str):
+                    if Path(lab["ipynb"]).with_suffix(".py") != Path(lab["python"]):
+                        report.errors.append(f"assets.{week} 的双格式实验名称不配对")
+        elif mode == "implementation":
+            report.errors.append(f"assets.{week} 是实现课但没有实验文件")
+
+        if not isinstance(interactive, list) or not interactive:
+            report.errors.append(f"assets.{week}.interactive 必须是非空列表")
         else:
-            for notebook in notebooks:
-                if not isinstance(notebook, str) or not (PROJECT_ROOT / notebook).is_file():
-                    report.errors.append(f"assets.{week} Notebook 不存在: {notebook!r}")
+            for relative_path in interactive:
+                if (
+                    not isinstance(relative_path, str)
+                    or not (PROJECT_ROOT / relative_path).is_file()
+                ):
+                    report.errors.append(f"assets.{week} 互动图不存在: {relative_path!r}")
 
         if not isinstance(exercise_ids, list):
             report.errors.append(f"assets.{week}.exercises 必须是列表")
             exercise_ids = []
         for exercise_id in exercise_ids:
-            exercise = exercise_by_id.get(str(exercise_id))
+            exercise = exercise_by_id.get(str(exercise_id).zfill(2))
             if exercise is None:
                 report.errors.append(f"assets.{week} 引用未知练习: {exercise_id!r}")
             elif week not in exercise.weeks:
                 report.errors.append(
-                    f"assets.{week} 与练习 {exercise.exercise_id} 的 manifest 周次不一致"
+                    f"assets.{week} 与练习 {exercise.exercise_id} 的 manifest 课次不一致"
                 )
 
         if mode not in {"implementation", "research", "capstone"}:
             report.errors.append(f"assets.{week}.mode 非法: {mode!r}")
         if mode == "implementation" and not exercise_ids:
-            report.errors.append(f"assets.{week} 是实现周但没有 starter/checker")
+            report.errors.append(f"assets.{week} 是实现课但没有 starter/checker")
         if not isinstance(deliverable, str) or not deliverable.strip():
             report.errors.append(f"assets.{week}.deliverable 不能为空")
         if not isinstance(sources, list) or not sources:
@@ -276,22 +301,30 @@ def validate_notebook_contracts() -> ValidationReport:
     try:
         data = load_roadmap()
     except (OSError, ValueError, yaml.YAMLError) as exc:
-        report.errors.append(f"无法读取 Notebook 契约: {exc}")
+        report.errors.append(f"无法读取实验契约: {exc}")
         return report
 
     notebook_weeks: dict[str, set[int]] = {}
     notebook_starters: dict[str, set[str]] = {}
+    paired_python: dict[str, str] = {}
     for raw_week, item in data.get("assets", {}).items():
-        if not isinstance(item, dict):
+        if not isinstance(item, dict) or not isinstance(item.get("lab"), dict):
             continue
         week = int(raw_week)
-        for path in item.get("notebooks", []):
-            notebook_weeks.setdefault(path, set()).add(week)
-            notebook_starters.setdefault(path, set()).update(map(str, item.get("exercises", [])))
+        notebook = item["lab"].get("ipynb")
+        python_lab = item["lab"].get("python")
+        if not isinstance(notebook, str) or not isinstance(python_lab, str):
+            continue
+        notebook_weeks.setdefault(notebook, set()).add(week)
+        notebook_starters.setdefault(notebook, set()).update(
+            str(exercise_id).zfill(2) for exercise_id in item.get("exercises", [])
+        )
+        paired_python[notebook] = python_lab
 
     for relative_path, expected_weeks in notebook_weeks.items():
         path = PROJECT_ROOT / relative_path
-        if not path.is_file():
+        python_path = PROJECT_ROOT / paired_python[relative_path]
+        if not path.is_file() or not python_path.is_file():
             continue
         try:
             notebook = json.loads(path.read_text(encoding="utf-8"))
@@ -307,7 +340,7 @@ def validate_notebook_contracts() -> ValidationReport:
             report.errors.append(f"Notebook 契约缺字段 {relative_path}: {sorted(missing)}")
             continue
         if set(map(int, contract["weeks"])) != expected_weeks:
-            report.errors.append(f"Notebook 周次与 roadmap 不一致: {relative_path}")
+            report.errors.append(f"Notebook 课次与 roadmap 不一致: {relative_path}")
         if set(map(str, contract["starter_ids"])) != notebook_starters[relative_path]:
             report.errors.append(f"Notebook starter IDs 与 roadmap 不一致: {relative_path}")
         if not isinstance(contract["estimated_minutes"], int) or contract["estimated_minutes"] <= 0:
@@ -320,46 +353,134 @@ def validate_notebook_contracts() -> ValidationReport:
     return report
 
 
+def _catalog_target(relative_path: str) -> str:
+    path = Path(relative_path)
+    try:
+        return path.relative_to("learning").as_posix()
+    except ValueError:
+        return (Path("..") / path).as_posix()
+
+
+def _catalog_link(relative_path: str, label: str | None = None) -> str:
+    return f"[{label or Path(relative_path).name}]({_catalog_target(relative_path)})"
+
+
 def render_learning_path() -> str:
-    """渲染唯一的 1–48 学习路径。"""
+    """从课程清单渲染唯一的 1–48 课 Markdown 目录。"""
+
     data = load_roadmap()
-    week_by_number = {int(item["week"]): item for item in data["weeks"]}
     assets = {int(key): value for key, value in data["assets"].items()}
+    exercise_by_id = {exercise.exercise_id: exercise for exercise in EXERCISES}
+    weekly_hours = data.get("course", {}).get("weekly_hours", "8-10")
     lines = [
         "<!-- 由 `uv run llm-course course path --write` 生成，请勿手动维护。 -->",
-        "# LLM 学习路径（1–48）",
+        "# LLM-Zero2Pro 学习目录（第 1–48 课）",
         "",
-        "所有人都按 1 → 48 推进；学习节奏可以不同，完成标准保持一致。",
-        "可以根据自己的基础调整每一周所用的时间，但完成标准保持一致。",
+        "这是课程唯一入口。不要随机挑 Notebook：从第 1 课开始，完成本课验收后再进入下一课。",
+        "课程主线严格聚焦文本 LLM；多模态位于文末选修区，不计入 48 课毕业要求。",
         "",
-        "[课程使用说明](../README.md#统一的学习路径怎么使用) · "
-        "[架构演进图](architecture_evolution.md) · "
-        "[练习清单](../exercises/manifest.yaml)",
+        "## 第一次使用",
         "",
-        "| 周次 | 主题 | 讲义 | Notebook | 练习 / 交付物 |",
-        "|---:|---|---|---|---|",
+        "1. 在仓库根目录运行 `uv sync` 和 `uv run llm-course doctor`。",
+        "2. VS Code 用户运行 `uv run llm-course vscode`，或执行 `code .` 后打开本文件。",
+        "3. 在 VS Code 选择项目 `.venv` 解释器；打开 `.ipynb` 时选择同一个 Kernel。",
+        "4. 每个实验只需选择 `.ipynb` 或同名 `# %%` Python 文件之一，不要重复完成。",
+        "5. 互动 HTML 使用系统浏览器或 VS Code Live Preview 打开。",
+        "",
+        "环境细节见 [VS Code 指南](../setup/vscode.md)、[Windows/macOS 环境指南]"
+        "(../setup/environment.md)和[JupyterLab 可选指南](../setup/jupyterlab.md)。",
+        "",
+        "## 固定学习顺序",
+        "",
+        "每课都按：**讲义 → 补充阅读 → 互动图 → 实验二选一 → starter → 自动核查 → 交付物与验收**。",
+        "没有独立 starter 的研究课，以清单中的交付物和完成标准验收。",
+        "",
+        "## 九阶段总览",
+        "",
+        "| 阶段 | 课次 | 主题 |",
+        "|---:|---:|---|",
     ]
-    for week in range(1, 49):
-        lesson = week_by_number[week]
-        asset = assets[week]
-        lecture_path = Path(asset["lecture"])
-        try:
-            lecture_path = lecture_path.relative_to("docs")
-        except ValueError:
-            pass
-        lecture = f"[进入讲义]({lecture_path.as_posix()})"
-        notebooks = ", ".join(
-            f"[{Path(notebook).name}](../{Path(notebook).as_posix()})"
-            for notebook in asset["notebooks"]
-        )
-        exercise_ids = ", ".join(map(str, asset["exercises"]))
-        output = exercise_ids or asset["deliverable"]
-        lines.append(f"| {week} | {lesson['title']} | {lecture} | {notebooks} | {output} |")
+    for index, stage in enumerate(data["stages"], start=1):
+        lines.append(f"| {index} | {stage['weeks']} | {stage['title']} |")
+
+    for stage_index, stage in enumerate(data["stages"], start=1):
+        lines.extend(["", f"## 阶段 {stage_index}：{stage['title']}（第 {stage['weeks']} 课）", ""])
+        stage_lessons = [lesson for lesson in data["weeks"] if lesson["stage"] == stage["id"]]
+        for lesson in stage_lessons:
+            week = int(lesson["week"])
+            asset = assets[week]
+            prerequisite = "课程环境准备" if week == 1 else f"完成第 {week - 1:02d} 课"
+            lines.extend(
+                [
+                    f"### 第 {week:02d} 课：{lesson['title']}",
+                    "",
+                    f"- **学习目标**：{'；'.join(lesson['objectives'])}",
+                    f"- **前置知识**：{prerequisite}",
+                    f"- **预计时间**：{weekly_hours} 小时，可按掌握程度拆分多天完成",
+                    f"- **本课内容**：{'；'.join(lesson['experiments'])}",
+                    "- **按此顺序学习**：",
+                    f"  1. 阅读 {_catalog_link(asset['lesson'], '本课完整讲义')}。",
+                ]
+            )
+            extra_readings = [path for path in lesson["readings"] if path != asset["lesson"]]
+            if extra_readings:
+                links = "、".join(_catalog_link(path) for path in extra_readings)
+                lines.append(f"  2. 按需阅读 {links}，用于补齐阶段背景和方法。")
+            else:
+                lines.append("  2. 本课没有额外阅读，复述讲义中的形状和公式。")
+            interactive_links = "、".join(
+                _catalog_link(path, "互动图") for path in asset["interactive"]
+            )
+            lines.append(f"  3. 打开 {interactive_links}，先预测控件变化，再观察结果。")
+            lab = asset["lab"]
+            if isinstance(lab, dict):
+                lines.append(
+                    "  4. 实验二选一："
+                    f"{_catalog_link(lab['ipynb'], '.ipynb')} 或 "
+                    f"{_catalog_link(lab['python'], 'VS Code # %% .py')}。"
+                )
+            else:
+                lines.append(
+                    "  4. 本课无独立代码实验；运行 `uv run llm-course doctor` 并保存诊断结果。"
+                )
+            exercise_ids = [str(item).zfill(2) for item in asset["exercises"]]
+            if exercise_ids:
+                starter_links = "、".join(
+                    _catalog_link(exercise_by_id[item].template, f"starter {item}")
+                    for item in exercise_ids
+                )
+                lines.append(f"  5. 填写 {starter_links} 中保留的核心空缺。")
+                commands = "；".join(
+                    f"`uv run llm-course exercises check {item}`" for item in exercise_ids
+                )
+                lines.append(f"  6. 自动核查：{commands}。")
+            else:
+                lines.append("  5. 本课没有独立 starter，完成研究记录或实验报告。")
+                lines.append("  6. 按讲义中的断言复现结果，并检查输出中没有隐藏状态。")
+            lines.extend(
+                [
+                    f"  7. **交付物**：{asset['deliverable']}。",
+                    f"- **完成标准**：{'；'.join(lesson['acceptance'])}",
+                    f"- **一手来源**：{'；'.join(str(source) for source in asset['sources'])}",
+                    "",
+                ]
+            )
+
     lines.extend(
         [
+            "## 48 课之后：多模态选修",
             "",
-            "使用方式：从第 1 周开始，依次完成对应讲义、Notebook 与练习；通过本周的完成标准后，",
-            "再进入下一周。中途回来时，从第一个尚未完成的周次继续即可。",
+            "先阅读[多模态桥接讲义](readings/extensions/multimodal.md)和"
+            "[数据流互动图](readings/interactive/multimodal-flow.html)，再从以下格式任选一种：",
+            "",
+            "- [多模态 Notebook](labs/optional/80_multimodal_bridge.ipynb)",
+            "- [多模态 VS Code 实验](labs/optional/80_multimodal_bridge.py)",
+            "- [多模态 starter](labs/starter/21_multimodal_bridge.py)",
+            "",
+            "## 学习目录边界",
+            "",
+            "`learning/readings/` 只放阅读与互动材料；`learning/labs/` 只放可运行或填写的实验。",
+            "环境在 `setup/`，课程配置在 `course/`，公开核查在 `checks/`，参考实现位于 `src/`。",
             "",
         ]
     )
@@ -386,7 +507,7 @@ def validate_course_assets() -> ValidationReport:
             expected = render_learning_path().replace("\r\n", "\n")
             if actual != expected:
                 report.errors.append(
-                    "docs/learning_path.md 已经漂移；"
+                    "learning/README.md 已经漂移；"
                     "请运行 `uv run llm-course course path --write` 重新生成。"
                 )
         except (OSError, KeyError, TypeError, ValueError, yaml.YAMLError) as exc:

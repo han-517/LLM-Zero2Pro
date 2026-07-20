@@ -20,6 +20,7 @@ llm-course = "llm_course.cli:main"
 dev = [
     "ipykernel>=6.29,<7",
     "jupyterlab>=4.2,<5",
+    "jupytext>=1.17,<2",
     "nbclient>=0.10,<1",
     "pytest>=8.3,<9",
     "ruff>=0.11,<1",
@@ -62,3 +63,7 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 
+
+[tool.ruff.lint.per-file-ignores]
+"learning/labs/*.py" = ["E402", "E501"]
+"learning/labs/optional/*.py" = ["E402", "E501"]

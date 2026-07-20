@@ -10,8 +10,8 @@ lessons:
   - 区分训练、验证和测试
   - 理解欠拟合与过拟合
   readings:
-  - docs/stages/02_neural_lm.md
-  - docs/weeks/05_supervision_generalization.md
+  - learning/readings/stages/02_neural_lm.md
+  - learning/readings/lessons/05_supervision_generalization.md
   experiments:
   - 拟合一维函数
   - 观察训练/验证曲线
@@ -20,9 +20,12 @@ lessons:
   - 不会用测试集调参
   - 能解释泛化间隙
   assets:
-    lecture: docs/weeks/05_supervision_generalization.md
-    notebooks:
-    - notebooks/core/02_neural_language_models.ipynb
+    lesson: learning/readings/lessons/05_supervision_generalization.md
+    lab:
+      ipynb: learning/labs/02_neural_language_models.ipynb
+      python: learning/labs/02_neural_language_models.py
+    interactive:
+    - learning/readings/interactive/foundations-lab.html
     exercises: []
     sources:
     - the_pile
@@ -35,8 +38,8 @@ lessons:
   - 理解层的组合
   - 观察 ReLU、tanh、SiLU 的差异
   readings:
-  - docs/stages/02_neural_lm.md
-  - docs/weeks/06_mlp_activations_optimization.md
+  - learning/readings/stages/02_neural_lm.md
+  - learning/readings/lessons/06_mlp_activations_optimization.md
   experiments:
   - 从零 MLP
   - 梯度流可视化
@@ -45,9 +48,12 @@ lessons:
   - 小数据过拟合
   - 解释非线性的作用
   assets:
-    lecture: docs/weeks/06_mlp_activations_optimization.md
-    notebooks:
-    - notebooks/core/02_neural_language_models.ipynb
+    lesson: learning/readings/lessons/06_mlp_activations_optimization.md
+    lab:
+      ipynb: learning/labs/02_neural_language_models.ipynb
+      python: learning/labs/02_neural_language_models.py
+    interactive:
+    - learning/readings/interactive/foundations-lab.html
     exercises:
     - '12'
     sources:
@@ -61,8 +67,8 @@ lessons:
   - 把 token 映射为可学习向量
   - 理解 next-token prediction
   readings:
-  - docs/stages/02_neural_lm.md
-  - docs/weeks/07_embeddings_neural_lm.md
+  - learning/readings/stages/02_neural_lm.md
+  - learning/readings/lessons/07_embeddings_neural_lm.md
   experiments:
   - Bigram 表
   - Embedding + MLP LM
@@ -71,9 +77,12 @@ lessons:
   - 实现 bigram LM
   - 能解释 logits 和概率
   assets:
-    lecture: docs/weeks/07_embeddings_neural_lm.md
-    notebooks:
-    - notebooks/core/02_neural_language_models.ipynb
+    lesson: learning/readings/lessons/07_embeddings_neural_lm.md
+    lab:
+      ipynb: learning/labs/02_neural_language_models.ipynb
+      python: learning/labs/02_neural_language_models.py
+    interactive:
+    - learning/readings/interactive/foundations-lab.html
     exercises:
     - '12'
     sources:
@@ -87,8 +96,8 @@ lessons:
   - 理解循环状态
   - 知道长依赖和串行计算为何困难
   readings:
-  - docs/stages/02_neural_lm.md
-  - docs/weeks/08_rnn_state_and_sequence_bottleneck.md
+  - learning/readings/stages/02_neural_lm.md
+  - learning/readings/lessons/08_rnn_state_and_sequence_bottleneck.md
   experiments:
   - 手写 Elman RNN
   - 梯度随时间变化
@@ -97,9 +106,12 @@ lessons:
   - 实现 RNN 单元
   - 说出注意力替代 RNN 的动机
   assets:
-    lecture: docs/weeks/08_rnn_state_and_sequence_bottleneck.md
-    notebooks:
-    - notebooks/core/02_neural_language_models.ipynb
+    lesson: learning/readings/lessons/08_rnn_state_and_sequence_bottleneck.md
+    lab:
+      ipynb: learning/labs/02_neural_language_models.ipynb
+      python: learning/labs/02_neural_language_models.py
+    interactive:
+    - learning/readings/interactive/foundations-lab.html
     exercises:
     - '12'
     sources:

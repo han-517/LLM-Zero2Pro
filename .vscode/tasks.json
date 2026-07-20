@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "课程：环境诊断",
+      "type": "shell",
+      "command": "uv run llm-course doctor",
+      "problemMatcher": []
+    },
+    {
+      "label": "课程：检查 48 课资产",
+      "type": "shell",
+      "command": "uv run llm-course course check --no-tests",
+      "problemMatcher": []
+    },
+    {
+      "label": "课程：核查当前 starter",
+      "type": "shell",
+      "command": "uv run llm-course exercises check ${input:exerciseId}",
+      "problemMatcher": []
+    },
+    {
+      "label": "课程：检查双格式实验同步",
+      "type": "shell",
+      "command": "uv run python scripts/sync_labs.py --check",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "exerciseId",
+      "type": "promptString",
+      "description": "输入练习编号或别名，例如 07 或 rope",
+      "default": "01"
+    }
+  ]
+}

@@ -10,8 +10,8 @@ lessons:
   - 理解数据来源、许可和泄漏
   - 设计数据卡
   readings:
-  - docs/weeks/22_data_governance.md
-  - docs/stages/05_pretraining.md
+  - learning/readings/lessons/22_data_governance.md
+  - learning/readings/stages/05_pretraining.md
   experiments:
   - 检查小语料编码
   - 数据统计
@@ -20,9 +20,12 @@ lessons:
   - 记录来源与许可
   - 区分训练和评测污染
   assets:
-    lecture: docs/weeks/22_data_governance.md
-    notebooks:
-    - notebooks/core/07_pretraining_systems.ipynb
+    lesson: learning/readings/lessons/22_data_governance.md
+    lab:
+      ipynb: learning/labs/07_pretraining_systems.ipynb
+      python: learning/labs/07_pretraining_systems.py
+    interactive:
+    - learning/readings/interactive/training-and-alignment.html
     exercises:
     - '14'
     sources:
@@ -36,8 +39,8 @@ lessons:
   - 理解质量过滤和近重复
   - 观察数据配比影响
   readings:
-  - docs/weeks/23_dedup_mixing_packing.md
-  - docs/stages/05_pretraining.md
+  - learning/readings/lessons/23_dedup_mixing_packing.md
+  - learning/readings/stages/05_pretraining.md
   experiments:
   - MinHash 概念实验
   - 重复数据过拟合
@@ -46,9 +49,12 @@ lessons:
   - 统计每步保留率
   - 避免静默丢数据
   assets:
-    lecture: docs/weeks/23_dedup_mixing_packing.md
-    notebooks:
-    - notebooks/core/07_pretraining_systems.ipynb
+    lesson: learning/readings/lessons/23_dedup_mixing_packing.md
+    lab:
+      ipynb: learning/labs/07_pretraining_systems.ipynb
+      python: learning/labs/07_pretraining_systems.py
+    interactive:
+    - learning/readings/interactive/training-and-alignment.html
     exercises:
     - '14'
     sources:
@@ -62,8 +68,8 @@ lessons:
   - 理解动量和自适应缩放
   - 设计可解释的 scheduler
   readings:
-  - docs/weeks/24_adamw_schedules.md
-  - docs/stages/05_pretraining.md
+  - learning/readings/lessons/24_adamw_schedules.md
+  - learning/readings/stages/05_pretraining.md
   experiments:
   - SGD/AdamW 对照
   - cosine schedule
@@ -72,9 +78,12 @@ lessons:
   - 与 PyTorch 单步一致
   - 绘制学习率曲线
   assets:
-    lecture: docs/weeks/24_adamw_schedules.md
-    notebooks:
-    - notebooks/core/07_pretraining_systems.ipynb
+    lesson: learning/readings/lessons/24_adamw_schedules.md
+    lab:
+      ipynb: learning/labs/07_pretraining_systems.ipynb
+      python: learning/labs/07_pretraining_systems.py
+    interactive:
+    - learning/readings/interactive/training-and-alignment.html
     exercises:
     - '15'
     sources:
@@ -88,8 +97,8 @@ lessons:
   - 估算参数/激活/优化器内存
   - 理解算力与带宽瓶颈
   readings:
-  - docs/weeks/25_mixed_precision_resources.md
-  - docs/stages/05_pretraining.md
+  - learning/readings/lessons/25_mixed_precision_resources.md
+  - learning/readings/stages/05_pretraining.md
   experiments:
   - resource accounting
   - dtype 误差
@@ -98,9 +107,12 @@ lessons:
   - 写清估算假设
   - 区分训练与推理内存
   assets:
-    lecture: docs/weeks/25_mixed_precision_resources.md
-    notebooks:
-    - notebooks/core/07_pretraining_systems.ipynb
+    lesson: learning/readings/lessons/25_mixed_precision_resources.md
+    lab:
+      ipynb: learning/labs/07_pretraining_systems.ipynb
+      python: learning/labs/07_pretraining_systems.py
+    interactive:
+    - learning/readings/interactive/training-and-alignment.html
     exercises: []
     sources:
     - llama
@@ -113,8 +125,8 @@ lessons:
   - 区分数据/张量/流水线并行
   - 理解 ZeRO/FSDP 的状态分片
   readings:
-  - docs/weeks/26_parallel_checkpointing.md
-  - docs/stages/05_pretraining.md
+  - learning/readings/lessons/26_parallel_checkpointing.md
+  - learning/readings/stages/05_pretraining.md
   experiments:
   - 纸面内存分片
   - 可恢复检查点清单
@@ -123,9 +135,12 @@ lessons:
   - 标明通信边界
   - 恢复后数据顺序和优化器状态可追溯
   assets:
-    lecture: docs/weeks/26_parallel_checkpointing.md
-    notebooks:
-    - notebooks/core/07_pretraining_systems.ipynb
+    lesson: learning/readings/lessons/26_parallel_checkpointing.md
+    lab:
+      ipynb: learning/labs/07_pretraining_systems.ipynb
+      python: learning/labs/07_pretraining_systems.py
+    interactive:
+    - learning/readings/interactive/training-and-alignment.html
     exercises: []
     sources:
     - gshard
@@ -138,8 +153,8 @@ lessons:
   - 理解幂律拟合
   - 不外推到证据范围之外
   readings:
-  - docs/weeks/27_scaling_and_evaluation.md
-  - docs/stages/05_pretraining.md
+  - learning/readings/lessons/27_scaling_and_evaluation.md
+  - learning/readings/stages/05_pretraining.md
   experiments:
   - 拟合微型 scaling curve
   - 置信区间
@@ -148,9 +163,12 @@ lessons:
   - 报告拟合残差
   - 说明缩尺结论局限
   assets:
-    lecture: docs/weeks/27_scaling_and_evaluation.md
-    notebooks:
-    - notebooks/core/07_pretraining_systems.ipynb
+    lesson: learning/readings/lessons/27_scaling_and_evaluation.md
+    lab:
+      ipynb: learning/labs/07_pretraining_systems.ipynb
+      python: learning/labs/07_pretraining_systems.py
+    interactive:
+    - learning/readings/interactive/training-and-alignment.html
     exercises: []
     sources:
     - chinchilla
@@ -163,8 +181,8 @@ lessons:
   - 建立版本固定且可重复的评测
   - 区分能力、污染、实现故障和统计波动
   readings:
-  - docs/weeks/28_reliable_evaluation.md
-  - docs/stages/05_pretraining.md
+  - learning/readings/lessons/28_reliable_evaluation.md
+  - learning/readings/stages/05_pretraining.md
   experiments:
   - 随机与旧 checkpoint 基线
   - 答案 parser、近重复污染与分桶评测
@@ -173,9 +191,12 @@ lessons:
   - 原始输出、样本分母、种子与环境完整
   - 污染命中保存证据且报告处理前后结果
   assets:
-    lecture: docs/weeks/28_reliable_evaluation.md
-    notebooks:
-    - notebooks/core/07_pretraining_systems.ipynb
+    lesson: learning/readings/lessons/28_reliable_evaluation.md
+    lab:
+      ipynb: learning/labs/07_pretraining_systems.ipynb
+      python: learning/labs/07_pretraining_systems.py
+    interactive:
+    - learning/readings/interactive/training-and-alignment.html
     exercises: []
     sources:
     - helm

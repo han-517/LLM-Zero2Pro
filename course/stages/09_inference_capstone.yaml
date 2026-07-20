@@ -10,8 +10,8 @@ lessons:
   - 理解 scale/zero-point/group
   - 测量大小与误差权衡
   readings:
-  - docs/stages/09_inference.md
-  - docs/weeks/45_quantization.md
+  - learning/readings/stages/09_inference.md
+  - learning/readings/lessons/45_quantization.md
   experiments:
   - 对称 int8/int4 伪量化
   - 层级误差
@@ -20,9 +20,12 @@ lessons:
   - 饱和处理正确
   - 报告误差和理论体积
   assets:
-    lecture: docs/weeks/45_quantization.md
-    notebooks:
-    - notebooks/core/11_inference_serving.ipynb
+    lesson: learning/readings/lessons/45_quantization.md
+    lab:
+      ipynb: learning/labs/11_inference_serving.ipynb
+      python: learning/labs/11_inference_serving.py
+    interactive:
+    - learning/readings/interactive/serving-lab.html
     exercises:
     - '20'
     sources:
@@ -36,8 +39,8 @@ lessons:
   - 理解非连续 KV 页面
   - 理解 draft/verify 保持分布正确
   readings:
-  - docs/stages/09_inference.md
-  - docs/weeks/46_paged_attention_continuous_batching.md
+  - learning/readings/stages/09_inference.md
+  - learning/readings/lessons/46_paged_attention_continuous_batching.md
   experiments:
   - 页面分配模拟
   - 块式贪心推测解码：一次 target 调用验证多个候选
@@ -46,9 +49,12 @@ lessons:
   - draft 等于 target 时完整接受
   - 解释拒绝后的修正
   assets:
-    lecture: docs/weeks/46_paged_attention_continuous_batching.md
-    notebooks:
-    - notebooks/core/11_inference_serving.ipynb
+    lesson: learning/readings/lessons/46_paged_attention_continuous_batching.md
+    lab:
+      ipynb: learning/labs/11_inference_serving.ipynb
+      python: learning/labs/11_inference_serving.py
+    interactive:
+    - learning/readings/interactive/serving-lab.html
     exercises:
     - '20'
     sources:
@@ -62,9 +68,9 @@ lessons:
   - 区分 latency、throughput、TTFT、TPOT
   - 记录完整实验条件
   readings:
-  - docs/03_capstone.md
-  - docs/stages/09_inference.md
-  - docs/weeks/47_speculative_decoding_benchmarks.md
+  - learning/readings/references/capstone.md
+  - learning/readings/stages/09_inference.md
+  - learning/readings/lessons/47_speculative_decoding_benchmarks.md
   experiments:
   - 预热与重复测量
   - 参数/FLOPs 匹配
@@ -73,9 +79,12 @@ lessons:
   - 一次只改变一个因素
   - 原始结果可追溯
   assets:
-    lecture: docs/weeks/47_speculative_decoding_benchmarks.md
-    notebooks:
-    - notebooks/core/11_inference_serving.ipynb
+    lesson: learning/readings/lessons/47_speculative_decoding_benchmarks.md
+    lab:
+      ipynb: learning/labs/11_inference_serving.ipynb
+      python: learning/labs/11_inference_serving.py
+    interactive:
+    - learning/readings/interactive/serving-lab.html
     exercises:
     - '20'
     sources:
@@ -89,9 +98,9 @@ lessons:
   - 完成 Dense/Attention/MoE 对照
   - 区分证据、推断和限制
   readings:
-  - docs/03_capstone.md
-  - docs/weeks/48_capstone_defense.md
-  - docs/stages/09_inference.md
+  - learning/readings/references/capstone.md
+  - learning/readings/lessons/48_capstone_defense.md
+  - learning/readings/stages/09_inference.md
   experiments:
   - 三个模型公平训练
   - 生成和失败案例分析
@@ -101,9 +110,12 @@ lessons:
   - 报告损失/速度/内存/路由/限制
   - 能解释关键实现而非只运行代码
   assets:
-    lecture: docs/weeks/48_capstone_defense.md
-    notebooks:
-    - notebooks/core/11_inference_serving.ipynb
+    lesson: learning/readings/lessons/48_capstone_defense.md
+    lab:
+      ipynb: learning/labs/11_inference_serving.ipynb
+      python: learning/labs/11_inference_serving.py
+    interactive:
+    - learning/readings/interactive/serving-lab.html
     exercises: []
     sources:
     - transformer

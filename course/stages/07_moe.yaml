@@ -10,8 +10,8 @@ lessons:
   - 区分总参数和活跃参数
   - 实现 token-choice routing
   readings:
-  - docs/weeks/35_topk_routing.md
-  - docs/stages/07_moe.md
+  - learning/readings/lessons/35_topk_routing.md
+  - learning/readings/stages/07_moe.md
   experiments:
   - 路由热力图
   - Dense/MoE 活跃 FLOPs
@@ -20,9 +20,12 @@ lessons:
   - 门控权重归一化
   - 所有被选择且未丢弃的专家可反传；构造批次覆盖全部专家
   assets:
-    lecture: docs/weeks/35_topk_routing.md
-    notebooks:
-    - notebooks/core/09_moe.ipynb
+    lesson: learning/readings/lessons/35_topk_routing.md
+    lab:
+      ipynb: learning/labs/09_moe.ipynb
+      python: learning/labs/09_moe.py
+    interactive:
+    - learning/readings/interactive/architecture-lab.html
     exercises:
     - '10'
     sources:
@@ -36,8 +39,8 @@ lessons:
   - 理解系统容量约束
   - 测量 expert utilization
   readings:
-  - docs/weeks/36_capacity_and_balance.md
-  - docs/stages/07_moe.md
+  - learning/readings/lessons/36_capacity_and_balance.md
+  - learning/readings/stages/07_moe.md
   experiments:
   - 容量溢出
   - 均衡损失前后对照
@@ -46,9 +49,12 @@ lessons:
   - 溢出行为显式
   - 负载统计正确
   assets:
-    lecture: docs/weeks/36_capacity_and_balance.md
-    notebooks:
-    - notebooks/core/09_moe.ipynb
+    lesson: learning/readings/lessons/36_capacity_and_balance.md
+    lab:
+      ipynb: learning/labs/09_moe.ipynb
+      python: learning/labs/09_moe.py
+    interactive:
+    - learning/readings/interactive/architecture-lab.html
     exercises:
     - '05'
     sources:
@@ -62,8 +68,8 @@ lessons:
   - 控制 router logits
   - 理解路由专用 FP32
   readings:
-  - docs/weeks/37_router_stability.md
-  - docs/stages/07_moe.md
+  - learning/readings/lessons/37_router_stability.md
+  - learning/readings/stages/07_moe.md
   experiments:
   - 极端 logits
   - z-loss 消融
@@ -72,9 +78,12 @@ lessons:
   - 无 NaN
   - 能解释 z-loss 不等于负载均衡
   assets:
-    lecture: docs/weeks/37_router_stability.md
-    notebooks:
-    - notebooks/core/09_moe.ipynb
+    lesson: learning/readings/lessons/37_router_stability.md
+    lab:
+      ipynb: learning/labs/09_moe.ipynb
+      python: learning/labs/09_moe.py
+    interactive:
+    - learning/readings/interactive/architecture-lab.html
     exercises:
     - '18'
     sources:
@@ -88,8 +97,8 @@ lessons:
   - 理解公共知识和专业知识拆分
   - 从 Dense 初始化 MoE
   readings:
-  - docs/weeks/38_shared_experts_upcycling.md
-  - docs/stages/07_moe.md
+  - learning/readings/lessons/38_shared_experts_upcycling.md
+  - learning/readings/stages/07_moe.md
   experiments:
   - 复制 FFN 权重
   - 共享专家消融
@@ -98,9 +107,12 @@ lessons:
   - 初始化输出可比较
   - 说明对称性如何被打破
   assets:
-    lecture: docs/weeks/38_shared_experts_upcycling.md
-    notebooks:
-    - notebooks/core/09_moe.ipynb
+    lesson: learning/readings/lessons/38_shared_experts_upcycling.md
+    lab:
+      ipynb: learning/labs/09_moe.ipynb
+      python: learning/labs/09_moe.py
+    interactive:
+    - learning/readings/interactive/architecture-lab.html
     exercises:
     - '18'
     sources:
@@ -114,8 +126,8 @@ lessons:
   - 理解 all-to-all 通信
   - 串起 DeepSeek V1-V3 路由演化
   readings:
-  - docs/weeks/39_expert_parallel.md
-  - docs/stages/07_moe.md
+  - learning/readings/lessons/39_expert_parallel.md
+  - learning/readings/stages/07_moe.md
   experiments:
   - 通信量纸面估算
   - aux-loss-free bias 模拟
@@ -124,9 +136,12 @@ lessons:
   - 区分算法收益与系统收益
   - 能批判技术报告证据
   assets:
-    lecture: docs/weeks/39_expert_parallel.md
-    notebooks:
-    - notebooks/core/09_moe.ipynb
+    lesson: learning/readings/lessons/39_expert_parallel.md
+    lab:
+      ipynb: learning/labs/09_moe.ipynb
+      python: learning/labs/09_moe.py
+    interactive:
+    - learning/readings/interactive/architecture-lab.html
     exercises:
     - '18'
     sources:

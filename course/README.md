@@ -10,10 +10,10 @@
 
 ## 学习者怎么用
 
-直接打开[统一学习路线](../docs/learning_path.md)。第一次从第 1 周开始，以后从第一个未完成的周继续。
+直接打开[统一学习路线](../learning/README.md)。第一次从第 1 周开始，以后从第一个未完成的周继续。
 
 ## 维护者怎么用
 
-修改 `stages/NN_*.yaml` 后，运行 `uv run llm-course course path --write` 更新唯一的 `docs/learning_path.md`，再运行校验。
+修改 `stages/NN_*.yaml` 后，运行 `uv run llm-course course path --write` 更新唯一的 `learning/README.md`，再运行校验。
 
 这里不再保存 15 周抽样路径，也不会生成两个版本。

@@ -15,6 +15,7 @@ from llm_course.doctor import run_doctor
 from llm_course.exercises import print_exercises, run_exercise_checks
 from llm_course.lab import launch_lab
 from llm_course.papers import check_links, generate_graph, load_catalog, validate_catalog
+from llm_course.vscode import launch_vscode
 
 
 def _configure_utf8_stream(stream: TextIO) -> None:
@@ -27,7 +28,9 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="llm-course", description="文本 LLM 课程工具")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    lab_parser = subparsers.add_parser("lab", help="打开课程欢迎页并启动 JupyterLab")
+    subparsers.add_parser("vscode", help="使用 VS Code 打开课程目录")
+
+    lab_parser = subparsers.add_parser("lab", help="可选：在 learning/ 启动 JupyterLab")
     lab_parser.add_argument("--no-browser", action="store_true", help="不自动打开浏览器")
     lab_parser.add_argument("--port", type=int, help="指定 JupyterLab 端口")
 
@@ -69,7 +72,7 @@ def _build_parser() -> argparse.ArgumentParser:
     check_parser = course_sub.add_parser("check", help="校验 48 周闭环并运行测试")
     check_parser.add_argument("--no-tests", action="store_true", help="只校验数据，不运行 pytest")
     path_parser = course_sub.add_parser("path", help="查看统一的 1–48 学习路线")
-    path_parser.add_argument("--write", action="store_true", help="同步到 docs/learning_path.md")
+    path_parser.add_argument("--write", action="store_true", help="同步到 learning/README.md")
     path_parser.add_argument(
         "--output",
         type=Path,
@@ -102,6 +105,8 @@ def main(argv: list[str] | None = None) -> int:
     _configure_utf8_stream(sys.stdout)
     _configure_utf8_stream(sys.stderr)
     args = _build_parser().parse_args(argv)
+    if args.command == "vscode":
+        return launch_vscode()
     if args.command == "lab":
         return launch_lab(no_browser=args.no_browser, port=args.port)
     if args.command == "doctor":
