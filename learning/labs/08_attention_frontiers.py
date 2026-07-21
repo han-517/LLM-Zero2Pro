@@ -100,4 +100,4 @@ print("recurrent == parallel")
 # %% [markdown] llm_course_enrichment=true
 # ## 来源与验收
 #
-# [FlashAttention](https://arxiv.org/abs/2205.14135)、[DeepSeek-V2/MLA](https://arxiv.org/abs/2405.04434)、[Linear Transformers](https://arxiv.org/abs/2006.16236)、[Mamba-2](https://arxiv.org/abs/2405.21060)、[Gated DeltaNet](https://arxiv.org/abs/2412.06464)。完成 starter 16–18，并说明保持/近似了什么。
+# [FlashAttention](https://arxiv.org/abs/2205.14135)、[DeepSeek-V2/MLA](https://arxiv.org/abs/2405.04434)、[Linear Transformers](https://arxiv.org/abs/2006.16236)、[Mamba-2](https://arxiv.org/abs/2405.21060)、[Gated DeltaNet](https://arxiv.org/abs/2412.06464)。完成 starter 16–17，并说明保持/近似了什么。

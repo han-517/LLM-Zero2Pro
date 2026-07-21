@@ -1,0 +1,5 @@
+Language models predict the next token. A small model can still teach us the full training loop.
+Tokens become vectors. Attention mixes context. Residual paths preserve information.
+语言模型预测下一个 token。小模型也能展示完整的数据、训练、保存、恢复和生成流程。
+Correctness comes before speed. Reproducibility comes before impressive claims.
+Language models predict the next token. Attention mixes context. Training reduces uncertainty.

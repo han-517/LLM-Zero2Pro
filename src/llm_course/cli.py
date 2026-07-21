@@ -15,6 +15,7 @@ from llm_course.doctor import run_doctor
 from llm_course.exercises import print_exercises, run_exercise_checks
 from llm_course.lab import launch_lab
 from llm_course.papers import check_links, generate_graph, load_catalog, validate_catalog
+from llm_course.projects import print_projects, run_project_checks
 from llm_course.vscode import launch_vscode
 
 
@@ -87,6 +88,11 @@ def _build_parser() -> argparse.ArgumentParser:
     exercise_check.add_argument(
         "exercise", nargs="?", default="all", help="编号或别名（如 07、rope）；默认 all"
     )
+    projects_parser = subparsers.add_parser("projects", help="贯穿式大作业与集成核查")
+    projects_sub = projects_parser.add_subparsers(dest="projects_command", required=True)
+    projects_sub.add_parser("list", help="列出五个贯穿式大作业及建设状态")
+    project_check = projects_sub.add_parser("check", help="运行一个可用大作业的公开核查")
+    project_check.add_argument("project", help="大作业编号或别名（如 01、end-to-end-lm）")
     return parser
 
 
@@ -126,6 +132,11 @@ def main(argv: list[str] | None = None) -> int:
             return print_exercises()
         if args.exercises_command == "check":
             return run_exercise_checks(args.exercise)
+    if args.command == "projects":
+        if args.projects_command == "list":
+            return print_projects()
+        if args.projects_command == "check":
+            return run_project_checks(args.project)
     if args.command == "papers":
         if args.papers_command == "validate":
             report = validate_catalog()

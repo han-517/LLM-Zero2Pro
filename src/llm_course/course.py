@@ -11,6 +11,7 @@ import yaml
 from llm_course.exercises import EXERCISES, validate_exercise_assets
 from llm_course.lectures import validate_weekly_lectures
 from llm_course.paths import PROJECT_ROOT, ROADMAP_PATH
+from llm_course.projects import PROJECTS, validate_project_assets
 from llm_course.schemas import LessonManifest, ValidationReport
 
 LESSON_FIELDS = {
@@ -49,8 +50,11 @@ REQUIRED_COURSE_ASSETS = (
     "learning/readings/interactive/multimodal-flow.html",
     "learning/readings/extensions/multimodal.md",
     "course/exercises.yaml",
+    "course/projects.yaml",
     "learning/labs/starter/README.md",
+    "learning/labs/projects/README.md",
     "checks/exercises/__init__.py",
+    "checks/projects/__init__.py",
     "LLM-Zero2Pro.code-workspace",
     ".vscode/extensions.json",
     ".vscode/settings.json",
@@ -404,6 +408,32 @@ def render_learning_path() -> str:
     for index, stage in enumerate(data["stages"], start=1):
         lines.append(f"| {index} | {stage['weeks']} | {stage['title']} |")
 
+    lines.extend(
+        [
+            "",
+            "## 五个贯穿式大作业",
+            "",
+            "单函数 starter 用于练习局部正确性；贯穿式大作业用于证明你能把数据、模型、"
+            "训练和评测连接起来。",
+            "建设中的项目先阅读规格，不计入当前自动验收；完成后会在同一 48 课主线中启用。",
+            "",
+            "| 编号 | 相关课次 | 状态 | 大作业 | 核查 |",
+            "|---:|---:|---|---|---|",
+        ]
+    )
+    for project in PROJECTS:
+        status = "可开始" if project.available else "建设中"
+        check = (
+            f"`uv run llm-course projects check {project.project_id}`"
+            if project.available
+            else "规格预览"
+        )
+        project_link = _catalog_link(f"{project.directory}/README.md", project.title)
+        lines.append(
+            f"| {project.project_id} | {project.lesson_label} | {status} | "
+            f"{project_link} | {check} |"
+        )
+
     for stage_index, stage in enumerate(data["stages"], start=1):
         lines.extend(["", f"## 阶段 {stage_index}：{stage['title']}（第 {stage['weeks']} 课）", ""])
         stage_lessons = [lesson for lesson in data["weeks"] if lesson["stage"] == stage["id"]]
@@ -514,6 +544,7 @@ def validate_course_assets() -> ValidationReport:
         except (OSError, KeyError, TypeError, ValueError, yaml.YAMLError) as exc:
             report.errors.append(f"无法核对统一学习路径: {exc}")
     report.merge(validate_notebook_contracts())
+    report.merge(validate_project_assets())
     return report
 
 

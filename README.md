@@ -94,6 +94,15 @@ uv run llm-course exercises check rope
 ```
 
 `exercises check` 检查学员填写内容；`course check` 检查仓库和课程资产，两者职责不同。
+完成若干局部 starter 后，再进入 [`learning/labs/projects/`](learning/labs/projects/README.md)
+中的贯穿式大作业。大作业代码完全由学习者持有，不允许导入 `src/` 中的参考实现；
+当前可开始的第 01 项会把 Byte BPE、现代 Decoder、训练、断点恢复和生成连接成一个
+多文件系统：
+
+```text
+uv run llm-course projects list
+uv run llm-course projects check 01
+```
 
 ## 常用命令
 
@@ -105,6 +114,8 @@ uv run llm-course exercises check rope
 | 同步 `learning/README.md` | `uv run llm-course course path --write` |
 | 列出 starter | `uv run llm-course exercises list` |
 | 核查 starter | `uv run llm-course exercises check <编号或别名>` |
+| 列出贯穿式大作业 | `uv run llm-course projects list` |
+| 核查贯穿式大作业 | `uv run llm-course projects check <编号或别名>` |
 | 可选 JupyterLab | `uv run llm-course lab` |
 | 检查双格式实验 | `uv run python scripts/sync_labs.py --check` |
 | 完整课程健康检查 | `uv run llm-course course check` |
@@ -114,6 +125,7 @@ uv run llm-course exercises check rope
 每课固定按“讲义 → 互动图 → 实验 → starter → 核查 → 交付物”推进。完成 48 课后，应能：
 
 - 从零解释并实现 tokenizer、因果注意力、Transformer、KV Cache 和 Tiny GPT。
+- 在不导入课程参考实现的前提下，训练、保存、恢复并生成一个端到端文本语言模型。
 - 比较 MHA、GQA、MLA、线性/稀疏注意力的计算和缓存权衡。
 - 实现并诊断 Top-k MoE 的路由、容量、负载与数值稳定性。
 - 解释 SFT、LoRA、DPO、GRPO、量化、分页缓存和推测解码的输入契约与边界。

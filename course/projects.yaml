@@ -1,0 +1,44 @@
+version: 1
+policy:
+  unit_exercises_are_prerequisites: true
+  learner_owns_integration_code: true
+  reference_imports_forbidden: true
+projects:
+  - id: "01"
+    slug: end-to-end-lm
+    title: 从字节 BPE 到可恢复训练的完整语言模型
+    lessons: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    status: available
+    directory: learning/labs/projects/01_end_to_end_lm
+    checks:
+      - checks/projects/test_01_tokenizer.py
+      - checks/projects/test_01_model.py
+      - checks/projects/test_01_training.py
+  - id: "02"
+    slug: real-data-pipeline
+    title: 从网页文档到可审计预训练数据
+    lessons: [22, 23, 28]
+    status: planned
+    directory: learning/labs/projects/02_real_data_pipeline
+    checks: []
+  - id: "03"
+    slug: gpu-systems
+    title: Profiling、Triton、DDP 与分片训练
+    lessons: [25, 26, 29]
+    status: planned
+    directory: learning/labs/projects/03_gpu_systems
+    checks: []
+  - id: "04"
+    slug: scaling-laws
+    title: 受预算约束的 Scaling Law 实验
+    lessons: [27, 28]
+    status: planned
+    directory: learning/labs/projects/04_scaling_laws
+    checks: []
+  - id: "05"
+    slug: alignment-rl
+    title: SFT、rollout、可验证奖励与策略更新
+    lessons: [40, 41, 42, 43, 44]
+    status: planned
+    directory: learning/labs/projects/05_alignment_rl
+    checks: []

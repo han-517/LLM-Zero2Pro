@@ -34,6 +34,19 @@
 | 8 | 40-44 | 后训练与推理能力 |
 | 9 | 45-48 | 推理优化与毕业项目 |
 
+## 五个贯穿式大作业
+
+单函数 starter 用于练习局部正确性；贯穿式大作业用于证明你能把数据、模型、训练和评测连接起来。
+建设中的项目先阅读规格，不计入当前自动验收；完成后会在同一 48 课主线中启用。
+
+| 编号 | 相关课次 | 状态 | 大作业 | 核查 |
+|---:|---:|---|---|---|
+| 01 | 9–21 | 可开始 | [从字节 BPE 到可恢复训练的完整语言模型](labs/projects/01_end_to_end_lm/README.md) | `uv run llm-course projects check 01` |
+| 02 | 22–23、28 | 建设中 | [从网页文档到可审计预训练数据](labs/projects/02_real_data_pipeline/README.md) | 规格预览 |
+| 03 | 25–26、29 | 建设中 | [Profiling、Triton、DDP 与分片训练](labs/projects/03_gpu_systems/README.md) | 规格预览 |
+| 04 | 27–28 | 建设中 | [受预算约束的 Scaling Law 实验](labs/projects/04_scaling_laws/README.md) | 规格预览 |
+| 05 | 40–44 | 建设中 | [SFT、rollout、可验证奖励与策略更新](labs/projects/05_alignment_rl/README.md) | 规格预览 |
+
 ## 阶段 1：工具、数学与 PyTorch（第 1-4 课）
 
 ### 第 01 课：命令行、Git、Python 与可复现环境

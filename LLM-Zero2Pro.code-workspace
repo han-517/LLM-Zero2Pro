@@ -57,6 +57,15 @@
         }
       },
       {
+        "label": "课程：核查贯穿式大作业",
+        "type": "shell",
+        "command": "uv run llm-course projects check ${input:projectId}",
+        "problemMatcher": [],
+        "options": {
+          "cwd": "${workspaceFolder}/.."
+        }
+      },
+      {
         "label": "课程：检查双格式实验同步",
         "type": "shell",
         "command": "uv run python scripts/sync_labs.py --check",
@@ -71,6 +80,12 @@
         "id": "exerciseId",
         "type": "promptString",
         "description": "输入练习编号或别名，例如 07 或 rope",
+        "default": "01"
+      },
+      {
+        "id": "projectId",
+        "type": "promptString",
+        "description": "输入大作业编号或别名，例如 01 或 end-to-end-lm",
         "default": "01"
       }
     ]
