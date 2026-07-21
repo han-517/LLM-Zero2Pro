@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 from pathlib import Path
 
 import llm_course.exercises as exercise_module
@@ -61,6 +62,17 @@ def test_templates_keep_core_implementation_blank() -> None:
         source = (ROOT / exercise.template).read_text(encoding="utf-8")
         assert "TODO" in source
         assert "raise NotImplementedError" in source
+
+
+def test_public_loader_uses_the_unique_learning_starter_directory() -> None:
+    loader_path = ROOT / "checks" / "exercises" / "_loader.py"
+    spec = importlib.util.spec_from_file_location("exercise_loader_test", loader_path)
+    assert spec is not None and spec.loader is not None
+    loader = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(loader)
+    module = loader.load_starter("20_inference_systems.py")
+    assert module.__file__ is not None
+    assert Path(module.__file__).parent == ROOT / "learning" / "labs" / "starter"
 
 
 def test_select_exercises_accepts_ids_aliases_optional_and_all() -> None:
