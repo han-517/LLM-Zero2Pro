@@ -96,12 +96,12 @@ uv run llm-course exercises check rope
 `exercises check` 检查学员填写内容；`course check` 检查仓库和课程资产，两者职责不同。
 完成若干局部 starter 后，再进入 [`learning/labs/projects/`](learning/labs/projects/README.md)
 中的贯穿式大作业。大作业代码完全由学习者持有，不允许导入 `src/` 中的参考实现；
-当前可开始的第 01 项会把 Byte BPE、现代 Decoder、训练、断点恢复和生成连接成一个
-多文件系统：
+五项大作业依次覆盖端到端 LM、真实数据管线、GPU/分布式系统、Scaling Law 和
+SFT/RLVR；均要求实际运行产物与报告：
 
 ```text
 uv run llm-course projects list
-uv run llm-course projects check 01
+uv run llm-course projects check 01  # 也可使用 02、03、04、05
 ```
 
 ## 常用命令
@@ -126,6 +126,9 @@ uv run llm-course projects check 01
 
 - 从零解释并实现 tokenizer、因果注意力、Transformer、KV Cache 和 Tiny GPT。
 - 在不导入课程参考实现的前提下，训练、保存、恢复并生成一个端到端文本语言模型。
+- 构建带来源、脱敏、近重复、group split 和数据卡的可审计文本管线。
+- 用 profiler、双进程 DDP、分片与受预算真实 sweep 验证系统和 Scaling 结论。
+- 执行 response-only SFT、grouped rollout 和可验证奖励策略更新，并分析奖励黑客。
 - 比较 MHA、GQA、MLA、线性/稀疏注意力的计算和缓存权衡。
 - 实现并诊断 Top-k MoE 的路由、容量、负载与数值稳定性。
 - 解释 SFT、LoRA、DPO、GRPO、量化、分页缓存和推测解码的输入契约与边界。

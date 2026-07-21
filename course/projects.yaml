@@ -10,6 +10,7 @@ projects:
     lessons: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
     status: available
     directory: learning/labs/projects/01_end_to_end_lm
+    package: student_lm
     checks:
       - checks/projects/test_01_tokenizer.py
       - checks/projects/test_01_model.py
@@ -18,27 +19,40 @@ projects:
     slug: real-data-pipeline
     title: 从网页文档到可审计预训练数据
     lessons: [22, 23, 28]
-    status: planned
+    status: available
     directory: learning/labs/projects/02_real_data_pipeline
-    checks: []
+    package: student_pipeline
+    checks:
+      - checks/projects/test_02_pipeline.py
+      - checks/projects/test_02_dedup_audit.py
   - id: "03"
     slug: gpu-systems
     title: Profiling、Triton、DDP 与分片训练
     lessons: [25, 26, 29]
-    status: planned
+    status: available
     directory: learning/labs/projects/03_gpu_systems
-    checks: []
+    package: student_systems
+    checks:
+      - checks/projects/test_03_systems.py
+      - checks/projects/test_03_train_step.py
+      - checks/projects/test_03_triton_optional.py
   - id: "04"
     slug: scaling-laws
     title: 受预算约束的 Scaling Law 实验
     lessons: [27, 28]
-    status: planned
+    status: available
     directory: learning/labs/projects/04_scaling_laws
-    checks: []
+    package: student_scaling
+    checks:
+      - checks/projects/test_04_scaling.py
+      - checks/projects/test_04_run_contract.py
   - id: "05"
     slug: alignment-rl
     title: SFT、rollout、可验证奖励与策略更新
     lessons: [40, 41, 42, 43, 44]
-    status: planned
+    status: available
     directory: learning/labs/projects/05_alignment_rl
-    checks: []
+    package: student_alignment
+    checks:
+      - checks/projects/test_05_sft_rollout.py
+      - checks/projects/test_05_grpo_update.py

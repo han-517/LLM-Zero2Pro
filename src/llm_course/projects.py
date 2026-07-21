@@ -22,6 +22,7 @@ class Project:
     lessons: tuple[int, ...]
     status: str
     directory: str
+    package: str
     checks: tuple[str, ...]
 
     @property
@@ -60,6 +61,7 @@ def load_projects(path: Path = MANIFEST_PATH) -> tuple[Project, ...]:
                 lessons=tuple(int(lesson) for lesson in item["lessons"]),
                 status=str(item["status"]),
                 directory=str(item["directory"]),
+                package=str(item["package"]),
                 checks=tuple(str(check) for check in item.get("checks", ())),
             )
         )
@@ -107,9 +109,9 @@ def run_project_checks(identifier: str) -> int:
         check=False,
     )
     if completed.returncode == 0:
-        print("大作业公开核查通过。继续执行训练、恢复、生成和实验报告验收。")
+        print("大作业公开核查通过。继续运行完整入口并完成 README 中的报告验收。")
     else:
-        print("大作业尚未通过；按 tokenizer → model → training 的顺序处理第一条失败。")
+        print("大作业尚未通过；按项目 README 的固定顺序处理第一条失败。")
     return completed.returncode
 
 
@@ -128,6 +130,8 @@ def validate_project_assets() -> ValidationReport:
         seen_slugs.add(project.slug)
         if project.status not in VALID_STATUSES:
             report.errors.append(f"大作业状态无效: {project.project_id}: {project.status}")
+        if not project.package.isidentifier() or not project.package.startswith("student_"):
+            report.errors.append(f"大作业 learner-owned package 名称无效: {project.project_id}")
         if tuple(sorted(set(project.lessons))) != project.lessons or any(
             not 1 <= lesson <= 48 for lesson in project.lessons
         ):
@@ -150,15 +154,20 @@ def validate_project_assets() -> ValidationReport:
                 report.errors.append(f"大作业核查无法编译: {check}: {exc}")
 
         if project.available:
-            student_files = sorted((directory / "student_lm").glob("*.py"))
+            package_directory = directory / project.package
+            student_files = sorted(package_directory.glob("*.py"))
             if not student_files:
                 report.errors.append(f"大作业缺少 learner-owned package: {project.project_id}")
+            has_blank_core = False
             for path in student_files:
                 source = path.read_text(encoding="utf-8")
                 if "llm_from_scratch" in source:
                     report.errors.append(f"大作业 starter 不得导入参考实现: {path}")
+                has_blank_core |= "raise NotImplementedError" in source
                 try:
                     compile(source, str(path), "exec")
                 except SyntaxError as exc:
                     report.errors.append(f"大作业 starter 无法编译: {path}: {exc}")
+            if not has_blank_core:
+                report.errors.append(f"大作业必须保留 learner-owned 核心空缺: {project.project_id}")
     return report

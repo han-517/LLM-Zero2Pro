@@ -37,15 +37,15 @@
 ## 五个贯穿式大作业
 
 单函数 starter 用于练习局部正确性；贯穿式大作业用于证明你能把数据、模型、训练和评测连接起来。
-建设中的项目先阅读规格，不计入当前自动验收；完成后会在同一 48 课主线中启用。
+五项均提供 learner-owned starter 与公开核查；实际运行产物和报告按各项目 README 验收。
 
 | 编号 | 相关课次 | 状态 | 大作业 | 核查 |
 |---:|---:|---|---|---|
 | 01 | 9–21 | 可开始 | [从字节 BPE 到可恢复训练的完整语言模型](labs/projects/01_end_to_end_lm/README.md) | `uv run llm-course projects check 01` |
-| 02 | 22–23、28 | 建设中 | [从网页文档到可审计预训练数据](labs/projects/02_real_data_pipeline/README.md) | 规格预览 |
-| 03 | 25–26、29 | 建设中 | [Profiling、Triton、DDP 与分片训练](labs/projects/03_gpu_systems/README.md) | 规格预览 |
-| 04 | 27–28 | 建设中 | [受预算约束的 Scaling Law 实验](labs/projects/04_scaling_laws/README.md) | 规格预览 |
-| 05 | 40–44 | 建设中 | [SFT、rollout、可验证奖励与策略更新](labs/projects/05_alignment_rl/README.md) | 规格预览 |
+| 02 | 22–23、28 | 可开始 | [从网页文档到可审计预训练数据](labs/projects/02_real_data_pipeline/README.md) | `uv run llm-course projects check 02` |
+| 03 | 25–26、29 | 可开始 | [Profiling、Triton、DDP 与分片训练](labs/projects/03_gpu_systems/README.md) | `uv run llm-course projects check 03` |
+| 04 | 27–28 | 可开始 | [受预算约束的 Scaling Law 实验](labs/projects/04_scaling_laws/README.md) | `uv run llm-course projects check 04` |
+| 05 | 40–44 | 可开始 | [SFT、rollout、可验证奖励与策略更新](labs/projects/05_alignment_rl/README.md) | `uv run llm-course projects check 05` |
 
 ## 阶段 1：工具、数学与 PyTorch（第 1-4 课）
 
@@ -412,6 +412,7 @@
   5. 本课没有独立 starter，完成研究记录或实验报告。
   6. 按讲义中的断言复现结果，并检查输出中没有隐藏状态。
   7. **交付物**：经典到现代组件逐项消融表。
+  8. **贯穿式大作业里程碑**：进入 [从字节 BPE 到可恢复训练的完整语言模型](labs/projects/01_end_to_end_lm/README.md)，运行 `uv run llm-course projects check 01`，再完成真实运行产物与报告。
 - **完成标准**：训练无 NaN；能解释 warmup 和 clipping
 - **一手来源**：llama
 
@@ -534,6 +535,8 @@
   5. 本课没有独立 starter，完成研究记录或实验报告。
   6. 按讲义中的断言复现结果，并检查输出中没有隐藏状态。
   7. **交付物**：含去污染声明、区间与故障核查的评测卡。
+  8. **贯穿式大作业里程碑**：进入 [从网页文档到可审计预训练数据](labs/projects/02_real_data_pipeline/README.md)，运行 `uv run llm-course projects check 02`，再完成真实运行产物与报告。
+  8. **贯穿式大作业里程碑**：进入 [受预算约束的 Scaling Law 实验](labs/projects/04_scaling_laws/README.md)，运行 `uv run llm-course projects check 04`，再完成真实运行产物与报告。
 - **完成标准**：原始输出、样本分母、种子与环境完整；污染命中保存证据且报告处理前后结果
 - **一手来源**：helm
 
@@ -554,6 +557,7 @@
   5. 填写 [starter 16](labs/starter/16_attention_frontiers.py) 中保留的核心空缺。
   6. 自动核查：`uv run llm-course exercises check 16`。
   7. **交付物**：在线 Softmax 与标准注意力等价。
+  8. **贯穿式大作业里程碑**：进入 [Profiling、Triton、DDP 与分片训练](labs/projects/03_gpu_systems/README.md)，运行 `uv run llm-course projects check 03`，再完成真实运行产物与报告。
 - **完成标准**：与标准注意力一致；解释为何不是近似注意力
 - **一手来源**：flashattention
 
@@ -815,6 +819,7 @@
   5. 填写 [starter 19](labs/starter/19_posttraining.py) 中保留的核心空缺。
   6. 自动核查：`uv run llm-course exercises check 19`。
   7. **交付物**：GRPO/RLVR 组内优势与安全评测。
+  8. **贯穿式大作业里程碑**：进入 [SFT、rollout、可验证奖励与策略更新](labs/projects/05_alignment_rl/README.md)，运行 `uv run llm-course projects check 05`，再完成真实运行产物与报告。
 - **完成标准**：常数奖励时优势为零；解释奖励稀疏与作弊
 - **一手来源**：deepseekmath
 

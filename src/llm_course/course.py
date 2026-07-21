@@ -11,7 +11,7 @@ import yaml
 from llm_course.exercises import EXERCISES, validate_exercise_assets
 from llm_course.lectures import validate_weekly_lectures
 from llm_course.paths import PROJECT_ROOT, ROADMAP_PATH
-from llm_course.projects import PROJECTS, validate_project_assets
+from llm_course.projects import PROJECTS, Project, validate_project_assets
 from llm_course.schemas import LessonManifest, ValidationReport
 
 LESSON_FIELDS = {
@@ -375,6 +375,9 @@ def render_learning_path() -> str:
     data = load_roadmap()
     assets = {int(key): value for key, value in data["assets"].items()}
     exercise_by_id = {exercise.exercise_id: exercise for exercise in EXERCISES}
+    project_milestones: dict[int, list[Project]] = {}
+    for project in PROJECTS:
+        project_milestones.setdefault(max(project.lessons), []).append(project)
     weekly_hours = data.get("course", {}).get("weekly_hours", "8-10")
     lines = [
         "<!-- 由 `uv run llm-course course path --write` 生成，请勿手动维护。 -->",
@@ -415,7 +418,7 @@ def render_learning_path() -> str:
             "",
             "单函数 starter 用于练习局部正确性；贯穿式大作业用于证明你能把数据、模型、"
             "训练和评测连接起来。",
-            "建设中的项目先阅读规格，不计入当前自动验收；完成后会在同一 48 课主线中启用。",
+            "五项均提供 learner-owned starter 与公开核查；实际运行产物和报告按各项目 README 验收。",
             "",
             "| 编号 | 相关课次 | 状态 | 大作业 | 核查 |",
             "|---:|---:|---|---|---|",
@@ -488,9 +491,16 @@ def render_learning_path() -> str:
             else:
                 lines.append("  5. 本课没有独立 starter，完成研究记录或实验报告。")
                 lines.append("  6. 按讲义中的断言复现结果，并检查输出中没有隐藏状态。")
+            lines.append(f"  7. **交付物**：{asset['deliverable']}。")
+            for project in project_milestones.get(week, []):
+                project_link = _catalog_link(f"{project.directory}/README.md", project.title)
+                lines.append(
+                    f"  8. **贯穿式大作业里程碑**：进入 {project_link}，运行 "
+                    f"`uv run llm-course projects check {project.project_id}`，"
+                    "再完成真实运行产物与报告。"
+                )
             lines.extend(
                 [
-                    f"  7. **交付物**：{asset['deliverable']}。",
                     f"- **完成标准**：{'；'.join(lesson['acceptance'])}",
                     f"- **一手来源**：{'；'.join(str(source) for source in asset['sources'])}",
                     "",

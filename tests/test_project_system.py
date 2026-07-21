@@ -19,17 +19,17 @@ def test_manifest_defines_five_integrated_projects() -> None:
         "05",
     ]
     assert PROJECTS[0].slug == "end-to-end-lm"
-    assert PROJECTS[0].available
-    assert all(not project.available for project in PROJECTS[1:])
+    assert all(project.available for project in PROJECTS)
     assert validate_project_assets().ok
 
 
 def test_available_project_is_learner_owned_and_keeps_core_work_blank() -> None:
-    student_dir = ROOT / PROJECTS[0].directory / "student_lm"
-    sources = [path.read_text(encoding="utf-8") for path in student_dir.glob("*.py")]
-    assert sources
-    assert any("raise NotImplementedError" in source for source in sources)
-    assert all("llm_from_scratch" not in source for source in sources)
+    for project in (project for project in PROJECTS if project.available):
+        student_dir = ROOT / project.directory / project.package
+        sources = [path.read_text(encoding="utf-8") for path in student_dir.glob("*.py")]
+        assert sources
+        assert any("raise NotImplementedError" in source for source in sources)
+        assert all("llm_from_scratch" not in source for source in sources)
 
 
 def test_cli_parses_project_list_and_check() -> None:
@@ -61,12 +61,12 @@ def test_runner_invokes_all_public_checks_for_available_project(monkeypatch) -> 
     assert captured["check"] is False
 
 
-def test_planned_project_does_not_start_pytest(monkeypatch) -> None:
+def test_unknown_project_does_not_start_pytest(monkeypatch) -> None:
     def unexpected_run(*_args, **_kwargs):
-        raise AssertionError("planned projects must not invoke pytest")
+        raise AssertionError("unknown projects must not invoke pytest")
 
     monkeypatch.setattr(project_module.subprocess, "run", unexpected_run)
-    assert run_project_checks("02") == 2
+    assert run_project_checks("missing") == 2
 
 
 def test_generated_catalog_explains_integrated_projects() -> None:
@@ -74,3 +74,7 @@ def test_generated_catalog_explains_integrated_projects() -> None:
     assert "## 五个贯穿式大作业" in catalog
     assert "从字节 BPE 到可恢复训练的完整语言模型" in catalog
     assert "uv run llm-course projects check 01" in catalog
+    assert all(
+        f"projects check {project_id}" in catalog for project_id in ("01", "02", "03", "04", "05")
+    )
+    assert catalog.count("**贯穿式大作业里程碑**") == 5
